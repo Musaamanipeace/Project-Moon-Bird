@@ -101,3 +101,7 @@ src/                    React app (pages, components, challenges, context)
 scripts/dev.mjs         dev orchestrator (Go API + Vite)
 docker-compose.yml      local PostgreSQL
 ```
+
+## Contributing
+
+We follow Conventional Commits for commit messages. Please create a feature branch, make your changes, run `npm test` (frontend) and `go test ./...` (backend) before committing. Follow the PR template in `.github/PULL_REQUEST_TEMPLATE.md`.
