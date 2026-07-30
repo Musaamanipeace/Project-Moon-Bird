@@ -1,159 +1,170 @@
-Moonbug Product & Technical Documentation
-Table of Contents
-Login, Authentication, and Authorization
+Project Moon-Bird — Unified Product & Challenge Documentation
+This document consolidates the original product vision and the expanded feature set into a single reference. The vision described here has not changed from its origin; it has only been expanded. Where the two source drafts described the same idea at different levels of detail, the fuller version is used and no detail from either draft is dropped.
 
-PostgreSQL Database Schema
+1. Vision & Overview
+Project Moon-Bird (formerly Moon Bug) is being built to add the content-engaging element that will encourage people to register and explore it, discovering a whole world of professional advertising, networking, and community support. The app has been renamed from Moon Bug to Project Moon-Bird.
+Its aim is to introduce common citizens and unsuspecting fun-seekers to health awareness, skill awareness, and relationship building through group challenges. The goal is to scale quickly, so AI will be used to craft complex, remotely doable challenges themed around fun topics that relate to specific end users based on their hobbies and portfolio data.
+Loading that data is itself an early onboarding challenge. Otherwise, users jump straight into watching ads and using the platform's micro-services, which might include agentic engineering, digital marketing, IP consultancy, and quality AI immersive feedback with a smooth user interface.
+Together, all of the modules below come together to form one hub for launching campaigns, networking, advertising, and discovering brands. It is set to launch in Kenya and Africa.
 
-REST APIs
-
-Profile Portfolio
-
+3. Core Modules (Feature Map)
+The following modules are the building blocks of the platform. Each entry below merges the short "inside Moon-Bird" descriptions with the fuller feature map.
+MoonDial
+MoonDial serves as the platform's lunar clock and calendar. The lunar clock tells lunar time — the position of the moon in the visible or invisible sky. The calendar maps moon phases onto dates. MoonDial also:
+Calculates the number of full moon cycles between two dates (e.g., between your birthday and today).
+Surfaces extra info such as whether the moon is at its closest distance from Earth (perigee) or furthest (apogee).
+Lets you map events of all types onto the calendar, toggle those events on and off, and toggle highlighted moon-phase dates.
+Events
+An events catalogue. Although there is a separate Catalogues module, the events catalogue is intentionally more standalone. Events are split into:
+Astro events — every astronomical event visible to the human eye, including the ISS, meteor showers, comets, super moons, blood moons, all eclipses, dying-star events, etc.
+Community events — live events, online events, seminars, web spaces, and similar gatherings.
+Holidays.
+Personal events — created by users and set to public or private.
+MoonBird AI
+MoonBird AI is the AI interface, operating as a benevolent servant and friend. She can:
+Initiate conversations with you.
+Perform tasks within your reach on your command and authentication — making edits for you and opening routes (dashboards).
+Offer friendly guidance, though not professional assistance per se.
+MoonBird's persona is that of an artist, a singer, and a free spirit.
 Challenges
-
-Localized Ads & Surveys (Watchers and Advertisers)
-
-Tools, Widgets, and Games
-
-Landing Pages (Signed and Unsigned Users)
-
-Support, FAQ, and Contact Page
-
-Terms and Conditions
-
-Payment System
-
-Live Chat
-
-User Education
-
-Profile Settings
-
-Donate Tab
-
-Repository Licensing (Future Additions)
-
-1. Login, Authentication, and Authorization
-Session Management: Implements secure cookie saving and session expiry logic.
-
-Security Mechanisms: Features rate-limiting, CAPTCHA verification, and device tracking to prevent automated attacks.
-
-Onboarding Flow: Requires verification using a legitimate email address. An One-Time Password (OTP) with a strict expiration window is sent to complete registration or login.
-
-2. Profile Portfolio
-The portfolio supports dynamic fields to showcase a user's identity, assets, and activities.
-
-Standard Fields: Real name, nickname, age, birthday, weight, height, status, hobbies, current projects/activities, completed challenges, current challenge, achievements, rank, professional CV, and links (either a collection of URLs or a single Linktree reference).
-
-Asset Asset Tracking: Dedicated sections for personal items: "My Car," "My Bicycle," "My Pets," "My Jewelry," and "Clothing Collections."
-
-Favorites Field: Defaults to favorite book, movie, meal, place to visit, color, superhero, junk food, fruit, video game, day of the week, and Moonbug challenge. The system automatically populates additional suggestion fields based on user hobbies.
-
-Data Architecture: Fields use a nested, hierarchical structure. A basic portfolio field consists of a title and a value (e.g., Name: Jacob). However, the system supports complex types: integers, multi-value fields, and custom sub-fields where users can input nested key-value pairs. Data integrity is maintained via a strict, logical rendering order.
-
-3. Tools, Widgets, and Games
-Tools are central to the Moonbug ecosystem and work in tandem with user challenges and activities.
-
-A. The Notebook
-The notebook operates across several distinct functional modes:
-
-Daily Journal: Updated every evening to plan for the upcoming day.
-
-Dream Journal: Dedicated space to record and track dreams.
-
-Logbook: Built to log progress on challenges and personal activities.
-
-Life Goals: A roadmap to document lifetime acquisitions and achievements.
-
-Scheduler: Handles daily, weekly, or monthly activities with attached deadlines.
-
-Ideas Mode: A cataloging space to title and categorize spontaneous thoughts.
-
-B. The Moon Dial (Lunar Clock)
-An offline-first widget that visualizes the moon’s position and trajectory using a local, universal data point. It eliminates constant network dependency, performing validation checks only during active internet connections.
-
-Visual Elements: Displays a circular layout showing the celestial equator (the sun's path at equinox), the current overhead latitude (indicated by a sun icon), and the current day's lunar trajectory (indicated by a moon icon).
-
-Path Tracking: Tracks continuous orbital paths rather than immediate altitude. The 24-hour dial tracks from sunrise to sunrise. Markers explicitly denote sunrise, midday, sunset, midnight, moonrise, moonset, mid-moonlight, and mid-nomoon.
-
-Calculators & Insights: Features horizon visibility indicators, local weather, upcoming astronomical events, illumination percentage, and time remaining until the next phase. Includes a phase scroller for future dates, a "Did You Know?" daily synopsis, and a historical calculator that determines the exact number of lunar cycles elapsed since a user's birthday alongside their birth moon phase.
-
-C. The Events Catalogue
-Tier 1 (Astronomical Events): A comprehensive annual catalog available completely offline. An automated AI pipeline identifies, updates, and persists newly discovered celestial events into the database. Users can browse significant past astronomical occurrences and historical catastrophic events visible from Earth. Each event tracking object stores properties for rarity, title, a short synopsis, and educational source material.
-
-Tier 2 (Community Events): Added directly by users and verified advertisers. These entries can be saved natively to a user's personal calendar.
-
-D. Word-Guessing Game
-A general knowledge word-guessing game requiring players to identify a word or a two-word phrase (representing famous people, places, or corporations).
-
-Mechanics: Players receive 4 primary hints, with each hint flashing sequentially for 6 seconds. Answering early preserves a point bonus.
-
-Difficulty Scaling: 1,000 highly challenging game levels generated via AI, split into three difficulty modes:
-
-Easy: Grants 3 additional hints.
-
-Medium: Grants 1 additional hint.
-
-Hard: Standard mode restricted strictly to the 4 core hints.
+The primary engine of the platform (detailed fully in Section 3). Some challenges are Moon-Bird exclusive; some are created by users. They are multistage activities that involve roles, steps, expression and note-taking, research, chat, and learning. Some are solo, some are for teams; some are short, and some are long and can run indefinitely.
+Journal
+A journal with inbuilt features and templates, including: voice-to-text input, read-aloud, a log template, a scheduler template, a deadline-note template, a reminder template, and all other templates that already exist.
+Portfolio
+A customizable, informal portfolio that lets users add custom fields and comes with a lot of fields available straight out of the box.
+Catalogues
+Curated lists of things, including: a skills catalogue, a books catalogue, a company/brands catalogue, an astro-events catalogue (also accessible from the Events module), a disease catalogue, and a charities/non-profit programmes catalogue.
+Ads
+Users can come here to watch ads, and can skip ads if they have gained or bought certain privileges (business logic controls this — e.g., a certain number of ads that cannot be skipped). Users can engage with ads by liking, commenting on, and sharing them. The intent is to keep expanding beneficial ways for people to interact, create, and associate with brands — a way of getting honest ad feedback from users, for advertisers willing to receive it. This may be the core of the app: not the core money-maker, but the problem-solver that encourages quality commercials and advertising over low-effort sponsored ads.
+Any normal user can register to be an advertiser. A normal user without advertising privileges can simply watch ads. Advertising privileges are earned by playing challenges, and privileges may expire.
+Chat
+Users can chat with each other, but the primary focus is live chat — two online people chatting in real time. There is no emphasis on DMing offline users; the point is engagement. Chatting can earn privileges (potentially structured so that only chatting with new people counts). Some challenges require the chat feature.
+Snapshot
+Shows a screenshot of your activity, used throughout challenges to log and share progress.
 
 4. Challenges
-Challenges are real-world activities designed to foster community engagement and skill development across writing, programming, art, and creative disciplines.
+3.1 The Nature of Challenges
+Challenges are the primary engine of Project Moon-Bird. They are multi-stage, structured activities that guide users through learning, self-improvement, exploration, and community engagement.
+A challenge can range from a brief 30-minute solo activity to a long-term, evolving group project spanning weeks or months with a leader and team members holding assigned roles (like actual jobs). All challenges are designed to be completed remotely or in local environments, using only text, sound, images, video, and link routing.
+All of these are creatable by the end user through a small learning curve using powerful tools — similar to how anyone can make an easy-to-understand Roblox game, except these challenges involve only text, sound, image, video, and link routing. As users progress, they make use of resources provided by Moon-Bird — sometimes even forming startups, running campaigns, organizing events, learning, and becoming aware of brands they might never have known otherwise. Exploring brands is a big part of the platform.
+Every challenge has a designated Completion Step — a mandatory final action that must be fulfilled (and audited, where applicable) to deem the challenge officially Finished.
+3.2 Authorship & Refinement
+Some challenges are crafted by AI — very carefully in the initial phase — and later refined by humans.
+3.3 Challenge State
+Once a challenge is launched, it carries a state:
+Unfinished
+Finished — completed and audited where applicable
+Completed / Unaudited
+Evolving — potentially endless
+3.4 Challenge Metadata
+Beyond categories, every challenge also has a scope, which may be a required entry when building a challenge:
+Skills-related
+Self-improvement / wellbeing
+Fun-based — derived from the user's interests and hobbies
+3.5 The Challenge Builder
+Challenges are created in the in-app Challenge Builder. The following are its building blocks. Except where marked Mandatory, these are not required — they serve as optional building blocks the creator can combine.
+Title.
+Category and scope (Skills-Related, Self-Improvement/Wellbeing, or Fun-Based) — metadata that may be required entries.
+Participation Mode — Solo or Group (single-member or team-member).
+Participant Roles — for group challenges, assign specific roles to team members, including an optional team leader.
+Step Sequence — the ordered steps required to progress through the challenge.
+Addable / Dynamic Steps (Mid-Challenge Flexibility, Optional) — toggle whether the team leader or creator may add steps while the challenge is already underway.
+Checkpoints.
+Target Milestones.
+Bonus Steps (Optional) — optional side steps or extra branches users can complete for extra rewards or privileges.
+Completion Step (Mandatory) — the exact final step and criteria required to deem the challenge Finished.
+Auditor's Questionnaire (Optional) — a tailored survey or audit questionnaire for peer/AI evaluation.
+Creator-Sponsored Rewards — cash, digital services, or digital assets such as music and art.
+Metadata & Art/Media Asset Placements — embed videos, music, and images between or during steps.
 
-Structure: Challenges are broken down into sequential stages. Each stage includes an educational tutorial layout providing resource links, alongside a prominent task display.
+5. Onboarding & Challenge Catalogue
+To qualify for more challenges, users complete an onboarding phase that teaches them Moon-Bird's core utilities: MoonDial (clock and calendar), Events, Journal, Advertisements, and Portfolio. These onboarding challenges are simple. There are mandatory ones as well as bonus options — such as creating a challenge, or watching ads to find those you like, dislike, or would like to comment on or learn more about.
+The challenges below represent the current drafted catalogue. Challenge 1 was originally drafted under the working title "Fly Me to the Moon" before being finalized as "Sky Watcher (Level One)."
+Challenge 1: Sky Watcher (Level One)
+Step 1: Open MoonDial, observe tomorrow's moonrise, moon zenith, and moonset times, and add a reminder with a sound notification for each.
+Step 2 (Optional): Take a picture of the moon with your camera, or describe how the moon looks and how it makes you feel.
+Step 3: Visit MoonDial to note your lunar data, then take a snapshot and log it.
+Step 4 (Optional): Share the log on your personal feed (posts).
+Step 5: Search the internet or any resource for a holiday or public event that coincides with the full moon, record the time of its zenith, and add a reminder.
+Step 6 (Optional): Take a snapshot of this reminder and log it, sharing the log publicly.
+Bonus Step: Explore astro events, pick a favorite, and journal a plan for an activity during that day (an indoor activity is strongly advised unless you are in a safe place).
+Bonus Step: Tell an auditor about your experience on that day.
+Completion Step (Mandatory): Submit your logged lunar snapshot and public-event reminder to the auditor or system check to mark the challenge as Finished.
+Challenge 2: Who Am I (Level One)
+Step 1: Pick a time to wake up the following day — when you would usually start your day — and set an alarm.
+Step 2: Make a schedule for your tasks on that day and activate it; it will remind you at every time you need to perform a task. (If you cannot carry your device, make a to-do list to check off at the end of the day. By default, a schedule is also a checkable to-do list.)
+Step 3: Complete your portfolio page.
+Bonus Step: Explore the skills catalogue and find a simple skill you like.
+Bonus Step: Go on a 5-day streak of practicing this skill.
+Completion Step (Mandatory): Publish your completed Portfolio page to lock in your onboarding profile and transition the challenge state to Finished.
+Challenge 3: The Seeker
+Step 1: Go to the books catalogue and pick a book that seems interesting.
+Step 2: Read one chapter or section.
+Step 3: Write down, in an input text box, why you liked it; if you disliked it, express that as well.
+Step 4: Answer some tailored survey questions about the book:
+The Hook: On a scale of 1 to 5, how strongly did the opening chapter pull you into the story or topic?
+Pacing & Flow: Did the chapter feel like it moved too fast, too slow, or just right?
+Character/Topic First Impression: Which character, idea, or concept grabbed your attention the most, and why?
+Clarity & Tone: Was there anything in this chapter that felt confusing, off-putting, or out of place?
+Expectations Set: Based on this chapter alone, what do you anticipate the rest of the book will be about?
+The Drop-Off Check: At any point during the chapter, did you feel tempted to stop reading? (If yes, where?)
+The Cliffhanger Factor: How eager are you to flip the page and start Chapter 2 immediately?
+Target Audience Fit: In a few words, who do you think would enjoy reading this book the most?
+Bonus Step: Finish reading the book.
+Bonus Step: Take a quiz on the book.
+Completion Step (Mandatory): Complete and submit the 8-question reader survey to officially mark the challenge as Finished.
+Challenge 4: Up to Date
+Step 1: Pick a current-event story or news video from the platform feed or external media.
+Step 2: Watch or read the selected current-event coverage carefully.
+Step 3: Write down, in an input text box, your personal perspective on the event and how it impacts your local community.
+Step 4: Answer some tailored survey questions about the event:
+Source Reliability: On a scale of 1 to 5, how trustworthy and unbiased did this news coverage feel?
+Core Takeaway: In one or two sentences, what was the most important fact or message you learned?
+Local Impact: Does this issue directly affect you, your family, or your neighborhood? (Yes/No, and why?)
+Actionability: Is there a clear action or solution proposed in the coverage, or is it just reporting a problem?
+Discussion Value: Would you feel comfortable sharing or discussing this topic with a peer in Live Chat?
+Bonus Step: Answer the current-event verification quiz to test your comprehension.
+Bonus Step: Share your perspective entry publicly on your personal feed (posts).
+Completion Step (Mandatory): Submit your written perspective and survey answers to complete the audit and mark the challenge as Finished.
+Challenge 5: Cut the Habit (Inspired by James Clear)
+Step 1: Identify the habit you want to quit and log its primary trigger (time, location, emotional state, or people) in your Journal.
+Step 2: Reframe your mindset in your Journal by writing an identity statement (e.g., "I am not the type of person who does X").
+Step 3: Increase friction by setting up at least one physical or digital barrier (e.g., app blocker, physical displacement) to make the habit inconvenient.
+Step 4: Answer some tailored survey questions about your progress:
+Trigger Awareness: On a scale of 1 to 5, how easy was it to identify the exact moment or mood that triggers this habit?
+Friction Check: Did the barrier you set up successfully delay or stop you the last time you felt the urge?
+Identity Shift: How convincing does your new identity statement feel to you right now?
+Support Need: Would having an accountability partner or Habit Contract make you more likely to stick with this change?
+Bonus Step: Create a Habit Contract in your Journal with an accountability partner or a disincentive penalty for slipping up.
+Bonus Step: Maintain a 5-day streak of successfully avoiding the habit and log it using Snapshot.
+Completion Step (Mandatory): Submit your trigger log, friction-barrier plan, and survey answers to mark the challenge as Finished.
+Challenge 6: Vital Check (Level One)
+Step 1: Visit a local health clinic or medical center and get your basic vitals recorded (e.g., blood pressure, pulse, weight, or blood sugar).
+Step 2: Research or consult with a health professional / the disease catalogue to find out what your readings mean and gauge your current overall health status.
+Step 3: Log your health-status gauge in your Journal using the health template.
+Step 4: Draft an actionable personal plan in your Journal outlining how you will either maintain your good health or improve your vitals over the next 30 days.
+Bonus Step: Explore the disease and health catalogue to learn about preventive measures for one common health condition.
+Bonus Step: Set up daily water or exercise reminders on MoonDial to support your health plan.
+Completion Step (Mandatory): Save your actionable health plan and vital-summary log in your Journal to deem the challenge officially Finished.
+Challenge 7: Sky Watcher (Level Two)
+Step 1: Go to the Astro Events catalogue and observe the nearest upcoming astro event, or browse and select one specific event that interests you (note: choosing a distant event will affect the calendar time required to complete this challenge).
+Step 2: Mark the exact event date on your MoonDial calendar and set an active sound reminder.
+Step 3: Plan a specific observation activity in your Journal for that day (e.g., outdoor viewing spot, equipment needed, or safety measures).
+Step 4: On the scheduled date, attempt to capture the astronomical event with your eyes (or a camera).
+Step 5: Write a detailed log of your live observation experience in your Journal.
+Bonus Step: Share a photo or written description of the astro event on your personal feed (posts).
+Bonus Step: Connect with another online user in Live Chat during the astro event to compare observations.
+Completion Step (Mandatory): Log your final live-experience entry on the scheduled date to deem the challenge Finished.
+Challenge 8: Life Blueprint (Level One)
+Step 1: Create a list in your Journal of the core things you want to achieve in this lifetime (your master life goals).
+Step 2: Reflect on each goal and write a short explanation next to it detailing why that goal matters deeply to you.
+Step 3: Select one priority goal from your list to focus on right now.
+Step 4: Break down that single goal into sequential, actionable steps inside your Journal.
+Step 5: Set an exact commencement date on your MoonDial calendar for when you will take your very first step toward that goal.
+Bonus Step: Add a required skill for your chosen goal from the Skills Catalogue to your Portfolio as an active focus area.
+Bonus Step: Share your target commencement date with a friend or in Live Chat to build personal accountability.
+Completion Step (Mandatory): Confirm your chosen goal, action steps, and locked commencement date in your Journal to deem the challenge Finished.
 
-Proof of Execution: Users document completion by uploading logs, links, screenshots, or native smartphone photos. Tasks can contain optional steps, such as tracking non-mandatory daily progress photos for fitness challenges.
+6. Note
+An operational reminder from the source material: this documentation file should be added to .gitignore.
 
-Short Challenges: Simplified, self-monitored tasks requiring no peer review (e.g., creating a timetable, setting life goals, answering astronomical trivia, or a manual 10,000-count tapping matrix that verifies exact input interactions). Users can create and share these freely.
-
-Long Challenges: Multi-stage, complex activities requiring an audit phase.
-
-The Audit Phase: A random Moonbug peer reviews submitted logs via a dedicated live chat room where creators explain their workflow. Points are released upon successful validation.
-
-Social & Layout Features: Challenges support group completion via collaborative chatrooms. Challenge logs generate clean, visually polished achievement cards optimized for cross-platform sharing. Code implementation emphasizes structural attention to detail and a robust architectural base over rapid deployment.
-
-5. Advertisers and Watchers (The Ads Feed)
-The advertising engine operates as a core monetization pillar, balancing user privacy with direct-to-wallet reward infrastructure.
-
-Ad Formats: Features commercial video ads, campaign visuals, picture ads, paid challenges, and targeted surveys.
-
-Direct Crypto Payouts: Surveyors and paid-ad partners pay users directly into their individual, external cryptocurrency wallets. Moonbug avoids internal escrow or withdrawal thresholds for these interactions.
-
-User Personalization: Watchers curate their feed by selecting preferred brands, target business domains, or behavioral categories (e.g., influential, humorous). Video advertisements allow a skip action after 6 seconds.
-
-Content Guardrails: The platform enforces content filters. Users must explicitly toggle access for NSFW material (such as music videos or legal cannabis enterprises). Explicit pornography, prostitution, full nudity, and low-value self-promotion (e.g., basic Instagram follower farming) are strictly banned.
-
-Phased Implementation: The ad network will launch using curated, embedded fallbacks. As native advertisers register, the algorithmic matching engine will progressively swap embedded assets for direct campaign feeds.
-
-6. User Navigation & Home Dashboards
-The application utilizes a static master header containing all primary tabs, allowing vertical scrolling for individual view components.
-
-Logged-In Home Dashboard:
-
-User achievements and ranking summary.
-
-Personalized challenge suggestions with an instant action button.
-
-Upcoming astronomical events card with a deep-link to the full catalog.
-
-A public social logs feed displaying shared community milestones.
-
-A tailored ad container with a direct gateway button.
-
-Newsletter subscription block. The community newsletter is written bi-weekly by selected Moonbug users.
-
-An informational banner highlighting targeted survey opportunities based on hobbies, interests, and geographical location.
-
-Survey Integrity: Partners use analytical tools to scan demographic profiles, but survey validation is strictly governed by Moonbug. Once a user passes initial screening and begins a survey, partner companies cannot trigger a mid-survey screen-out to collect unpaid partial data.
-
-7. Future Additions (Long-Term Roadmap)
-Moonbug Radio: A community-queued audio streaming feature. Users can submit embeddable links under 6 minutes in length to a global playback queue.
-
-Expanded Gaming Suite: Additional modules to expand the application's built-in minigame catalog.
-
-Development Tracking: Step-by-step progress requires complete technical feature tracking. Unimplemented, planned capabilities must be meticulously listed in a dedicated feature log file following every sprint milestone.
-
-1. Crypto Wallet Integration & Direct PayoutsTo allow advertisers to pay users directly without using Moonbug as a financial escrow, use a stateless routing architecture built around non-custodial public keys.Public Key Ledger: During profile setup, users provide a public wallet address (e.g., Solana, Bitcoin Lightning LNURL, or EVM-compatible address). Moonbug stores only this public key in the PostgreSQL database.Encrypted Ad/Survey Payloads: When a partner company uploads a survey or ad campaign, they must deposit the total reward pool into a smart contract or programmatically managed hot wallet on their end.Cryptographic Completion Tokens: When a user completes a survey or watches an ad, the Moonbug backend validates the interaction and signs a one-time completion token using Moonbug's private key. The client app forwards this signed token directly to the advertiser’s payout API. The advertiser's system verifies the Moonbug signature and instantly broadcasts the payout transaction to the user's public address on-chain. This keeps Moonbug completely out of the financial flow while retaining full monitoring authority over completion verification.2. Universal Data Point for the Offline Lunar ClockTo compute highly precise local lunar tracking without hitting a network API, implement a lightweight client-side astronomical calculation engine.Ephemeris Coefficients Baseline: Embed a compressed dataset of semi-analytical variations (such as a simplified ELP2000-82 lunar theory model or standard orbital elements) directly within the SQLite database.The Universal Data Point: Use Terrestrial Time (TT) / Julian Date as your core universal temporal variable.Client-Side Computation: The app takes the device's internal hardware clock (converted to Julian Date) and its last known hardware GPS coordinates (latitude/longitude stored locally). A JavaScript/Go math module runs the trigonometric algorithms locally to calculate the moon's right ascension, declination, and local topocentric coordinates. This generates the exact visual paths for the Moon Dial completely offline. When the user goes online, the app simply pulls a small delta file to adjust for clock drift or polar motion variations.3. Client-Side Security for Non-Proof-of-Work ChallengesBecause short tasks (like the 10,000-tap challenge) run completely local to the device without external auditing, you must protect the integrity of the client-side state machine.Cryptographic Input Taps: Instead of incrementing a simple integer variable (which is easily manipulated via memory editors like Cheat Engine or rooted device hooks), tie each screen tap to a hardware-timestamped user event. For example, pass the screen coordinates and timing interval ($t_{\text{current}} - t_{\text{previous}}$) of each tap into a rolling HMAC (Hash-based Message Authentication Code) chain.Anomaly Detection Hooks: Implement a lightweight client-side script that analyzes the rhythm of the inputs. Human tapping has natural variance; automated macro clickers tap at perfectly uniform millisecond intervals or inhumanly high speeds. If the standard deviation of tap intervals falls below a strict threshold, flag the event stream as a bot.Signed State Payloads: Upon reaching 10,000 taps, the client packages the final cryptographic hash chain alongside the device metrics and sends it to the backend. The backend quickly verifies the signature and the tap cadence profile before unlocking the point reward.
-
-
-*  more in depth context *
-
-1. Crypto Wallet Integration & Direct PayoutsTo allow advertisers to pay users directly without using Moonbug as a financial escrow, use a stateless routing architecture built around non-custodial public keys.Public Key Ledger: During profile setup, users provide a public wallet address (e.g., Solana, Bitcoin Lightning LNURL, or EVM-compatible address). Moonbug stores only this public key in the PostgreSQL database.Encrypted Ad/Survey Payloads: When a partner company uploads a survey or ad campaign, they must deposit the total reward pool into a smart contract or programmatically managed hot wallet on their end.Cryptographic Completion Tokens: When a user completes a survey or watches an ad, the Moonbug backend validates the interaction and signs a one-time completion token using Moonbug's private key. The client app forwards this signed token directly to the advertiser’s payout API. The advertiser's system verifies the Moonbug signature and instantly broadcasts the payout transaction to the user's public address on-chain. This keeps Moonbug completely out of the financial flow while retaining full monitoring authority over completion verification.2. Universal Data Point for the Offline Lunar ClockTo compute highly precise local lunar tracking without hitting a network API, implement a lightweight client-side astronomical calculation engine.Ephemeris Coefficients Baseline: Embed a compressed dataset of semi-analytical variations (such as a simplified ELP2000-82 lunar theory model or standard orbital elements) directly within the SQLite database.The Universal Data Point: Use Terrestrial Time (TT) / Julian Date as your core universal temporal variable.Client-Side Computation: The app takes the device's internal hardware clock (converted to Julian Date) and its last known hardware GPS coordinates (latitude/longitude stored locally). A JavaScript/Go math module runs the trigonometric algorithms locally to calculate the moon's right ascension, declination, and local topocentric coordinates. This generates the exact visual paths for the Moon Dial completely offline. When the user goes online, the app simply pulls a small delta file to adjust for clock drift or polar motion variations.3. Client-Side Security for Non-Proof-of-Work ChallengesBecause short tasks (like the 10,000-tap challenge) run completely local to the device without external auditing, you must protect the integrity of the client-side state machine.Cryptographic Input Taps: Instead of incrementing a simple integer variable (which is easily manipulated via memory editors like Cheat Engine or rooted device hooks), tie each screen tap to a hardware-timestamped user event. For example, pass the screen coordinates and timing interval ($t_{\text{current}} - t_{\text{previous}}$) of each tap into a rolling HMAC (Hash-based Message Authentication Code) chain.Anomaly Detection Hooks: Implement a lightweight client-side script that analyzes the rhythm of the inputs. Human tapping has natural variance; automated macro clickers tap at perfectly uniform millisecond intervals or inhumanly high speeds. If the standard deviation of tap intervals falls below a strict threshold, flag the event stream as a bot.Signed State Payloads: Upon reaching 10,000 taps, the client packages the final cryptographic hash chain alongside the device metrics and sends it to the backend. The backend quickly verifies the signature and the tap cadence profile before unlocking the point reward.
