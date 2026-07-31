@@ -1,30 +1,41 @@
 {
-  "name": "moonbug",
+  "name": "moon-bird",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node scripts/dev.mjs",
-    "build": "vite build && (cd backend && go build -o ../bin/moonbug .)",
-    "start": "NODE_ENV=production ./bin/moonbug",
-    "migrate": "(cd backend && go run . -migrate) || true",
-    "lint": "tsc --noEmit"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:types": "supabase gen types typescript --local > lib/supabase/types.ts"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.47.10",
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",
-    "react": "^19.0.1",
-    "react-dom": "^19.0.1",
-    "react-router-dom": "^7.6.0"
+    "next": "^15.1.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "server-only": "^0.0.1",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.1.14",
+    "@tailwindcss/postcss": "^4.1.14",
     "@types/node": "^22.14.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@vitejs/plugin-react": "^5.0.4",
+    "eslint": "^9.18.0",
+    "eslint-config-next": "^15.1.6",
     "tailwindcss": "^4.1.14",
     "typescript": "~5.8.2",
-    "vite": "^6.2.3"
+    "vitest": "^3.0.4"
   }
 }

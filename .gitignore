@@ -7,3 +7,12 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Next.js
+.next/
+next-env.d.ts
+*.tsbuildinfo
+
+# Supabase CLI
+supabase/.branches/
+supabase/.temp/
