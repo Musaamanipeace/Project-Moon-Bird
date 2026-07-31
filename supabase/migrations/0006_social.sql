@@ -1,4 +1,4 @@
--- Moonbug Social / Chat / Audit schema (doc §3).
+-- Moon-Bird Social / Chat / Audit schema (doc §3).
 -- Supabase migration: old `users(id)` references become `auth.users(id)`.
 -- Re-runnable on existing DBs.
 

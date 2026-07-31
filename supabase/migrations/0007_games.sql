@@ -1,4 +1,4 @@
--- Moonbug Word-Guessing Game (doc §3.D).
+-- Moon-Bird Word-Guessing Game (doc §3.D).
 -- Supabase migration: old `users(id)` references become `auth.users(id)`.
 -- Re-runnable on existing DBs.
 

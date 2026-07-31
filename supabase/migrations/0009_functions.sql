@@ -1,7 +1,13 @@
 -- SECURITY DEFINER helper functions for server-authoritative actions (doc §6, §9).
 -- All functions set search_path = ''.
 
--- grant_advertiser_role: checks if user has any challenge activity, then grants advertiser status.
+-- grant_advertiser_role (A1): the ONLY sanctioned writer of is_advertiser. The
+-- RLS column grant on public.profiles deliberately excludes is_advertiser, so a
+-- user can never self-escalate; this SECURITY DEFINER function runs as the table
+-- owner and is the single privileged path. Eligibility is challenge-EARNED: the
+-- user must have at least one genuinely completed challenge (status 'finished'),
+-- not merely a started log. Idempotent: re-granting an existing advertiser is a
+-- no-op.
 CREATE OR REPLACE FUNCTION public.grant_advertiser_role(p_user_id uuid)
 RETURNS void
 LANGUAGE sql
@@ -11,7 +17,10 @@ AS $$
   UPDATE public.profiles
   SET is_advertiser = true
   WHERE id = p_user_id
-    AND EXISTS (SELECT 1 FROM public.challenge_logs WHERE user_id = p_user_id);
+    AND EXISTS (
+      SELECT 1 FROM public.challenge_logs
+      WHERE user_id = p_user_id AND status = 'finished'
+    );
 $$;
 
 -- award_badge: inserts a badge if it does not already exist.

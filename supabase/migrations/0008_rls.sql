@@ -2,9 +2,21 @@
 -- Re-runnable: uses CREATE OR REPLACE for policies.
 
 -- public.profiles
+-- A1: the self-service UPDATE must never let a user escalate their own
+-- privileges. Row scope ("own row") is enforced by the RLS policy; *column*
+-- scope is enforced with column-level privileges, because an RLS WITH CHECK
+-- only sees the NEW row and cannot tell whether is_advertiser/role changed.
+-- is_advertiser, role, streak, and longest_streak are therefore writable only
+-- by the SECURITY DEFINER functions, which run as the table owner and bypass
+-- these grants.
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "profiles_select_owner" ON public.profiles;
+DROP POLICY IF EXISTS "profiles_update_self" ON public.profiles;
 CREATE POLICY "profiles_select_owner" ON public.profiles FOR SELECT TO authenticated USING (auth.uid() = id);
 CREATE POLICY "profiles_update_self" ON public.profiles FOR UPDATE TO authenticated USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
+
+REVOKE UPDATE ON public.profiles FROM authenticated;
+GRANT UPDATE (display_name, preferred_method, notifications_enabled) ON public.profiles TO authenticated;
 
 -- public.challenges
 ALTER TABLE public.challenges ENABLE ROW LEVEL SECURITY;
@@ -66,9 +78,15 @@ CREATE POLICY "surveys_select_auth" ON public.surveys FOR SELECT TO authenticate
 ALTER TABLE public.completion_tokens ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "completion_tokens_all_owner" ON public.completion_tokens FOR ALL TO authenticated USING (auth.uid() = user_id);
 
--- public.user_wallets
-ALTER TABLE public.user_wallets ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "user_wallets_all_owner" ON public.user_wallets FOR ALL TO authenticated USING (auth.uid() = user_id);
+-- public.payout_accounts (PayPal rail — replaces the old crypto user_wallets).
+ALTER TABLE public.payout_accounts ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "payout_accounts_all_owner" ON public.payout_accounts FOR ALL TO authenticated USING (auth.uid() = user_id);
+
+-- public.ad_view_sessions (A3). Server-authoritative, but a user may only ever
+-- read/carry their own sessions; issuance and completion run through the
+-- SECURITY DEFINER path which bypasses RLS.
+ALTER TABLE public.ad_view_sessions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "ad_view_sessions_all_owner" ON public.ad_view_sessions FOR ALL TO authenticated USING (auth.uid() = user_id);
 
 -- public.chat_rooms
 ALTER TABLE public.chat_rooms ENABLE ROW LEVEL SECURITY;

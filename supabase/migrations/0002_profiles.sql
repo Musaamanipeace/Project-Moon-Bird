@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS public.profiles (
   id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  display_name text NOT NULL DEFAULT 'Moonbug',
+  display_name text NOT NULL DEFAULT 'Moon-Bird',
   auth_method text NOT NULL DEFAULT 'otp',
   preferred_method text NOT NULL DEFAULT 'otp',
   notifications_enabled boolean NOT NULL DEFAULT TRUE,

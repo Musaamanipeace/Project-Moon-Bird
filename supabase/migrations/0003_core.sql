@@ -1,3 +1,18 @@
+-- Challenge lifecycle state as a Postgres ENUM (audit finding B3). The
+-- transition table lives in the database via a trigger below, so no client or
+-- Route Handler can bypass it. Re-runnable: guard the type creation.
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'challenge_status') THEN
+    CREATE TYPE public.challenge_status AS ENUM (
+      'unfinished',
+      'finished',
+      'completed_unaudited',
+      'evolving'
+    );
+  END IF;
+END $$;
+
 CREATE TABLE IF NOT EXISTS public.challenges (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   slug text UNIQUE NOT NULL,
@@ -5,6 +20,9 @@ CREATE TABLE IF NOT EXISTS public.challenges (
   description text NOT NULL,
   prompt text NOT NULL,
   moon_phase text NOT NULL,
+  -- Required on every challenge (doc §7). Skills-Related | Self-Improvement-Wellbeing | Fun-Based.
+  scope text NOT NULL DEFAULT 'Self-Improvement-Wellbeing'
+    CHECK (scope IN ('Skills-Related','Self-Improvement-Wellbeing','Fun-Based')),
   icon text NOT NULL,
   sort_order integer NOT NULL
 );
@@ -15,12 +33,45 @@ CREATE TABLE IF NOT EXISTS public.challenge_logs (
   challenge_id uuid NOT NULL REFERENCES public.challenges(id) ON DELETE CASCADE,
   log_date date NOT NULL,
   data jsonb NOT NULL DEFAULT '{}'::jsonb,
-  status text NOT NULL DEFAULT 'unfinished' CHECK (status IN ('unfinished','finished','completed_unaudited','evolving')),
+  status public.challenge_status NOT NULL DEFAULT 'unfinished',
   completed_at timestamptz,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),
   UNIQUE (user_id, challenge_id, log_date)
 );
+
+-- Transition guard (B3). Valid edges (doc §7):
+--   unfinished          -> finished | completed_unaudited | evolving
+--   completed_unaudited -> finished (auditor approval) | unfinished (rejection)
+-- Any other status change raises. Same-status writes (metadata-only updates)
+-- are allowed through.
+CREATE OR REPLACE FUNCTION public.enforce_challenge_status_transition()
+RETURNS trigger
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+BEGIN
+  IF NEW.status = OLD.status THEN
+    RETURN NEW;
+  END IF;
+
+  IF OLD.status = 'unfinished'
+     AND NEW.status IN ('finished', 'completed_unaudited', 'evolving') THEN
+    RETURN NEW;
+  END IF;
+
+  IF OLD.status = 'completed_unaudited'
+     AND NEW.status IN ('finished', 'unfinished') THEN
+    RETURN NEW;
+  END IF;
+
+  RAISE EXCEPTION 'invalid status transition: % -> %', OLD.status, NEW.status;
+END $$;
+
+DROP TRIGGER IF EXISTS trg_challenge_status_transition ON public.challenge_logs;
+CREATE TRIGGER trg_challenge_status_transition
+  BEFORE UPDATE OF status ON public.challenge_logs
+  FOR EACH ROW EXECUTE FUNCTION public.enforce_challenge_status_transition();
 
 CREATE TABLE IF NOT EXISTS public.badges (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
