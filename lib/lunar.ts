@@ -1,4 +1,4 @@
-// Moonbug lunar calculations (UTC-based), ported from backend/internal/lunar/lunar.go.
+// Moon-Bird lunar calculations (UTC-based), ported from backend/internal/lunar/lunar.go.
 export const SYNODIC_MONTH = 29.530588853;
 const REF_NEW_MOON = 947166000; // Date.UTC(2000, 0, 6, 18, 14, 0) in seconds
 

@@ -14,7 +14,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Moonbug",
+  title: "Moon-Bird",
   description: "Lunar tracking and challenge platform",
 };
 

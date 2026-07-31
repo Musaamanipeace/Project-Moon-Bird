@@ -1,4 +1,4 @@
-# Moonbug Feature Log
+# Moon-Bird Feature Log
 
 Tracks implemented vs. planned capabilities per sprint milestone, as required by
 `PROJECT_DOCUMENTATION.md` §7 (Development Tracking). Updated after every milestone.
@@ -33,7 +33,7 @@ Tracks implemented vs. planned capabilities per sprint milestone, as required by
 ## Planned (roadmap, not yet started)
 📋 Phase 5 — Word-Guessing Game (doc §3.D)
 📋 Phase 6 — Moon Dial depth + Support/FAQ/Contact/Terms/Payment/Donate (doc §3.B, §5, §7)
-📋 Future: Moonbug Radio, expanded gaming suite (out of scope)
+📋 Future: Moon-Bird Radio, expanded gaming suite (out of scope)
 
 See .kilo/plans/1784471476639-moonbug-doc-alignment-plan.md for the full phased plan.
 
