@@ -8,7 +8,13 @@ import { z } from "zod";
 export const signupSchema = z
   .object({
     email: z.string().max(254).email(),
-    password: z.string().min(8).max(128),
+    // Six, not eight: §4.3's 400 body is the fixed string "email and password
+    // (min 6 chars) are required", and src/pages/Login.tsx gates on the same
+    // number. Enforcing a higher floor here would reject passwords the client
+    // accepted, with a message stating a limit we do not apply.
+    // TODO(operator): to raise the floor, raise it in all three places —
+    // Supabase Auth's minimum password length, this schema, and the client.
+    password: z.string().min(6).max(128),
     displayName: z.string().max(128).optional(),
   })
   .strict();
