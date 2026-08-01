@@ -172,7 +172,7 @@ Also note the route/handler naming mismatch: the path parameter is `{logId}` and
 
 ### A8 — HIGH: none exists
 
-There is no rate-limiting middleware, no per-IP or per-user counter, and no CAPTCHA anywhere in the codebase, despite `older_PROJECT_DOCUMENTATION.md` claiming rate limiting, CAPTCHA, and device tracking for the login flow. Unbounded endpoints of concern:
+There is no rate-limiting middleware, no per-IP or per-user counter, and no CAPTCHA anywhere in the codebase, despite `PROJECT_DOCUMENTATION.md` claiming rate limiting, CAPTCHA, and device tracking for the login flow. Unbounded endpoints of concern:
 
 - `POST /api/auth/request-otp` — email bombing of arbitrary addresses and SMTP quota exhaustion via *our* credentials.
 - `POST /api/auth/verify-otp` — 6-digit code, 5-minute window, unlimited guesses: brute force succeeds well inside the TTL.
@@ -241,7 +241,7 @@ Go side: `go vet ./...` clean, `go build ./...` clean, `go test ./...` passes (`
 
 ### Lunar accuracy (affects a user-facing claim)
 
-`backend/internal/lunar/lunar.go` computes moon altitude/azimuth from a deliberately simplified model — its own comments say "simplified draconic rhythm" and it derives declination from the *synodic* age, which is the wrong period for declination. `handlers.go:141` hardcodes `observerLatitude = 51.5 // London`, and longitude is not modeled at all, so the hour angle is effectively UTC-relative. For a Kenya-first launch (Nairobi ≈ 1.29°S, 36.82°E) the displayed sky position will be visibly wrong. `older_PROJECT_DOCUMENTATION.md` specifies an embedded ELP2000-82 ephemeris; that is not what is implemented. See blocking question 4.
+`backend/internal/lunar/lunar.go` computes moon altitude/azimuth from a deliberately simplified model — its own comments say "simplified draconic rhythm" and it derives declination from the *synodic* age, which is the wrong period for declination. `handlers.go:141` hardcodes `observerLatitude = 51.5 // London`, and longitude is not modeled at all, so the hour angle is effectively UTC-relative. For a Kenya-first launch (Nairobi ≈ 1.29°S, 36.82°E) the displayed sky position will be visibly wrong. `PROJECT_DOCUMENTATION.md` specifies an embedded ELP2000-82 ephemeris; that is not what is implemented. See blocking question 4.
 
 ---
 
