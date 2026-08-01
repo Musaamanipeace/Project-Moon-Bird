@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
 import { parseBody } from "@/lib/http/validate";
-import { challengeSaveSchema, settingsSchema } from "@/lib/schemas";
+import { challengeProgressSchema, settingsSchema } from "@/lib/schemas";
 
 function req(body: string): Request {
   return new Request("http://localhost/api/test", {
@@ -59,13 +59,29 @@ describe("parseBody", () => {
   });
 
   it("enforces the serialized-size cap on challenge data", async () => {
-    const tooBig = { slug: "s", data: { blob: "x".repeat(10_001) } };
-    const out = await parseBody(req(JSON.stringify(tooBig)), challengeSaveSchema);
+    const tooBig = { data: { blob: "x".repeat(10_001) } };
+    const out = await parseBody(
+      req(JSON.stringify(tooBig)),
+      challengeProgressSchema,
+    );
     expect((out as Response).status).toBe(400);
 
-    const ok = { slug: "s", data: { blob: "x" } };
-    const good = await parseBody(req(JSON.stringify(ok)), challengeSaveSchema);
+    const ok = { data: { blob: "x" } };
+    const good = await parseBody(
+      req(JSON.stringify(ok)),
+      challengeProgressSchema,
+    );
     expect(good).toEqual(ok);
+  });
+
+  it("rejects a client-supplied log date (§5.3 server-assigns it)", async () => {
+    // The log date must not be forgeable: a caller who could backdate a
+    // completion could repair a broken streak after the fact.
+    const out = await parseBody(
+      req('{"completed":true,"logDate":"2020-01-01"}'),
+      challengeProgressSchema,
+    );
+    expect((out as Response).status).toBe(400);
   });
 
   it("passes through zod coercion/defaults", async () => {

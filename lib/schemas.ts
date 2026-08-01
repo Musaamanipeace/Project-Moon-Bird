@@ -49,15 +49,39 @@ export const settingsSchema = z
 /** Serialized-size cap for free-form challenge payloads, in bytes. */
 const CHALLENGE_DATA_MAX_BYTES = 10_000;
 
-export const challengeSaveSchema = z
+/**
+ * Body of `PUT /api/challenges/{slug}` (docs/API_CONTRACTS.md §5.3).
+ *
+ * Go's struct was `{ Data map[string]interface{}; Completed bool }`, so both
+ * keys are effectively optional on the wire: a missing `data` decodes to nil
+ * (normalised to `{}`) and a missing `completed` decodes to false.
+ *
+ * There is deliberately no `logDate` key — the log date is server-assigned from
+ * UTC now, so a client cannot backdate a completion to repair a broken streak.
+ *
+ * Audit finding A2 — the server never checked `data` against the challenge's
+ * completion step — is only PARTIALLY closed here. The size and shape caps
+ * below are enforced; semantic validation is not, because the per-challenge
+ * completion-step copy does not survive in repo history (see seed.sql) and
+ * inventing acceptance criteria would be worse than none.
+ * TODO(operator): once the original completion steps are restored, add a
+ * per-challenge validator keyed on `challenges.slug` and reject payloads that
+ * do not satisfy it.
+ */
+export const challengeProgressSchema = z
   .object({
-    slug: z.string().max(120),
     // z.record() has no .max() — the cap is on the serialized size, which is
-    // what actually bounds the row we store.
-    data: z.record(z.unknown()).refine(
-      (value) => JSON.stringify(value).length <= CHALLENGE_DATA_MAX_BYTES,
-      { message: `data must serialize to at most ${CHALLENGE_DATA_MAX_BYTES} bytes` },
-    ),
+    // what actually bounds the jsonb column we store.
+    data: z
+      .record(z.unknown())
+      .refine(
+        (value) => JSON.stringify(value).length <= CHALLENGE_DATA_MAX_BYTES,
+        {
+          message: `data must serialize to at most ${CHALLENGE_DATA_MAX_BYTES} bytes`,
+        },
+      )
+      .nullish(),
+    completed: z.boolean().optional(),
   })
   .strict();
 

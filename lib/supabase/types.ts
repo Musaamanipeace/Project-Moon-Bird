@@ -60,7 +60,35 @@ export type Database = {
       user_game_progress: PermissiveTable;
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    // The SECURITY DEFINER RPCs from 0009_functions.sql / 0010_challenge_rpcs.sql.
+    // Listed literally for the same reason as Tables: .rpc() resolves the
+    // function name against this key union, so an index signature would type
+    // every call as `never`. Args/Returns are declared because a typo in a
+    // parameter name is otherwise a silent runtime 404 from PostgREST.
+    Functions: {
+      grant_advertiser_role: {
+        Args: { p_user_id: string };
+        Returns: undefined;
+      };
+      award_badge: {
+        Args: { p_user_id: string; p_challenge_id: string };
+        // boolean since 0010 — true only when a row was actually inserted.
+        Returns: boolean;
+      };
+      complete_challenge: {
+        Args: {
+          p_user_id: string;
+          p_challenge_id: string;
+          p_log_date: string;
+          p_status: string;
+        };
+        Returns: undefined;
+      };
+      recompute_streak: {
+        Args: { p_user_id: string };
+        Returns: undefined;
+      };
+    };
     Enums: {
       challenge_status:
         | "unfinished"
