@@ -72,12 +72,12 @@ describe("key loading", () => {
     const { der, base64 } = pkcs8Key();
     const payout = await loadModule(base64);
 
-    const { createPublicKey } = await import("node:crypto");
+    const { createPrivateKey, createPublicKey } = await import("node:crypto");
     const expected = Buffer.from(
       (
-        createPublicKey({ key: der, format: "der", type: "pkcs8" }).export({
-          format: "jwk",
-        }) as { x: string }
+        createPublicKey(
+          createPrivateKey({ key: der, format: "der", type: "pkcs8" }),
+        ).export({ format: "jwk" }) as { x: string }
       ).x,
       "base64url",
     ).toString("base64");

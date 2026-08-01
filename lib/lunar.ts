@@ -21,7 +21,36 @@ const PHASES = [
   { name: "Waning Gibbous", emoji: "🌖", code: "waning-gibbous" },
   { name: "Last Quarter", emoji: "🌗", code: "last-quarter" },
   { name: "Waning Crescent", emoji: "🌘", code: "waning-crescent" },
-];
+] as const;
+
+/**
+ * The index cascade below always lands in 0..7, but under
+ * noUncheckedIndexedAccess a `number` index is still `T | undefined`. Narrowing
+ * the index type carries that guarantee into the type system without a
+ * non-null assertion.
+ */
+type PhaseIndex = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+/**
+ * Map a phase fraction (0..1 through the synodic month) to a PHASES index.
+ *
+ * The quarter phases get narrow 6%-wide bands and the crescent/gibbous phases
+ * get the wide spans between them, so "First Quarter" names a few days around
+ * the actual quarter rather than a quarter of the month.
+ *
+ * Returning a narrowed index rather than `number` is what lets PHASES[i] type
+ * as defined under noUncheckedIndexedAccess.
+ */
+function phaseIndex(fraction: number): PhaseIndex {
+  if (fraction < 0.03 || fraction >= 0.97) return 0;
+  if (fraction < 0.22) return 1;
+  if (fraction < 0.28) return 2;
+  if (fraction < 0.47) return 3;
+  if (fraction < 0.53) return 4;
+  if (fraction < 0.72) return 5;
+  if (fraction < 0.78) return 6;
+  return 7;
+}
 
 function ageFor(date: Date): number {
   const days = (date.getTime() / 1000 - REF_NEW_MOON) / 86400;
@@ -36,30 +65,7 @@ export function getMoonStatus(date: Date = new Date()): MoonStatus {
   const angle = pct * 2 * Math.PI;
   const illumination = ((1 - Math.cos(angle)) / 2) * 100;
 
-  let idx = 0;
-  if (pct < 0.03 || pct >= 0.97) idx = 0;
-  else if (pct < 0.22) idx = 1;
-  else if (pct < 0.28) idx = 2;
-  else if (pct < 0.47) idx = 3;
-  else if (pct < 0.53) idx = 4;
-  else if (pct < 0.72) idx = 5;
-  else if (pct < 0.78) idx = 6;
-  else idx = 7;
-
-  const phaseForDate = (d: Date) => {
-    const a = ageFor(d);
-    const p = a / SYNODIC_MONTH;
-    let i = 0;
-    if (p < 0.03 || p >= 0.97) i = 0;
-    else if (p < 0.22) i = 1;
-    else if (p < 0.28) i = 2;
-    else if (p < 0.47) i = 3;
-    else if (p < 0.53) i = 4;
-    else if (p < 0.72) i = 5;
-    else if (p < 0.78) i = 6;
-    else i = 7;
-    return i;
-  };
+  const phase = PHASES[phaseIndex(pct)];
 
   const daysUntilNext = (target: number) => {
     let delta = target - pct;
@@ -70,9 +76,9 @@ export function getMoonStatus(date: Date = new Date()): MoonStatus {
   return {
     age,
     illumination,
-    phase: PHASES[idx].name,
-    phaseCode: PHASES[idx].code,
-    phaseEmoji: PHASES[idx].emoji,
+    phase: phase.name,
+    phaseCode: phase.code,
+    phaseEmoji: phase.emoji,
     daysUntilFull: daysUntilNext(0.5),
     daysUntilNew: daysUntilNext(0),
   };
@@ -83,16 +89,7 @@ export function phaseInfoForDate(date: Date) {
   const p = a / SYNODIC_MONTH;
   const angle = p * 2 * Math.PI;
   const illumination = ((1 - Math.cos(angle)) / 2) * 100;
-  let idx = 0;
-  if (p < 0.03 || p >= 0.97) idx = 0;
-  else if (p < 0.22) idx = 1;
-  else if (p < 0.28) idx = 2;
-  else if (p < 0.47) idx = 3;
-  else if (p < 0.53) idx = 4;
-  else if (p < 0.72) idx = 5;
-  else if (p < 0.78) idx = 6;
-  else idx = 7;
-  return { ...PHASES[idx], illumination: Math.round(illumination) };
+  return { ...PHASES[phaseIndex(p)], illumination: Math.round(illumination) };
 }
 
 export { PHASES };

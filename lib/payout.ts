@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createPublicKey } from "node:crypto";
+import { createPrivateKey, createPublicKey } from "node:crypto";
 
 let _keyPair: CryptoKeyPair | null = null;
 let _publicKeyBase64 = "";
@@ -78,11 +78,17 @@ function toPKCS8(raw: Uint8Array): Uint8Array {
  * /api/public-key advertised.
  */
 function derivePublicKeyBase64(der: Uint8Array): string {
-  const jwk = createPublicKey({
+  // Round-tripped through a private KeyObject rather than handed straight to
+  // createPublicKey: the DER here is PKCS8 (a private key), and
+  // createPublicKey's object form is typed for public encodings only.
+  const privateKey = createPrivateKey({
     key: Buffer.from(der),
     format: "der",
     type: "pkcs8",
-  }).export({ format: "jwk" }) as { x?: string };
+  });
+  const jwk = createPublicKey(privateKey).export({ format: "jwk" }) as {
+    x?: string;
+  };
 
   if (!jwk.x) {
     throw new Error("failed to derive Ed25519 public key from MOONBIRD_PAYOUT_KEY");
