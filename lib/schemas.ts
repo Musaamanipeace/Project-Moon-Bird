@@ -137,6 +137,110 @@ export const eventInputSchema = z
   })
   .strict();
 
+/**
+ * Valid `user_assets.kind` values — the CHECK in 0004_portfolio.sql:34 and the
+ * list at §8.3 (store.go:1306). Exported because the route maps a failure on
+ * this field to its own 400 body ("invalid asset kind", not "invalid body").
+ */
+export const ASSET_KINDS = [
+  "car",
+  "bicycle",
+  "pets",
+  "jewelry",
+  "clothing",
+] as const;
+
+/**
+ * One node of the §8.3 `fields` tree.
+ *
+ * Recursive, so it needs z.lazy plus an explicit type annotation — TypeScript
+ * cannot infer the type of a value that refers to itself. `children` is what
+ * the nesting is rebuilt from; ids are never accepted from the client (§8.3),
+ * which .strict() enforces for free: a client that echoes back a `id` from a
+ * previous GET gets a 400 rather than a silently ignored key.
+ *
+ * The defaults here are the three §8.3 server-side defaults. `fieldType` is
+ * additionally pinned to the 0004_portfolio.sql:26 CHECK set — Go accepted any
+ * string and let Postgres raise a constraint violation the contract names no
+ * body for, which would surface as an opaque 500.
+ */
+export type ProfileFieldInput = {
+  title: string;
+  valueText: string;
+  valueInt: number | null;
+  valueJson: unknown;
+  fieldType: "text" | "integer" | "multi" | "nested";
+  sortOrder: number;
+  children: ProfileFieldInput[];
+};
+
+export const profileFieldInputSchema: z.ZodType<ProfileFieldInput> = z.lazy(() =>
+  z
+    .object({
+      title: z.string().max(200),
+      valueText: z.string().max(10000).default(""),
+      valueInt: z.number().int().nullable().default(null),
+      valueJson: z.unknown().default([]),
+      fieldType: z
+        .enum(["text", "integer", "multi", "nested"])
+        .default("text"),
+      sortOrder: z.number().int().default(0),
+      children: z.array(profileFieldInputSchema).max(200).default([]),
+    })
+    .strict(),
+);
+
+/**
+ * §8.3 request body. Every collection is optional and defaults to `[]` because
+ * Go normalised a nil slice to empty — and since each Upsert* starts with a
+ * DELETE, **omitting a key deletes that collection**. That is the specified
+ * behaviour, not an oversight; a partial save is not expressible here.
+ */
+export const portfolioInputSchema = z
+  .object({
+    fields: z.array(profileFieldInputSchema).max(500).default([]),
+    assets: z
+      .array(
+        z
+          .object({
+            kind: z.enum(ASSET_KINDS),
+            title: z.string().max(200),
+            detail: z.unknown().default({}),
+            sortOrder: z.number().int().default(0),
+          })
+          .strict(),
+      )
+      .max(500)
+      .default([]),
+    favorites: z
+      .array(
+        z
+          .object({
+            kind: z.string().max(100),
+            label: z.string().max(200),
+            value: z.string().max(2000).default(""),
+            sortOrder: z.number().int().default(0),
+          })
+          .strict(),
+      )
+      .max(500)
+      .default([]),
+    links: z
+      .array(
+        z
+          .object({
+            url: z.string().max(2000).url(),
+            label: z.string().max(200).default(""),
+            isLinktree: z.boolean().default(false),
+            sortOrder: z.number().int().default(0),
+          })
+          .strict(),
+      )
+      .max(500)
+      .default([]),
+  })
+  .strict();
+
 export const adCampaignInputSchema = z
   .object({
     format: z.enum(["video", "picture", "paid_challenge", "survey"]),
