@@ -164,7 +164,7 @@ export function daysUntilNext(age: number, target: number): number {
   return delta * SYNODIC_MONTH;
 }
 
-function phaseName(age: number): string {
+export function phaseName(age: number): string {
   const pct = age / SYNODIC_MONTH;
   if (pct < 0.03 || pct >= 0.97) return "New Moon";
   if (pct < 0.22) return "Waxing Crescent";
@@ -176,7 +176,7 @@ function phaseName(age: number): string {
   return "Waning Crescent";
 }
 
-function phaseEmoji(age: number): string {
+export function phaseEmoji(age: number): string {
   const pct = age / SYNODIC_MONTH;
   if (pct < 0.03 || pct >= 0.97) return "🌑";
   if (pct < 0.22) return "🌒";
@@ -188,7 +188,7 @@ function phaseEmoji(age: number): string {
   return "🌘";
 }
 
-function phaseCode(age: number): string {
+export function phaseCode(age: number): string {
   const pct = age / SYNODIC_MONTH;
   if (pct < 0.03 || pct >= 0.97) return "new-moon";
   if (pct < 0.22) return "waxing-crescent";

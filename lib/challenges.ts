@@ -3,6 +3,7 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
+import { utcDate } from "@/lib/dates";
 import type { ChallengeStatus } from "@/lib/serializers/challenges";
 
 /**
@@ -38,14 +39,12 @@ export type ChallengeLogRow = {
 /**
  * The server-assigned log date (§5.3): today in UTC as "YYYY-MM-DD".
  *
- * `toISOString().slice(0, 10)` rather than any locale-aware formatter — the
- * column is a `date` and every other date comparison in the schema
- * (recompute_streak, the ad-view period) is against UTC, so a server running in
- * Nairobi must not write a different day than one running in UTC.
+ * A named re-export of {@link utcDate} rather than a second implementation —
+ * the log date, the ad-view period, and `recompute_streak` all have to agree on
+ * where a day starts, so a server running in Nairobi must not write a different
+ * day than one running in UTC.
  */
-export function utcLogDate(now: Date = new Date()): string {
-  return now.toISOString().slice(0, 10);
-}
+export const utcLogDate = utcDate;
 
 /**
  * Latest log per challenge for one user — the port of Go's

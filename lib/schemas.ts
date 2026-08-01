@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+import { isRealDate } from "@/lib/dates";
+import { NOTEBOOK_ENTRY_TYPES } from "@/lib/serializers/notebook";
+
 // Every schema is .strict(): the Go backend used decoder.DisallowUnknownFields,
 // so an unknown request key is a 400, not a silently ignored field
 // (docs/API_CONTRACTS.md §1.3). Dropping .strict() would let a typo'd or
@@ -82,6 +85,55 @@ export const challengeProgressSchema = z
       )
       .nullish(),
     completed: z.boolean().optional(),
+  })
+  .strict();
+
+/**
+ * Date-only "YYYY-MM-DD", the strict `time.Parse("2006-01-02", ...)` Go used.
+ *
+ * `isRealDate` rather than an inline refinement: an inline
+ * `new Date(v).toISOString()` throws a RangeError on "2026-13-01" instead of
+ * returning false, and a throwing refinement escapes zod as a 500 rather than
+ * the 400 this is here to produce.
+ */
+const dateOnly = z.string().refine(isRealDate, {
+  message: "must be a real calendar date",
+});
+
+/**
+ * Notebook create/update body (docs/API_CONTRACTS.md §6.2, §6.3).
+ *
+ * `dueDate` accepts null and "" as "no due date", matching Go, which treated a
+ * nil *string and an empty string identically. Both normalise to SQL NULL.
+ *
+ * Length caps close audit finding B7 — Go accepted multi-megabyte journal
+ * bodies with only a TrimSpace, which is a cheap storage-abuse vector.
+ */
+export const notebookEntrySchema = z
+  .object({
+    entryType: z.enum(NOTEBOOK_ENTRY_TYPES),
+    title: z.string().max(200),
+    body: z.string().max(50_000),
+    dueDate: z.union([dateOnly, z.literal("")]).nullish(),
+  })
+  .strict();
+
+/**
+ * Community event submission (docs/API_CONTRACTS.md §7.2).
+ *
+ * Only these six fields are accepted. `tier`, `approved`, and `authorId` are
+ * server-forced ('community', false, the caller) and are deliberately absent —
+ * a client that could set them would self-approve its own event onto the public
+ * calendar.
+ */
+export const eventInputSchema = z
+  .object({
+    title: z.string().max(200),
+    eventDate: dateOnly,
+    rarity: z.string().max(50).optional(),
+    synopsis: z.string().max(5_000).optional(),
+    category: z.string().max(100).optional(),
+    source: z.string().max(200).optional(),
   })
   .strict();
 
