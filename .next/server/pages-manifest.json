@@ -1,0 +1,19 @@
+{
+  "/AdDetail": "pages/AdDetail.js",
+  "/Ads": "pages/Ads.js",
+  "/AdvertiserCampaignForm": "pages/AdvertiserCampaignForm.js",
+  "/AdvertiserCompletions": "pages/AdvertiserCompletions.js",
+  "/AdvertiserDashboard": "pages/AdvertiserDashboard.js",
+  "/AdvertiserOnboard": "pages/AdvertiserOnboard.js",
+  "/AuditReview": "pages/AuditReview.js",
+  "/ChallengeDetail": "pages/ChallengeDetail.js",
+  "/Challenges": "pages/Challenges.js",
+  "/Events": "pages/Events.js",
+  "/Home": "pages/Home.js",
+  "/Login": "pages/Login.js",
+  "/Notebook": "pages/Notebook.js",
+  "/Profile": "pages/Profile.js",
+  "/_error": "pages/_error.js",
+  "/_app": "pages/_app.js",
+  "/_document": "pages/_document.js"
+}
