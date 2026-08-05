@@ -1,78 +1,97 @@
-import { useMemo } from "react";
-import { motion } from "motion/react";
-
-interface Star {
-  top: number;
-  left: number;
-  size: number;
-  delay: number;
-  duration: number;
-  opacity: number;
-}
-
-function makeStars(count: number): Star[] {
-  const stars: Star[] = [];
-  // Deterministic-ish pseudo random so layout is stable across renders.
-  let seed = 1337;
-  const rand = () => {
-    seed = (seed * 9301 + 49297) % 233280;
-    return seed / 233280;
-  };
-  for (let i = 0; i < count; i++) {
-    stars.push({
-      top: rand() * 100,
-      left: rand() * 100,
-      size: rand() * 2 + 0.6,
-      delay: rand() * 4,
-      duration: 2.5 + rand() * 4,
-      opacity: 0.3 + rand() * 0.7,
-    });
-  }
-  return stars;
-}
+import { useEffect, useRef } from "react";
 
 export default function StarryBackground() {
-  const stars = useMemo(() => makeStars(140), []);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    // Star data representation
+    const stars: { x: number; y: number; size: number; speed: number; opacity: number }[] = [];
+    const starCount = 120;
+
+    for (let i = 0; i < starCount; i++) {
+      stars.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        size: Math.random() * 1.5 + 0.5,
+        speed: Math.random() * 0.15 + 0.05,
+        opacity: Math.random() * 0.7 + 0.3,
+      });
+    }
+
+    const handleResize = () => {
+      if (!canvas) return;
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    const animate = () => {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "rgba(10, 11, 16, 1)";
+      ctx.fillRect(0, 0, width, height);
+
+      // Render cosmic background nebula glow
+      const gradient = ctx.createRadialGradient(
+        width * 0.5,
+        height * 0.5,
+        10,
+        width * 0.5,
+        height * 0.5,
+        Math.max(width, height) * 0.8
+      );
+      gradient.addColorStop(0, "rgba(22, 24, 47, 0.45)");
+      gradient.addColorStop(0.5, "rgba(13, 14, 33, 0.25)");
+      gradient.addColorStop(1, "rgba(8, 9, 14, 1)");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+
+      // Render and update drifting stars
+      stars.forEach((star) => {
+        ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Update star position (move slowly to the left representing rotation)
+        star.x -= star.speed;
+        if (star.x < 0) {
+          star.x = width;
+          star.y = Math.random() * height;
+        }
+
+        // Slight breathing shimmer effect
+        if (Math.random() < 0.02) {
+          star.opacity = Math.random() * 0.7 + 0.3;
+        }
+      });
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-      {/* Nebula glows */}
-      <div
-        className="absolute -left-40 -top-40 h-[42rem] w-[42rem] rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(91,107,255,0.18), transparent 65%)" }}
-      />
-      <div
-        className="absolute -right-32 top-10 h-[36rem] w-[36rem] rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(139,123,255,0.16), transparent 65%)" }}
-      />
-      <div
-        className="absolute bottom-[-12rem] left-1/3 h-[34rem] w-[34rem] rounded-full blur-3xl"
-        style={{ background: "radial-gradient(circle, rgba(122,240,208,0.1), transparent 65%)" }}
-      />
-
-      {/* Stars */}
-      <div className="absolute inset-0">
-        {stars.map((s, i) => (
-          <motion.span
-            key={i}
-            className="absolute rounded-full bg-white"
-            style={{
-              top: `${s.top}%`,
-              left: `${s.left}%`,
-              width: s.size,
-              height: s.size,
-              opacity: s.opacity,
-            }}
-            animate={{ opacity: [s.opacity, 0.15, s.opacity] }}
-            transition={{
-              duration: s.duration,
-              delay: s.delay,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-      </div>
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 w-full h-full pointer-events-none z-[-10]"
+      style={{ background: "#0a0b10" }}
+    />
   );
 }

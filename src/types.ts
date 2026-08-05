@@ -1,230 +1,186 @@
-export interface User {
+/**
+ * MoonBird Shared Types and Interfaces
+ */
+
+export interface Comment {
   id: string;
-  email: string;
-  displayName: string;
-  authMethod: "otp" | "password";
-  preferredMethod: "otp" | "password";
-  notificationsEnabled: boolean;
-  streak: number;
-  longestStreak: number;
-  isAdvertiser?: boolean;
-  createdAt: string;
+  author: string;
+  text: string;
+  timestamp: string;
 }
 
-export interface ChallengeDefinition {
+export interface AstroEvent {
   id: string;
-  slug: string;
   title: string;
   description: string;
-  prompt: string;
-  moonPhase: string;
-  icon: string;
-  sortOrder: number;
-}
-
-export interface ChallengeState {
-  challengeId: string;
-  slug: string;
-  logDate: string;
-  data: Record<string, unknown>;
-  completed: boolean;
-  updatedAt: string;
-}
-
-export interface ChallengeWithState extends ChallengeDefinition {
-  userState: ChallengeState | null;
-}
-
-export interface Badge {
-  challengeId: string;
-  title: string;
-  icon: string;
-  awardedAt: string;
-}
-
-export interface CalendarDay {
   date: string;
-  day: number;
-  phase: string;
-  phaseCode: string;
-  phaseEmoji: string;
-  illumination: number;
-  completedChallenges: string[] | null;
+  type: 'eclipse' | 'transit' | 'meteor-shower' | 'supermoon' | 'alignment';
+  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+  imagePlaceholder: string;
+  comments: Comment[];
+  category?: string;
+  viewingTips?: string;
 }
 
-export interface ProfileData {
-  user: User;
-  badges: Badge[];
-  streak: number;
-  longestStreak: number;
-  totalCompleted: number;
-  recentActivity: Array<{
-    slug: string;
-    logDate: string;
-    completed: boolean;
-    data: Record<string, unknown>;
-  }>;
-}
-
-export type NotebookType = "journal" | "dream" | "logbook" | "goal" | "schedule" | "idea";
-
-export interface NotebookEntry {
-  id: string;
-  entryType: NotebookType;
+export interface ChallengeStep {
+  stepNumber: number;
   title: string;
-  body: string;
-  dueDate: string | null;
-  createdAt: string;
-  updatedAt: string;
+  description: string;
+  actionType?: 'log_journal' | 'set_dial_reminder' | 'clinic_visit' | 'observe_event' | 'habit_barrier' | 'life_goal';
+  completed?: boolean;
 }
 
-export interface MoonEvent {
+export interface SurveyQuestion {
+  id: string;
+  prompt: string;
+  type: 'scale' | 'text' | 'yesno' | 'choice';
+  options?: string[];
+  userAnswer?: string | number;
+}
+
+export interface BonusTask {
   id: string;
   title: string;
-  eventDate: string;
-  rarity: string;
-  synopsis: string;
-  category: string;
-  source: string;
-  tier?: string;
-  approved?: boolean;
+  description: string;
+  xpReward: number;
+  completed?: boolean;
 }
 
-export type ProfileFieldType = "text" | "integer" | "multi" | "nested";
-
-export interface ProfileField {
+export interface Challenge {
   id: string;
-  parentId: string | null;
+  number?: number;
   title: string;
-  valueText: string;
-  valueInt: number | null;
-  valueJson: unknown[];
-  fieldType: ProfileFieldType;
-  sortOrder: number;
-  children?: ProfileField[];
+  level?: string;
+  category: 'Mindfulness' | 'Health' | 'Astronomy' | 'Life Blueprint' | 'Self-Improvement' | 'Custom';
+  description: string;
+  goal?: string;
+  rewardXp: number;
+  date?: string;
+  steps: ChallengeStep[];
+  surveyQuestions: SurveyQuestion[];
+  bonusTasks: BonusTask[];
+  completionRequirement: string;
+  comments: Comment[];
+  completedBy: string[]; // list of user nicknames
+  isCustom?: boolean;
+  createdBy?: string;
 }
 
-export type UserAssetKind = "car" | "bicycle" | "pets" | "jewelry" | "clothing";
-
-export interface UserAsset {
+export interface JournalEntry {
   id: string;
-  kind: UserAssetKind;
-  title: string;
-  detail: unknown;
-  sortOrder: number;
+  date: string;
+  content: string;
+  theme: string;
+  mood: string;
+  category?: 'General' | 'Trigger Log' | 'Action Plan' | 'Astro Observation' | 'Life Goals' | 'Health Vitals';
+  reminderDate?: string;
+  timestamp: string;
+  vitalsData?: {
+    bloodPressure?: string;
+    pulse?: number;
+    weight?: number;
+    bloodSugar?: string;
+  };
 }
 
-export interface UserFavorite {
-  id: string;
-  kind: string;
-  label: string;
-  value: string;
-  sortOrder: number;
-}
-
-export interface UserLink {
-  id: string;
-  url: string;
-  label: string;
-  isLinktree: boolean;
-  sortOrder: number;
-}
-
-export interface PortfolioData {
-  fields: ProfileField[];
-  assets: UserAsset[];
-  favorites: UserFavorite[];
-  links: UserLink[];
-}
-
-export type AdFormat = "video" | "picture" | "paid_challenge" | "survey";
-
-export interface AdCampaign {
-  id: string;
-  advertiserId: string;
-  format: AdFormat;
-  title: string;
-  payloadUrl: string;
-  rewardPerAction: number;
-  rewardCurrency: string;
-  targetCategories: string[];
-  nsfw: boolean;
-  status: string;
-}
-
-export interface AdSurvey {
-  questions: unknown[];
-  minPayout: number;
-}
-
-export interface AdCampaignDetail extends AdCampaign {
-  survey?: AdSurvey;
-}
-
-export interface UserWallet {
-  chain: "solana" | "evm";
-  address: string;
-}
-
-export interface CompletionToken {
-  campaignId: string;
-  userId: string;
-  nonce: string;
-  signature: string;
-  issuedAt: number;
-}
-
-export interface Advertiser {
+export interface RoutineTask {
   id: string;
   name: string;
-  verified: boolean;
-  createdAt: string;
+  timeFrame: string;
+  completed: boolean;
+  recurrence: 'Daily' | 'Weekly' | 'Monthly' | 'Annually';
+  lifespan: 'Permanent' | 'Temporary';
+  expiryDate?: string;
+  lastCompletedTimestamp?: string; // ISO string to check for resets
 }
 
-export interface AdvertiserMe {
-  advertiser: Advertiser;
-  isAdvertiser: boolean;
+export interface LifeGoal {
+  id: string;
+  title: string;
+  whyItMatters: string;
+  actionSteps: string[];
+  commencementDate: string;
+  priority: 'High' | 'Medium' | 'Low';
+  completed?: boolean;
+}
+
+export interface SkillItem {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  level: string;
+  isFocusArea?: boolean;
+}
+
+export interface HealthCondition {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  preventiveMeasures: string[];
+  normalRanges?: string;
+}
+
+export interface FeedPost {
+  id: string;
+  author: string;
+  content: string;
+  category: 'Perspective Entry' | 'Astro Event Snapshot' | 'Habit Avoided' | 'General';
+  timestamp: string;
+  likes: number;
+  comments: Comment[];
+}
+
+export interface Reminder {
+  id: string;
+  text: string;
+  datetime: string;
+  interval: 'once' | '4x-daily' | 'custom';
+  customHours?: string; // e.g. "08:00,12:00,16:00,20:00"
+  completed: boolean;
+}
+
+export interface Idea {
+  id: string;
+  content: string;
+  theme: 'general' | 'high-contrast' | 'dark-mode' | 'light-mode' | 'dyslexia-friendly';
+  timestamp: string;
+}
+
+export interface UserProfile {
+  nickname: string;
+  anonymous: boolean;
+  city: string;
+  hobbies: string[];
+  occupation: string;
+  favorites: {
+    planets: string[];
+    constellations: string[];
+    stars: string[];
+  };
+  favoriteStar: string;
+  projects: string[];
+  xp: number;
+  trophies: string[];
+  birthDate?: string;
+  btcWalletBalance: number;
+  skillsFocus?: SkillItem[];
 }
 
 export interface ChatMessage {
   id: string;
-  userId: string;
-  userName: string;
-  body: string;
-  createdAt: string;
+  sender: string; // 'AI' or user nickname
+  senderName: string;
+  text: string;
+  timestamp: string;
+  isProactive?: boolean;
 }
 
-export interface ChatRoom {
+export interface OnlineUser {
   id: string;
-  challengeId: string;
-  createdAt: string;
-  currentUser: string;
-  currentName: string;
+  nickname: string;
+  activePhase: string;
+  lastActive: string;
 }
 
-export interface AuditAssignment {
-  id: string;
-  challengeLogId: string;
-  status: string;
-  decidedAt?: string;
-  createdAt: string;
-  slug?: string;
-  log?: {
-    id: string;
-    logDate: string;
-    completed: boolean;
-    data: Record<string, unknown>;
-  };
-}
-
-export interface Advertiser {
-  id: string;
-  name: string;
-  verified: boolean;
-  createdAt: string;
-}
-
-export interface AdvertiserMe {
-  advertiser: Advertiser;
-  isAdvertiser: boolean;
-}
