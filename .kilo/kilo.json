@@ -1,7 +1,0 @@
-{
-  "$schema": "https://app.kilo.ai/config.json",
-  "permission": {
-    "bash": "allow",
-    "background_process": "allow"
-  }
-}
