@@ -52,6 +52,7 @@ interface AdvertiserDashboardProps {
   xp: number;
   onAddXp: (amount: number) => void;
   nickname: string;
+  onNavigateToView?: (view: string) => void;
 }
 
 const DEFAULT_ADS: Ad[] = [

@@ -5,17 +5,19 @@ import { JournalEntry, RoutineTask, LifeGoal, Reminder, Idea } from "../types";
 interface NotesWorkspaceProps {
   xp: number;
   onAddXp: (amount: number) => void;
+  onNavigateToView?: (view: string) => void;
 }
 
-export default function NotesWorkspace({ xp, onAddXp }: NotesWorkspaceProps) {
+export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesWorkspaceProps) {
   const [activeScope, setActiveScope] = useState<"diary" | "routine" | "goals" | "reminders" | "ideas">("diary");
 
-  // Local State representing IndexedDB/localStorage backups
   const [journals, setJournals] = useState<JournalEntry[]>([]);
   const [routines, setRoutines] = useState<RoutineTask[]>([]);
   const [goals, setGoals] = useState<LifeGoal[]>([]);
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [ideas, setIdeas] = useState<Idea[]>([]);
+
+  const [pendingChallengeAction, setPendingChallengeAction] = useState<{ challengeId: string; stepNumber: number; actionType: string } | null>(null);
 
   // Form States
   // Journal Form
@@ -98,6 +100,23 @@ export default function NotesWorkspace({ xp, onAddXp }: NotesWorkspaceProps) {
     const savedIdeas = localStorage.getItem("mb_ideas");
     if (savedIdeas) setIdeas(JSON.parse(savedIdeas));
 
+    // Load pending challenge tool action
+    const savedPending = localStorage.getItem("mb_pending_challenge_tool_action");
+    if (savedPending) {
+      try {
+        const parsed = JSON.parse(savedPending);
+        if (parsed.view === 'notes') {
+          setPendingChallengeAction(parsed);
+          if (parsed.actionType === 'create_routine') setActiveScope("routine");
+          else if (parsed.actionType === 'create_reminder') setActiveScope("reminders");
+          else if (parsed.actionType === 'create_goal') setActiveScope("goals");
+          else setActiveScope("diary");
+        }
+      } catch (e) {
+        console.error("Failed to parse pending challenge action", e);
+      }
+    }
+
     // Seed mock details if empty to guide the user beautifully
     if (!savedGoals) {
       const defaultGoals: LifeGoal[] = [
@@ -118,6 +137,24 @@ export default function NotesWorkspace({ xp, onAddXp }: NotesWorkspaceProps) {
     localStorage.setItem(key, JSON.stringify(data));
   };
 
+  const recordChallengeStepCompletion = () => {
+    if (!pendingChallengeAction) return;
+    const key = `${pendingChallengeAction.challengeId}-step-${pendingChallengeAction.stepNumber}`;
+    const existing = localStorage.getItem("mb_challenge_step_actions");
+    const actions = existing ? JSON.parse(existing) : {};
+    actions[key] = {
+      id: key,
+      challengeId: pendingChallengeAction.challengeId,
+      stepNumber: pendingChallengeAction.stepNumber,
+      actionType: pendingChallengeAction.actionType,
+      completedAt: new Date().toISOString()
+    };
+    localStorage.setItem("mb_challenge_step_actions", JSON.stringify(actions));
+    localStorage.removeItem("mb_pending_challenge_tool_action");
+    setPendingChallengeAction(null);
+    onNavigateToView?.("challenges");
+  };
+
   // 1. Journal Handlers
   const handleAddJournal = () => {
     if (!journalText.trim()) return;
@@ -136,6 +173,9 @@ export default function NotesWorkspace({ xp, onAddXp }: NotesWorkspaceProps) {
     setJournalText("");
     setJournalReminder("");
     onAddXp(20); // Award XP for journaling!
+    if (pendingChallengeAction?.actionType === 'create_journal') {
+      recordChallengeStepCompletion();
+    }
   };
 
   const handleSpeechToText = () => {
@@ -210,6 +250,9 @@ export default function NotesWorkspace({ xp, onAddXp }: NotesWorkspaceProps) {
     setRoutineTime("");
     setRoutineExpiry("");
     onAddXp(15);
+    if (pendingChallengeAction?.actionType === 'create_routine') {
+      recordChallengeStepCompletion();
+    }
   };
 
   const handleToggleRoutine = (id: string) => {
@@ -252,6 +295,9 @@ export default function NotesWorkspace({ xp, onAddXp }: NotesWorkspaceProps) {
     setGoalTitle("");
     setGoalContent("");
     onAddXp(25);
+    if (pendingChallengeAction?.actionType === 'create_goal') {
+      recordChallengeStepCompletion();
+    }
   };
 
   const handleDeleteGoal = (id: string) => {
@@ -277,6 +323,9 @@ export default function NotesWorkspace({ xp, onAddXp }: NotesWorkspaceProps) {
     setReminderText("");
     setReminderTime("");
     onAddXp(10);
+    if (pendingChallengeAction?.actionType === 'create_reminder') {
+      recordChallengeStepCompletion();
+    }
   };
 
   const handleDeleteReminder = (id: string) => {
@@ -328,6 +377,20 @@ export default function NotesWorkspace({ xp, onAddXp }: NotesWorkspaceProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-4 text-slate-100 max-w-6xl mx-auto">
+      {pendingChallengeAction && (
+        <div className="col-span-full bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3 flex items-center justify-between">
+          <div>
+            <span className="text-[10px] font-mono text-yellow-400 uppercase block font-bold">Challenge Action Required</span>
+            <span className="text-xs text-slate-200 font-mono">{pendingChallengeAction.description || 'Complete this step to continue your challenge'}</span>
+          </div>
+          <button
+            onClick={recordChallengeStepCompletion}
+            className="px-3 py-1.5 rounded-lg bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-mono text-[10px] font-bold uppercase tracking-wider transition-all"
+          >
+            Done — Return to Challenge
+          </button>
+        </div>
+      )}
       {/* Sidebar Scope Selector */}
       <div className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
         <button

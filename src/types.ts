@@ -27,7 +27,15 @@ export interface ChallengeStep {
   title: string;
   description: string;
   actionType?: 'log_journal' | 'set_dial_reminder' | 'clinic_visit' | 'observe_event' | 'habit_barrier' | 'life_goal';
-  completed?: boolean;
+  optional?: boolean;
+  mediaAssets?: MediaAsset[];
+  toolAction?: {
+    view: 'notes' | 'dial' | 'calendar' | 'profile' | 'chat' | 'events';
+    actionType: 'create_journal' | 'create_routine' | 'create_reminder' | 'create_goal' | 'observe_moon' | 'create_event' | 'update_profile' | 'send_chat' | 'take_snapshot' | 'observe_event';
+    label: string;
+    description: string;
+    verifyTag?: string;
+  };
 }
 
 export interface SurveyQuestion {
@@ -35,7 +43,6 @@ export interface SurveyQuestion {
   prompt: string;
   type: 'scale' | 'text' | 'yesno' | 'choice';
   options?: string[];
-  userAnswer?: string | number;
 }
 
 export interface BonusTask {
@@ -46,24 +53,86 @@ export interface BonusTask {
   completed?: boolean;
 }
 
+export interface ParticipantRole {
+  role: string;
+  description: string;
+  isLeader?: boolean;
+}
+
+export interface Checkpoint {
+  id: string;
+  label: string;
+  description: string;
+  stepNumber: number;
+}
+
+export interface TargetMilestone {
+  id: string;
+  label: string;
+  description: string;
+  rewardXp: number;
+}
+
+export interface CreatorReward {
+  id: string;
+  type: 'cash' | 'digital_service' | 'digital_asset';
+  description: string;
+  value: string;
+}
+
+export interface MediaAsset {
+  id: string;
+  type: 'image' | 'video' | 'audio';
+  url: string;
+  caption?: string;
+  placement: 'between_steps' | 'during_step';
+  stepNumber?: number;
+}
+
+export interface ChallengeParticipantState {
+  nickname: string;
+  state: 'Unfinished' | 'Finished' | 'Completed / Unaudited' | 'Evolving';
+  submittedAt?: string;
+  submittedNote?: string;
+}
+
+export interface ChallengeStepAction {
+  id: string;
+  challengeId: string;
+  stepNumber: number;
+  actionType: string;
+  completedAt: string;
+  data?: Record<string, any>;
+}
+
 export interface Challenge {
   id: string;
   number?: number;
   title: string;
   level?: string;
   category: 'Mindfulness' | 'Health' | 'Astronomy' | 'Life Blueprint' | 'Self-Improvement' | 'Custom';
+  scope: 'Skills-Related' | 'Self-Improvement/Wellbeing' | 'Fun-Based';
+  participationMode: 'Solo' | 'Group';
+  participantRoles?: ParticipantRole[];
+  dynamicSteps?: boolean;
+  checkpoints?: Checkpoint[];
+  targetMilestones?: TargetMilestone[];
   description: string;
   goal?: string;
   rewardXp: number;
+  creatorSponsoredRewards?: CreatorReward[];
   date?: string;
   steps: ChallengeStep[];
+  mediaAssets?: MediaAsset[];
   surveyQuestions: SurveyQuestion[];
+  auditorQuestionnaire?: SurveyQuestion[];
   bonusTasks: BonusTask[];
   completionRequirement: string;
   comments: Comment[];
-  completedBy: string[]; // list of user nicknames
+  participants: ChallengeParticipantState[];
   isCustom?: boolean;
   createdBy?: string;
+  state: 'Unfinished' | 'Finished' | 'Completed / Unaudited' | 'Evolving';
 }
 
 export interface JournalEntry {

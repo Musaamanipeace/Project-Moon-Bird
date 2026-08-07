@@ -7,9 +7,10 @@ interface ProfileDashboardProps {
   onChangeNickname: (name: string) => void;
   xp: number;
   onAddXp: (amount: number) => void;
+  onNavigateToView?: (view: string) => void;
 }
 
-export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAddXp }: ProfileDashboardProps) {
+export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAddXp, onNavigateToView }: ProfileDashboardProps) {
   const [profileId, setProfileId] = useState("");
   const [anonMode, setAnonMode] = useState(true);
   const [occupation, setOccupation] = useState("Student");

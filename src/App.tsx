@@ -803,17 +803,18 @@ export default function App() {
               <ChallengesDashboard
                 xp={xp}
                 onAddXp={handleAddXp}
+                onNavigateToView={setActiveView}
               />
             )}
 
             {/* VIEW D: NOTES WORKSPACE */}
             {activeView === "notes" && (
-              <NotesWorkspace xp={xp} onAddXp={handleAddXp} />
+              <NotesWorkspace xp={xp} onAddXp={handleAddXp} onNavigateToView={setActiveView} />
             )}
 
             {/* VIEW E: CALENDAR DASHBOARD */}
             {activeView === "calendar" && (
-              <CalendarDashboard />
+              <CalendarDashboard onNavigateToView={setActiveView} />
             )}
 
             {/* VIEW F: PROFILE DASHBOARD */}
@@ -823,6 +824,7 @@ export default function App() {
                 onChangeNickname={setNickname}
                 xp={xp}
                 onAddXp={handleAddXp}
+                onNavigateToView={setActiveView}
               />
             )}
 
@@ -832,6 +834,7 @@ export default function App() {
                 xp={xp}
                 onAddXp={handleAddXp}
                 nickname={nickname}
+                onNavigateToView={setActiveView}
               />
             )}
 
@@ -842,6 +845,7 @@ export default function App() {
                 xp={xp}
                 onAddXp={handleAddXp}
                 onDeductXp={handleDeductXp}
+                onNavigateToView={setActiveView}
               />
             )}
 
@@ -851,6 +855,7 @@ export default function App() {
                 nickname={nickname}
                 onAddXp={handleAddXp}
                 isOnline={isOnline}
+                onNavigateToView={setActiveView}
               />
             )}
           </>

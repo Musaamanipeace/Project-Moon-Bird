@@ -6,9 +6,10 @@ interface EventsDashboardProps {
   nickname: string;
   onAddXp: (amount: number) => void;
   isOnline: boolean;
+  onNavigateToView?: (view: string) => void;
 }
 
-export default function EventsDashboard({ nickname, onAddXp, isOnline }: EventsDashboardProps) {
+export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigateToView }: EventsDashboardProps) {
   const [activeTab, setActiveTab] = useState<"events" | "challenges">("events");
   const [events, setEvents] = useState<AstroEvent[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
@@ -250,7 +251,8 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline }: EventsD
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filteredChallenges.map((ch) => {
             const isHovered = hoveredId === ch.id;
-            const completed = ch.completedBy.includes(nickname);
+            const participant = ch.participants?.find((p: any) => p.nickname === nickname);
+            const completed = participant && (participant.state === 'Finished' || participant.state === 'Completed / Unaudited');
             return (
               <div
                 key={ch.id}
@@ -450,18 +452,22 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline }: EventsD
                   </p>
 
                   <div className="flex justify-end pt-2">
-                    {selectedItem.data.completedBy.includes(nickname) ? (
-                      <button disabled className="px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold uppercase cursor-not-allowed">
-                        ✓ Challenge Logged
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleCompleteChallenge(selectedItem.data.id)}
-                        className="px-4 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-slate-950 text-xs font-extrabold uppercase shadow transition-colors"
-                      >
-                        Log Challenge Complete
-                      </button>
-                    )}
+                    {(() => {
+                      const p = selectedItem.data.participants?.find((pt: any) => pt.nickname === nickname);
+                      const isCompleted = p && (p.state === 'Finished' || p.state === 'Completed / Unaudited');
+                      return isCompleted ? (
+                        <button disabled className="px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold uppercase cursor-not-allowed">
+                          ✓ Challenge Logged
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleCompleteChallenge(selectedItem.data.id)}
+                          className="px-4 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-slate-950 text-xs font-extrabold uppercase shadow transition-colors"
+                        >
+                          Log Challenge Complete
+                        </button>
+                      );
+                    })()}
                   </div>
                 </div>
               )}

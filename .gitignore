@@ -1,9 +1,5 @@
 node_modules/
-build/
 dist/
-bin/
-coverage/
-.DS_Store
-*.log
-.env*
-!.env.example
+.env
+.env.local
+MOONBIRD_DEPLOYMENT.md

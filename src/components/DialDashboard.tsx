@@ -9,9 +9,10 @@ interface DialDashboardProps {
   nickname: string;
   xp: number;
   onAddXp: (amount: number) => void;
+  onNavigateToView?: (view: string) => void;
 }
 
-export default function DialDashboard({ locationText, birthDate, nickname, xp, onAddXp }: DialDashboardProps) {
+export default function DialDashboard({ locationText, birthDate, nickname, xp, onAddXp, onNavigateToView }: DialDashboardProps) {
   const [showSun, setShowSun] = useState(true);
   const [showRealistic, setShowRealistic] = useState(true);
   

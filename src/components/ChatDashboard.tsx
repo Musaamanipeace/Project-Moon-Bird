@@ -7,9 +7,10 @@ interface ChatDashboardProps {
   xp: number;
   onAddXp: (amount: number) => void;
   onDeductXp: (amount: number) => void;
+  onNavigateToView?: (view: string) => void;
 }
 
-export default function ChatDashboard({ nickname, xp, onAddXp, onDeductXp }: ChatDashboardProps) {
+export default function ChatDashboard({ nickname, xp, onAddXp, onDeductXp, onNavigateToView }: ChatDashboardProps) {
   const [chatTab, setChatTab] = useState<"ai" | "tribe">("ai");
 
   // Chat message arrays
