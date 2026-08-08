@@ -284,7 +284,7 @@ export default function App() {
   const birthCycles = birthDateObj ? getCyclesSinceBirth(birthDateObj, activeDate) : 0;
 
   // Calculate moon rise and set decimal hours for activeDate using the calibrated sunriseHour
-  const activeRiseSet = getMoonRiseSetTimes(lunarStatus.age, sunriseHour);
+  const activeRiseSet = getMoonRiseSetTimes(lunarStatus.age, sunriseHour, 0);
   const mRiseHour = activeRiseSet.riseDecimal;
   const mSetHour = activeRiseSet.setDecimal;
 

@@ -135,11 +135,6 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
   const activeDate = getActiveDate();
   const lunarStatus = getLunarStatus(activeDate);
 
-  // Calculate moon rise and set decimal hours
-  const activeRiseSet = getMoonRiseSetTimes(lunarStatus.age, sunriseHour);
-  const mRiseHour = activeRiseSet.riseDecimal;
-  const mSetHour = activeRiseSet.setDecimal;
-
   // ---- Declination model (drives wave amplitude) ----
   // The Sun's overhead latitude (declination) varies seasonally between ±23.44°.
   // The Moon's declination is offset from the Sun because the lunar orbit is
@@ -154,6 +149,11 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
   const moonDeclination = sunDeclination + 5.14 * Math.sin(moonOrbitPhase);
   // Degrees the Moon is off from the Sun's overhead latitude (can be ±)
   const declinationOffsetDeg = Number((moonDeclination - sunDeclination).toFixed(1));
+
+  // Calculate moon rise and set decimal hours (calibrated by declination)
+  const activeRiseSet = getMoonRiseSetTimes(lunarStatus.age, sunriseHour, declinationOffsetDeg);
+  const mRiseHour = activeRiseSet.riseDecimal;
+  const mSetHour = activeRiseSet.setDecimal;
 
   // Pixels per degree on the viewport (Sun's max seasonal amplitude ~23.44° -> 180px)
   const PX_PER_DEG = 180 / 23.44;
@@ -411,13 +411,22 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
   const orbitRy = 55;
   const orbitTilt = -18; // degrees
 
-  // Moon's angular progress along its orbit for the active time (rise->set mapped on front arc)
-  const moonOrbitFrac = ((currentHourDecimal - mRiseHour + 24) % 24) / 24;
+  // True visible duration (calibrated to the actual moonrise -> moonset window,
+  // not a fixed 12h assumption) so the Moon's orbit placement matches the clock.
+  const moonVisibleDuration = (mSetHour - mRiseHour + 24) % 24;
+  // Moon's angular progress along its orbit for the active time.
+  // 0 = at moonrise (far-east point on the right of the front arc),
+  // 1 = at moonset (far-west point on the left of the front arc).
+  const moonElapsed = (currentHourDecimal - mRiseHour + 24) % 24;
+  const moonOrbitFrac = moonElapsed / (moonVisibleDuration || 24);
   // Angle on the ellipse (0 at far-east rise on the right, sweeping over the top)
   const moonOrbitAngle = (moonOrbitFrac * 2 * Math.PI) - Math.PI / 2;
   const moonGlobeX = globeCx + orbitRx * Math.cos(moonOrbitAngle);
   const moonGlobeY = globeCy + orbitRy * Math.sin(moonOrbitAngle);
-  const moonGlobeVisible = activeMoonY < 500;
+  // Visibility driven by the real rise/set window so the orbit badge and the
+  // wave "above the horizon" test always agree (handles midnight wrap).
+  const moonIsAbove = moonElapsed < moonVisibleDuration;
+  const moonGlobeVisible = moonIsAbove;
 
   // Observer dot on the central (middle) longitude, placed at the observer's
   // actual latitude. Latitude maps to vertical position on the globe disc:
@@ -1005,28 +1014,55 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
                 {/* equator line */}
                 <line x1={globeCx - globeR} y1={globeCy} x2={globeCx + globeR} y2={globeCy} stroke="#22d3ee" strokeWidth="1" opacity="0.4" strokeDasharray="3,4" />
 
-                {/* Front half of the orbital ring (in front of earth) */}
-                <path
-                  d={(() => {
+                {/* Orbital ring: the VISIBLE portion (moonrise -> moonset) is drawn as
+                    the solid front (blue) arc over the top of the globe; the OCCULTED
+                    portion (moonset -> moonrise) is drawn as a dashed back (indigo) arc.
+                    Both spans are calibrated to the real moonrise/moonset window. */}
+                {(() => {
+                  const buildArc = (fromFrac: number, toFrac: number) => {
                     const pts: string[] = [];
                     const steps = 80;
                     for (let i = 0; i <= steps; i++) {
-                      const a = Math.PI + (Math.PI * i) / steps; // front arc over the top
+                      const frac = fromFrac + ((toFrac - fromFrac) * i) / steps;
+                      const a = frac * 2 * Math.PI - Math.PI / 2; // 0 = far-east (right)
                       const x = globeCx + orbitRx * Math.cos(a);
                       const y = globeCy + orbitRy * Math.sin(a);
                       pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
                     }
                     return `M ${pts.join(" L ")}`;
-                  })()}
-                  fill="none"
-                  stroke={moonGlobeVisible ? "#3b82f6" : "#818cf8"}
-                  strokeWidth="4"
-                  opacity="0.9"
-                  transform={`rotate(${orbitTilt} ${globeCx} ${globeCy})`}
-                />
+                  };
+                  const visFrac = (moonVisibleDuration || 24) / 24;
+                  const frontArc = buildArc(0, visFrac);
+                  const backArc = buildArc(visFrac, 1);
+                  return (
+                    <>
+                      {/* Visible front arc (above horizon) */}
+                      <path
+                        d={frontArc}
+                        fill="none"
+                        stroke="#3b82f6"
+                        strokeWidth="4"
+                        opacity="0.9"
+                        transform={`rotate(${orbitTilt} ${globeCx} ${globeCy})`}
+                      />
+                      {/* Occulted back arc (below horizon) */}
+                      <path
+                        d={backArc}
+                        fill="none"
+                        stroke="#818cf8"
+                        strokeWidth="3"
+                        strokeDasharray="5,5"
+                        opacity="0.5"
+                        transform={`rotate(${orbitTilt} ${globeCx} ${globeCy})`}
+                      />
+                    </>
+                  );
+                })()}
 
-                {/* Moon on its orbit */}
-                <g transform={`translate(${moonGlobeX}, ${moonGlobeY}) rotate(${orbitTilt})`} className="transition-all duration-500">
+                {/* Moon on its orbit. When above the horizon it rides the solid front
+                    arc; when set it is mirrored onto the dashed back arc so the 3D
+                    orbit and the rise/set calibration stay consistent. */}
+                <g transform={`translate(${moonGlobeX}, ${moonGlobeVisible ? moonGlobeY : 2 * globeCy - moonGlobeY}) rotate(${orbitTilt})`} className="transition-all duration-500">
                   {moonGlobeVisible && <circle r="22" fill="#3b82f6" opacity="0.3" className="animate-pulse" />}
                   <text x="0" y="12" textAnchor="middle" fontSize="32" style={{ filter: moonGlobeVisible ? "drop-shadow(0px 0px 8px rgba(59,130,246,0.85))" : "grayscale(100%) opacity(0.3)" }}>{lunarStatus.phase.emoji}</text>
                 </g>

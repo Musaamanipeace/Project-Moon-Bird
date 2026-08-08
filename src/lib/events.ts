@@ -184,11 +184,19 @@ export function getNextActiveEvent(date: Date): AstroEvent {
   return next || sorted[0];
 }
 
-export function getMoonRiseSetTimes(age: number, sunriseHour: number = 6) {
-  // Offset of moon rise from sun rise in hours
+export function getMoonRiseSetTimes(age: number, sunriseHour: number = 6, declinationOffsetDeg: number = 0) {
+  // Offset of moon rise from sun rise in hours (Moon is ~50 min later each day).
   const riseHourOffset = (age / 29.53) * 24;
-  let riseHour = (sunriseHour + riseHourOffset) % 24;
-  let setHour = (riseHour + 12) % 24;
+  const riseHour = (sunriseHour + riseHourOffset) % 24;
+
+  // Calibrated visible duration: the Moon's orbital day is 24h50m, so it is
+  // above the horizon for ~12h25m on average. High/low declination shifts this
+  // (a high Moon stays up longer near the poles), so we perturb by declination.
+  const lunarDay = 24 + 24 / 29.53; // ~24.84h
+  const avgVisible = lunarDay / 2; // ~12.42h
+  const declinationFactor = (declinationOffsetDeg / 23.44) * 1.6; // ±~1.6h at extremes
+  const visibleDuration = Math.max(8, Math.min(16, avgVisible + declinationFactor));
+  const setHour = (riseHour + visibleDuration) % 24;
 
   const formatHour = (h: number) => {
     const hh = Math.floor(h);

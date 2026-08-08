@@ -46,6 +46,21 @@ export default function Header({ activeView, isOnline, theme, onThemeToggle, isL
       desc: "Explore detailed astronomy transits, eclipse guides, and community challenges.",
       steps: "Hover over cards to see details, submit challenge entries, or complete assignments for XP.",
     },
+    dial: {
+      title: "Lunar Dial Dashboard",
+      desc: "Observe real-time celestial coordinates on our MoonDial and track lunar rise, zenith, and set times.",
+      steps: "Watch the Moon's path across the sky, toggle Sun or realistic rendering, or set lunar reminders.",
+    },
+    challenges: {
+      title: "Challenges Dashboard",
+      desc: "Complete onboarding, lifestyle, and skill challenges to earn Cheese XP and level up.",
+      steps: "Pick a challenge track, follow step-by-step tasks, or submit entries for XP rewards.",
+    },
+    advertiser: {
+      title: "Advertiser Dashboard",
+      desc: "Self-hosted ethical advertisement ecosystem for brands and creators.",
+      steps: "Create sponsored ads, review the ad quiz, or browse the advertiser feed for XP.",
+    },
   };
 
   const currentContext = dashboardMap[activeView] || dashboardMap.home;
