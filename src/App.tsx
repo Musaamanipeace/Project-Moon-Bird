@@ -13,6 +13,7 @@ import ChallengesDashboard from "./components/ChallengesDashboard";
 import DialDashboard from "./components/DialDashboard";
 import AdvertiserDashboard from "./components/AdvertiserDashboard";
 import AdQuizModule from "./components/AdQuizModule";
+import CataloguesDashboard from "./components/CataloguesDashboard";
 import { AstroEvent, Challenge, OnlineUser } from "./types";
 
 function getMoonPhasePath(age: number, radius: number = 40) {
@@ -40,7 +41,7 @@ function getMoonPhasePath(age: number, radius: number = 40) {
 }
 
 export default function App() {
-  const [activeView, setActiveView] = useState<"home" | "dial" | "challenges" | "notes" | "profile" | "advertiser" | "chat">("home");
+  const [activeView, setActiveView] = useState<"home" | "dial" | "challenges" | "notes" | "profile" | "advertiser" | "chat" | "catalogues">("home");
   const [isOnline, setIsOnline] = useState(true);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
 
@@ -384,7 +385,7 @@ export default function App() {
     if (isNearNewMoon) {
       return {
         status: "INVISIBLE",
-        badgeColor: "text-amber-500 bg-amber-950/20 border-amber-900/30",
+        badgeColor: "text-turquoise-dim bg-turquoise-950/20 border-turquoise-900/30",
         reason: `New Moon Glare: Though above the horizon, the Moon is in New Moon phase and extremely close to the Sun's path. Solar glare completely washes it out.`
       };
     }
@@ -393,7 +394,7 @@ export default function App() {
       if (illumination < 15) {
         return {
           status: "INVISIBLE",
-          badgeColor: "text-amber-500 bg-amber-950/20 border-amber-900/30",
+          badgeColor: "text-turquoise-dim bg-turquoise-950/20 border-turquoise-900/30",
           reason: `Washed Out (Daylight): Though above the horizon, the thin crescent (${illumination}% illuminated) is too close to the Sun's bright path. Atmospheric scattering washes it out.`
         };
       }
@@ -415,7 +416,7 @@ export default function App() {
   const moonVisibility = getMoonVisibilityDetails();
 
   return (
-    <div className={`min-h-screen text-slate-100 flex flex-col font-sans transition-colors duration-300 ${theme}`}>
+    <div className={`app-scale-root min-h-screen text-slate-100 flex flex-col font-sans transition-colors duration-300 ${theme}`}>
       {/* Background Starry Nebula Canvas */}
       <StarryBackground />
 
@@ -436,7 +437,7 @@ export default function App() {
           <div className="w-full max-w-sm rounded-2xl border border-slate-700/80 bg-[#0a0b12] p-6 shadow-2xl relative">
             <div className="flex flex-col items-center text-center gap-2 mb-4">
               <div className="relative">
-                <Sparkles className="w-10 h-10 text-yellow-400 animate-pulse" />
+                <Sparkles className="w-10 h-10 text-turquoise animate-pulse" />
               </div>
               <h2 className="text-lg font-bold font-mono text-slate-100">Welcome to Moonbug</h2>
               <p className="text-xs text-slate-400">Enter your birth date and lunar nickname to begin your astral diary.</p>
@@ -451,7 +452,7 @@ export default function App() {
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
                   placeholder="e.g., Starseeker-99"
-                  className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-yellow-500"
+                  className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-turquoise-500"
                 />
               </div>
 
@@ -480,7 +481,7 @@ export default function App() {
 
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition-colors duration-300 shadow-lg shadow-yellow-500/10"
+                className="w-full py-2.5 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition-colors duration-300 shadow-lg shadow-turquoise-500/10"
               >
                 Enter Lunar Workspace
               </button>
@@ -497,19 +498,19 @@ export default function App() {
             {activeView === "home" && (
               <div className="space-y-8 px-4 py-4 max-w-5xl mx-auto">
                 
-                {/* 1. Global & Active Challenges Dashboard Hero Panel */}
+                {/* 1. Global & Active Challenges Hero Panel */}
                 <section className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl backdrop-blur-md relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-48 h-48 bg-yellow-500/5 rounded-full blur-3xl" />
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-turquoise-500/5 rounded-full blur-3xl" />
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-4 mb-4">
                     <div>
-                      <h2 className="text-sm font-bold font-mono text-yellow-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <h2 className="text-sm font-bold font-mono text-turquoise uppercase tracking-wider flex items-center gap-1.5">
                         🏆 COMMUNITY CHALLENGES OVERVIEW
                       </h2>
                       <p className="text-[10px] text-slate-400 font-mono mt-0.5">Track your active stargazing streaks and level milestones</p>
                     </div>
                     <button
                       onClick={() => setActiveView("challenges")}
-                      className="px-4 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-mono font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 self-start animate-pulse"
+                      className="px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-mono font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 self-start animate-pulse"
                     >
                       <span>Go to Challenges Workspace</span>
                       <span>&rarr;</span>
@@ -519,15 +520,15 @@ export default function App() {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="p-3.5 rounded-xl border border-slate-800 bg-slate-950/40 space-y-1">
                       <span className="text-[9px] font-mono text-slate-500 block uppercase">Active Stargaze Streak</span>
-                      <span className="text-lg font-bold font-mono text-yellow-400 block">🔥 5 Days</span>
+                      <span className="text-lg font-bold font-mono text-turquoise block">🔥 5 Days</span>
                       <span className="text-[8.5px] text-slate-400 font-sans block leading-normal">Streak Saver archive active. Your lunar journal is safe.</span>
                     </div>
 
                     <div className="p-3.5 rounded-xl border border-slate-800 bg-slate-950/40 space-y-1">
                       <span className="text-[9px] font-mono text-slate-500 block uppercase">Cheese XP Balance</span>
-                      <span className="text-lg font-bold font-mono text-yellow-400 block">{xp} XP</span>
+                      <span className="text-lg font-bold font-mono text-turquoise block">{xp} XP</span>
                       <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden border border-slate-800/60 mt-1">
-                        <div className="bg-yellow-500 h-full rounded-full" style={{ width: `${Math.min(100, (xp / 600) * 100)}%` }} />
+                        <div className="bg-turquoise-500 h-full rounded-full" style={{ width: `${Math.min(100, (xp / 600) * 100)}%` }} />
                       </div>
                     </div>
 
@@ -546,7 +547,7 @@ export default function App() {
                 <section className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl backdrop-blur-md space-y-4">
                   <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
                     <div>
-                      <h2 className="text-sm font-bold font-mono text-yellow-400 uppercase tracking-wider">
+                      <h2 className="text-sm font-bold font-mono text-turquoise uppercase tracking-wider">
                         🌌 OFFLINE ASTRONOMICAL EVENTS FEED
                       </h2>
                       <p className="text-[10px] text-slate-400 font-mono mt-0.5">Coordinated from the local annual calendar tracking matrix</p>
@@ -558,11 +559,11 @@ export default function App() {
                       <div
                         key={ev.id}
                         onClick={() => setSelectedHomeItem({ type: "event", data: ev })}
-                        className="cursor-pointer p-4 rounded-xl border border-slate-850 bg-slate-950/30 hover:border-yellow-500/30 hover:bg-slate-950/70 transition-all flex flex-col justify-between h-36"
+                        className="cursor-pointer p-4 rounded-xl border border-slate-850 bg-slate-950/30 hover:border-turquoise-500/30 hover:bg-slate-950/70 transition-all flex flex-col justify-between h-36"
                       >
                         <div>
                           <div className="flex justify-between items-start gap-2">
-                            <span className="text-[9px] font-mono text-yellow-500">{ev.date}</span>
+                            <span className="text-[9px] font-mono text-turquoise-dim">{ev.date}</span>
                             <span className="text-[8px] font-mono font-bold px-1.5 py-0.2 bg-slate-900 border border-slate-800 rounded text-slate-400 uppercase">
                               {ev.rarity}
                             </span>
@@ -578,15 +579,36 @@ export default function App() {
                   </div>
                 </section>
 
+                {/* 3b. Unified Catalogues quick-access */}
+                <section className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl backdrop-blur-md">
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <h3 className="text-xs font-bold font-mono text-turquoise uppercase tracking-wider flex items-center gap-1.5">
+                        📚 Unified Catalogues
+                      </h3>
+                      <p className="text-[10px] text-slate-400 font-mono">
+                        Browse astro events & campaigns together, sorted by category.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setActiveView("catalogues")}
+                      className="px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-mono font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5 self-start"
+                    >
+                      <span>Open Catalogues</span>
+                      <span>&rarr;</span>
+                    </button>
+                  </div>
+                </section>
+
                 {/* 4. Conditional Authentication Gate (Claim Anonymous Pass) */}
                 <section className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl backdrop-blur-md">
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="space-y-1">
-                      <h3 className="text-xs font-bold font-mono text-yellow-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <h3 className="text-xs font-bold font-mono text-turquoise uppercase tracking-wider flex items-center gap-1.5">
                         🛡️ SECURED ANONYMOUS PASS PORTAL
                       </h3>
                       <p className="text-[10.5px] text-slate-300 font-mono">
-                        Your unique Moonbug identifier token: <span className="text-yellow-500 font-bold font-mono">{nickname}</span>
+                        Your unique Moonbug identifier token: <span className="text-turquoise-dim font-bold font-mono">{nickname}</span>
                       </p>
                       <p className="text-[9.5px] text-slate-500 font-sans leading-normal">
                         Zero telemetry database logs. Re-assign or customize your nickname coordinates anytime to cycle ledger slots.
@@ -612,7 +634,7 @@ export default function App() {
 
                 {/* 3. Personal calculations */}
                 <section className="bg-[#0c0d16]/80 border border-slate-800 p-5 rounded-2xl backdrop-blur-md">
-                  <h3 className="text-sm font-bold font-mono text-yellow-400 uppercase tracking-wider mb-3">
+                  <h3 className="text-sm font-bold font-mono text-turquoise uppercase tracking-wider mb-3">
                     🔢 PERSONAL CELESTIAL CALCULATIONS
                   </h3>
 
@@ -621,13 +643,13 @@ export default function App() {
                       <div className="flex items-center gap-1">
                         <span className="text-[10px] font-mono text-slate-400 uppercase">Lunar Age</span>
                         <div className="group relative">
-                          <HelpCircle className="w-3.5 h-3.5 text-yellow-400 cursor-help" />
+                          <HelpCircle className="w-3.5 h-3.5 text-turquoise cursor-help" />
                           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block w-52 p-2 rounded-lg bg-black border border-slate-700 text-[10px] text-slate-300 leading-normal z-50">
                             "Lunar Age" is defined as: The number of full moon cycles that have occurred since the user's birthdate.
                           </div>
                         </div>
                       </div>
-                      <span className="text-sm font-bold font-mono text-yellow-400 block">
+                      <span className="text-sm font-bold font-mono text-turquoise block">
                         {birthCycles.toLocaleString()} full moon cycles
                       </span>
                       <span className="text-[9px] text-slate-500 font-mono block leading-relaxed">
@@ -637,7 +659,7 @@ export default function App() {
 
                     <div className="p-3.5 rounded-xl border border-slate-800 bg-slate-950/40 space-y-1">
                       <span className="text-[10px] font-mono text-slate-400 uppercase block">Moon Birth Phase</span>
-                      <span className="text-sm font-bold font-mono text-yellow-400 block">
+                      <span className="text-sm font-bold font-mono text-turquoise block">
                         {userBirthPhase ? `${userBirthPhase.name} ${userBirthPhase.emoji}` : "Calculating..."}
                       </span>
                       <span className="text-[9px] text-slate-500 font-mono block leading-relaxed">
@@ -666,7 +688,7 @@ export default function App() {
                   {/* Events Highlights */}
                   <section className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl backdrop-blur-md space-y-3">
                     <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
-                      <h3 className="text-xs font-bold font-mono text-yellow-400 uppercase tracking-widest">
+                      <h3 className="text-xs font-bold font-mono text-turquoise uppercase tracking-widest">
                         🌌 Astronomy Event Highlights
                       </h3>
                       <button onClick={() => setActiveView("events")} className="text-[9px] font-mono text-slate-400 hover:text-slate-200">
@@ -681,14 +703,14 @@ export default function App() {
                           onMouseEnter={() => setHoveredItemId(ev.id)}
                           onMouseLeave={() => setHoveredItemId(null)}
                           onClick={() => setSelectedHomeItem({ type: "event", data: ev })}
-                          className="group relative cursor-pointer p-2.5 rounded-xl border border-slate-850 bg-slate-950/30 hover:border-yellow-500/30 transition-all flex items-center justify-between gap-3"
+                          className="group relative cursor-pointer p-2.5 rounded-xl border border-slate-850 bg-slate-950/30 hover:border-turquoise-500/30 transition-all flex items-center justify-between gap-3"
                         >
                           <div>
-                            <span className="text-[9px] font-mono text-yellow-500">{ev.date}</span>
-                            <h4 className="text-xs font-bold text-slate-200 group-hover:text-yellow-400">{ev.title}</h4>
+                            <span className="text-[9px] font-mono text-turquoise-dim">{ev.date}</span>
+                            <h4 className="text-xs font-bold text-slate-200 group-hover:text-turquoise">{ev.title}</h4>
                           </div>
                           <span className={`text-[8px] font-mono font-bold px-1.5 py-0.5 rounded-full border border-slate-800 ${
-                            hoveredItemId === ev.id ? "bg-yellow-500 text-slate-950 animate-pulse" : "bg-slate-900 text-slate-400"
+                            hoveredItemId === ev.id ? "bg-turquoise-500 text-slate-950 animate-pulse" : "bg-slate-900 text-slate-400"
                           }`}>
                             {hoveredItemId === ev.id ? "(click me)" : ev.rarity}
                           </span>
@@ -700,7 +722,7 @@ export default function App() {
                   {/* Challenges Highlights */}
                   <section className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl backdrop-blur-md space-y-3">
                     <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
-                      <h3 className="text-xs font-bold font-mono text-yellow-400 uppercase tracking-widest">
+                      <h3 className="text-xs font-bold font-mono text-turquoise uppercase tracking-widest">
                         🏆 Community Challenges
                       </h3>
                       <button onClick={() => setActiveView("events")} className="text-[9px] font-mono text-slate-400 hover:text-slate-200">
@@ -713,13 +735,13 @@ export default function App() {
                         <div
                           key={ch.id}
                           onClick={() => setSelectedHomeItem({ type: "challenge", data: ch })}
-                          className="group cursor-pointer p-2.5 rounded-xl border border-slate-850 bg-slate-950/30 hover:border-yellow-500/30 transition-all flex items-center justify-between gap-3"
+                          className="group cursor-pointer p-2.5 rounded-xl border border-slate-850 bg-slate-950/30 hover:border-turquoise-500/30 transition-all flex items-center justify-between gap-3"
                         >
                           <div>
-                            <span className="text-[9px] font-mono text-yellow-500">Value: +{ch.rewardXp} XP</span>
-                            <h4 className="text-xs font-bold text-slate-200 group-hover:text-yellow-400">{ch.title}</h4>
+                            <span className="text-[9px] font-mono text-turquoise-dim">Value: +{ch.rewardXp} XP</span>
+                            <h4 className="text-xs font-bold text-slate-200 group-hover:text-turquoise">{ch.title}</h4>
                           </div>
-                          <span className="text-[9px] font-mono text-slate-400 group-hover:text-yellow-300">
+                          <span className="text-[9px] font-mono text-slate-400 group-hover:text-turquoise-bright">
                             Detail &rarr;
                           </span>
                         </div>
@@ -732,7 +754,7 @@ export default function App() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Newsletter subscription form */}
                   <section className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl backdrop-blur-md space-y-3">
-                    <h3 className="text-xs font-bold font-mono text-yellow-400 uppercase tracking-widest">
+                    <h3 className="text-xs font-bold font-mono text-turquoise uppercase tracking-widest">
                       📰 WEEKLY MOONBUG NEWSLETTER
                     </h3>
                     <p className="text-[11px] text-slate-400 leading-relaxed font-mono">
@@ -747,7 +769,7 @@ export default function App() {
                         placeholder="your@email.com"
                         className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 flex-1 focus:outline-none"
                       />
-                      <button type="submit" className="p-2.5 rounded-xl bg-yellow-500 text-slate-950 hover:bg-yellow-400 transition-colors font-bold text-xs uppercase">
+                      <button type="submit" className="p-2.5 rounded-xl bg-turquoise-500 text-slate-950 hover:bg-turquoise-400 transition-colors font-bold text-xs uppercase">
                         Subscribe
                       </button>
                     </form>
@@ -760,7 +782,7 @@ export default function App() {
 
                   {/* Online Tribe quick monitor */}
                   <section className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl backdrop-blur-md space-y-3">
-                    <h3 className="text-xs font-bold font-mono text-yellow-400 uppercase tracking-widest flex items-center gap-1.5">
+                    <h3 className="text-xs font-bold font-mono text-turquoise uppercase tracking-widest flex items-center gap-1.5">
                       <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -787,7 +809,7 @@ export default function App() {
               </div>
             )}
 
-            {/* VIEW B: DIAL DASHBOARD */}
+            {/* VIEW B: DIAL VIEW */}
             {activeView === "dial" && (
               <DialDashboard
                 locationText={locationText}
@@ -798,7 +820,7 @@ export default function App() {
               />
             )}
 
-            {/* VIEW C: CHALLENGES DASHBOARD */}
+            {/* VIEW C: CHALLENGES VIEW */}
             {activeView === "challenges" && (
               <ChallengesDashboard
                 xp={xp}
@@ -812,12 +834,12 @@ export default function App() {
               <NotesWorkspace xp={xp} onAddXp={handleAddXp} onNavigateToView={setActiveView} />
             )}
 
-            {/* VIEW E: CALENDAR DASHBOARD */}
+            {/* VIEW E: CALENDAR VIEW */}
             {activeView === "calendar" && (
               <CalendarDashboard onNavigateToView={setActiveView} />
             )}
 
-            {/* VIEW F: PROFILE DASHBOARD */}
+            {/* VIEW F: PROFILE VIEW */}
             {activeView === "profile" && (
               <ProfileDashboard
                 nickname={nickname}
@@ -828,7 +850,7 @@ export default function App() {
               />
             )}
 
-            {/* VIEW G: ADVERTISER DASHBOARD */}
+            {/* VIEW G: ADVERTISER VIEW */}
             {activeView === "advertiser" && (
               <AdvertiserDashboard
                 xp={xp}
@@ -838,7 +860,7 @@ export default function App() {
               />
             )}
 
-            {/* VIEW H: CHAT DASHBOARD */}
+            {/* VIEW H: CHAT VIEW */}
             {activeView === "chat" && (
               <ChatDashboard
                 nickname={nickname}
@@ -858,6 +880,11 @@ export default function App() {
                 onNavigateToView={setActiveView}
               />
             )}
+
+            {/* VIEW J: UNIFIED CATALOGUES */}
+            {activeView === "catalogues" && (
+              <CataloguesDashboard onNavigateToView={setActiveView} />
+            )}
           </>
         )}
       </main>
@@ -868,80 +895,72 @@ export default function App() {
           <button
             onClick={() => setActiveView("home")}
             className={`flex flex-col items-center gap-1.5 text-[9px] font-mono font-bold transition-all duration-300 ${
-              activeView === "home" ? "text-yellow-400" : "text-slate-500 hover:text-slate-300"
+              activeView === "home" ? "text-turquoise" : "text-slate-200 hover:text-white"
             }`}
           >
-            <span>🏠</span>
             <span>Home</span>
           </button>
 
           <button
             onClick={() => setActiveView("dial")}
             className={`flex flex-col items-center gap-1.5 text-[9px] font-mono font-bold transition-all duration-300 ${
-              activeView === "dial" ? "text-yellow-400" : "text-slate-500 hover:text-slate-300"
+              activeView === "dial" ? "text-turquoise" : "text-slate-200 hover:text-white"
             }`}
           >
-            <span>🌙</span>
             <span>Lunar Dial</span>
           </button>
 
           <button
             onClick={() => setActiveView("challenges")}
             className={`flex flex-col items-center gap-1.5 text-[9px] font-mono font-bold transition-all duration-300 ${
-              activeView === "challenges" ? "text-yellow-400" : "text-slate-500 hover:text-slate-300"
+              activeView === "challenges" ? "text-turquoise" : "text-slate-200 hover:text-white"
             }`}
           >
-            <span>🏆</span>
             <span>Challenges</span>
           </button>
 
           <button
             onClick={() => setActiveView("notes")}
             className={`flex flex-col items-center gap-1.5 text-[9px] font-mono font-bold transition-all duration-300 ${
-              activeView === "notes" ? "text-yellow-400" : "text-slate-500 hover:text-slate-300"
+              activeView === "notes" ? "text-turquoise" : "text-slate-200 hover:text-white"
             }`}
           >
-            <span>📝</span>
             <span>Notebook</span>
           </button>
 
           <button
             onClick={() => setActiveView("calendar")}
             className={`flex flex-col items-center gap-1.5 text-[9px] font-mono font-bold transition-all duration-300 ${
-              activeView === "calendar" ? "text-yellow-400" : "text-slate-500 hover:text-slate-300"
+              activeView === "calendar" ? "text-turquoise" : "text-slate-200 hover:text-white"
             }`}
           >
-            <span>📅</span>
             <span>Calendar</span>
           </button>
 
           <button
             onClick={() => setActiveView("profile")}
             className={`flex flex-col items-center gap-1.5 text-[9px] font-mono font-bold transition-all duration-300 ${
-              activeView === "profile" ? "text-yellow-400" : "text-slate-500 hover:text-slate-300"
+              activeView === "profile" ? "text-turquoise" : "text-slate-200 hover:text-white"
             }`}
           >
-            <span>👤</span>
             <span>Profile</span>
           </button>
 
           <button
             onClick={() => setActiveView("advertiser")}
             className={`flex flex-col items-center gap-1.5 text-[9px] font-mono font-bold transition-all duration-300 ${
-              activeView === "advertiser" ? "text-yellow-400" : "text-slate-500 hover:text-slate-300"
+              activeView === "advertiser" ? "text-turquoise" : "text-slate-200 hover:text-white"
             }`}
           >
-            <span>📢</span>
             <span>Advertiser</span>
           </button>
 
           <button
             onClick={() => setActiveView("chat")}
             className={`flex flex-col items-center gap-1.5 text-[9px] font-mono font-bold transition-all duration-300 ${
-              activeView === "chat" ? "text-yellow-400" : "text-slate-500 hover:text-slate-300"
+              activeView === "chat" ? "text-turquoise" : "text-slate-200 hover:text-white"
             }`}
           >
-            <span>💬</span>
             <span>Chat</span>
           </button>
         </nav>
@@ -959,7 +978,7 @@ export default function App() {
             </button>
 
             <div className="space-y-3 text-center">
-              <span className="text-[9px] font-mono text-yellow-400 uppercase tracking-widest block">
+              <span className="text-[9px] font-mono text-turquoise uppercase tracking-widest block">
                 Highlighted Event Summary
               </span>
               <h3 className="text-base font-bold font-mono text-slate-100">
@@ -969,8 +988,8 @@ export default function App() {
                 {selectedHomeItem.data.description}
               </p>
               {selectedHomeItem.type === "challenge" && (
-                <div className="p-3 bg-yellow-500/5 border border-yellow-500/20 rounded-xl text-left text-xs font-mono">
-                  <span className="font-bold text-yellow-400 uppercase block mb-1">Goal Metric:</span>
+                <div className="p-3 bg-turquoise-500/5 border border-turquoise-500/20 rounded-xl text-left text-xs font-mono">
+                  <span className="font-bold text-turquoise uppercase block mb-1">Goal Metric:</span>
                   {selectedHomeItem.data.goal}
                 </div>
               )}
@@ -980,7 +999,7 @@ export default function App() {
                     setSelectedHomeItem(null);
                     setActiveView("events");
                   }}
-                  className="px-3.5 py-1.5 rounded-xl bg-yellow-500 text-slate-950 font-bold text-xs uppercase"
+                  className="px-3.5 py-1.5 rounded-xl bg-turquoise-500 text-slate-950 font-bold text-xs uppercase"
                 >
                   Enter Forums
                 </button>

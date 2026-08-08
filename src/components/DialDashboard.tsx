@@ -315,7 +315,7 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
     if (isNearNewMoon) {
       return {
         status: "INVISIBLE",
-        badgeColor: "text-amber-500 bg-amber-950/20 border-amber-900/30",
+        badgeColor: "text-turquoise-dim bg-turquoise-950/20 border-turquoise-900/30",
         reason: `New Moon Glare: Though above the horizon, the Moon is extremely close to the Sun's path. Solar glare completely washes it out.`
       };
     }
@@ -324,7 +324,7 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
       if (illumination < 15) {
         return {
           status: "INVISIBLE",
-          badgeColor: "text-amber-500 bg-amber-950/20 border-amber-900/30",
+          badgeColor: "text-turquoise-dim bg-turquoise-950/20 border-turquoise-900/30",
           reason: `Washed Out (Daylight): Though above the horizon, the thin crescent (${illumination}% illuminated) is too close to the Sun's bright daytime path.`
         };
       }
@@ -438,11 +438,11 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
   return (
     <div className="space-y-8 p-4 max-w-5xl mx-auto text-slate-200">
       
-      {/* 1. Dashboard Header Banner */}
+      {/* 1. Header Banner */}
       <section className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl backdrop-blur-md">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-3 mb-4">
           <div>
-            <h2 className="text-sm font-bold font-mono text-yellow-400 uppercase tracking-wider">
+            <h2 className="text-sm font-bold font-mono text-turquoise uppercase tracking-wider">
               🌙 Celestial Moon Dial
             </h2>
             <p className="text-[10px] text-slate-400 font-mono mt-0.5">Location Coordinated: {locationText} | Passive Sync</p>
@@ -452,7 +452,7 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
             <button
               onClick={() => setShowSun(!showSun)}
               className={`px-3 py-1 rounded-lg border text-[10px] font-mono font-bold transition-colors ${
-                showSun ? "border-yellow-500 bg-yellow-500/10 text-yellow-300" : "border-slate-850 bg-slate-950 text-slate-500"
+                showSun ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright" : "border-slate-850 bg-slate-950 text-slate-500"
               }`}
             >
               ☀️ Sun Toggle
@@ -460,7 +460,7 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
             <button
               onClick={() => setShowRealistic(!showRealistic)}
               className={`px-3 py-1 rounded-lg border text-[10px] font-mono font-bold transition-colors ${
-                showRealistic ? "border-yellow-500 bg-yellow-500/10 text-yellow-300" : "border-slate-850 bg-slate-950 text-slate-500"
+                showRealistic ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright" : "border-slate-850 bg-slate-950 text-slate-500"
               }`}
             >
               🌕 Realistic View
@@ -471,7 +471,7 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
         {/* DISPLAY MODE SWITCHER — three lunar-clock visualizations */}
         <div className="p-3 mb-4 rounded-xl border border-slate-800/60 bg-slate-950/70 backdrop-blur-sm">
           <div className="flex items-center gap-2 mb-2.5">
-            <Eye className="w-4 h-4 text-yellow-500" />
+            <Eye className="w-4 h-4 text-turquoise-dim" />
             <span className="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">Lunar Clock Display</span>
           </div>
           <div className="grid grid-cols-3 gap-2">
@@ -486,7 +486,7 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
                 title={m.desc}
                 className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg border text-[10px] font-mono font-bold transition-colors ${
                   displayMode === m.id
-                    ? "border-yellow-500 bg-yellow-500/10 text-yellow-300"
+                    ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright"
                     : "border-slate-850 bg-slate-950 text-slate-500 hover:text-slate-300"
                 }`}
               >
@@ -500,7 +500,7 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
         {/* INTERACTIVE CUSTOM TIME CONTROL BLOCK */}
         <div className="p-3 mb-4 rounded-xl border border-slate-800/60 bg-slate-950/70 backdrop-blur-sm flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-yellow-500" />
+            <Calendar className="w-4 h-4 text-turquoise-dim" />
             <span className="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">Interactive Sky Clock</span>
           </div>
 
@@ -514,7 +514,7 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
                   setCustomDateStr(e.target.value);
                   setIsLiveSync(false);
                 }}
-                className="px-2.5 py-1 rounded-lg border border-slate-800 bg-slate-900 text-xs text-yellow-400 focus:outline-none focus:border-yellow-500 font-mono"
+                className="px-2.5 py-1 rounded-lg border border-slate-800 bg-slate-900 text-xs text-turquoise focus:outline-none focus:border-turquoise-500 font-mono"
               />
             </div>
 
@@ -527,7 +527,7 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
                   setCustomTimeStr(e.target.value);
                   setIsLiveSync(false);
                 }}
-                className="px-2.5 py-1 rounded-lg border border-slate-800 bg-slate-900 text-xs text-yellow-400 focus:outline-none focus:border-yellow-500 font-mono"
+                className="px-2.5 py-1 rounded-lg border border-slate-800 bg-slate-900 text-xs text-turquoise focus:outline-none focus:border-turquoise-500 font-mono"
               />
             </div>
 
@@ -568,9 +568,9 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
                 step="0.01"
                 value={sunriseHour}
                 onChange={(e) => setSunriseHour(parseFloat(e.target.value))}
-                className="w-full sm:w-40 accent-yellow-400 h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer"
+                className="w-full sm:w-40 accent-turquoise-400 h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer"
               />
-              <span className="text-xs font-mono text-yellow-400 font-bold bg-slate-950 px-2 py-0.5 rounded border border-slate-800 min-w-[70px] text-center">
+              <span className="text-xs font-mono text-turquoise font-bold bg-slate-950 px-2 py-0.5 rounded border border-slate-800 min-w-[70px] text-center">
                 {(() => {
                   const h = Math.floor(sunriseHour);
                   const m = Math.floor((sunriseHour - h) * 60);
@@ -580,7 +580,7 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
             </div>
 
             <div className="text-[9px] font-mono text-indigo-300 bg-indigo-950/40 px-2 py-1 rounded border border-indigo-900/30">
-              Today's Moonrise: <span className="font-bold text-yellow-400">{activeRiseSet.rise}</span>
+              Today's Moonrise: <span className="font-bold text-turquoise">{activeRiseSet.rise}</span>
             </div>
           </div>
         </div>
@@ -1097,13 +1097,13 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
                 {moonVisibility.reason}
               </p>
               <p className="text-[10px] font-sans text-slate-400 leading-relaxed border-t border-slate-800/60 pt-2.5">
-                💡 <span className="text-slate-300 font-semibold">Observation Rule:</span> Above the horizon line, visibility is calculated dynamically by matching the Moon's coordinates relative to the Sun's path. Solar glare or daylight scatters thin illumination, rendering them <span className="text-amber-400 font-bold">INVISIBLE</span>.
+                💡 <span className="text-slate-300 font-semibold">Observation Rule:</span> Above the horizon line, visibility is calculated dynamically by matching the Moon's coordinates relative to the Sun's path. Solar glare or daylight scatters thin illumination, rendering them <span className="text-turquoise font-bold">INVISIBLE</span>.
               </p>
             </div>
 
             {/* Scientific explanation — adapts to the active display */}
             <div className="p-4 rounded-2xl border border-slate-800/80 bg-slate-950/60 text-slate-300 space-y-2.5">
-              <h4 className="text-xs font-bold font-mono text-yellow-400 uppercase tracking-widest">
+              <h4 className="text-xs font-bold font-mono text-turquoise uppercase tracking-widest">
                 {displayMode === "compass" && "🧭 Compass Clock Representation"}
                 {displayMode === "wave" && "🌍 Horizon & Wave Trajectories"}
                 {displayMode === "globe" && "🌐 3D Earth & Orbit Representation"}
@@ -1151,12 +1151,12 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
               {/* Next active Astronomical Event */}
               <div className="p-3.5 rounded-xl border border-slate-800/80 bg-slate-950/40">
                 <span className="text-[9px] font-mono text-slate-500 block uppercase">Next Astro Event</span>
-                <span className="text-xs font-bold text-yellow-400 block mt-0.5 truncate">
+                <span className="text-xs font-bold text-turquoise block mt-0.5 truncate">
                   {getNextActiveEvent(activeDate).title}
                 </span>
                 <div className="flex items-center justify-between mt-1 text-[8px] font-mono">
                   <span className="text-slate-400">{getNextActiveEvent(activeDate).date}</span>
-                  <span className="px-1 py-0.2 rounded bg-slate-900 border border-slate-800 text-yellow-500 uppercase font-extrabold">
+                  <span className="px-1 py-0.2 rounded bg-slate-900 border border-slate-800 text-turquoise-dim uppercase font-extrabold">
                     {getNextActiveEvent(activeDate).rarity}
                   </span>
                 </div>
@@ -1197,24 +1197,24 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
         return (
           <section className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl backdrop-blur-md text-center space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800/60 pb-2 mb-1">
-              <h3 className="text-xs font-bold font-mono text-yellow-400 uppercase tracking-widest">
+              <h3 className="text-xs font-bold font-mono text-turquoise uppercase tracking-widest">
                 🌕 Today's Moon
               </h3>
               
               <div className="flex items-center gap-1.5 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800 font-mono text-xs font-bold text-slate-200">
                 <button
                   onClick={() => setCyclePhaseOffset(prev => prev - 1)}
-                  className="text-slate-400 hover:text-yellow-400 p-0.5 transition-colors focus:outline-none"
+                  className="text-slate-400 hover:text-turquoise p-0.5 transition-colors focus:outline-none"
                   title="Previous Phase"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                 </button>
-                <span className="px-1 shrink-0 text-yellow-400">
+                <span className="px-1 shrink-0 text-turquoise">
                   {cyclePhaseOffset === 0 ? "Current Cycle" : `Forecast ${cyclePhaseOffset > 0 ? "+" : ""}${cyclePhaseOffset} (${formattedTargetDate})`}
                 </span>
                 <button
                   onClick={() => setCyclePhaseOffset(prev => prev + 1)}
-                  className="text-slate-400 hover:text-yellow-400 p-0.5 transition-colors focus:outline-none"
+                  className="text-slate-400 hover:text-turquoise p-0.5 transition-colors focus:outline-none"
                   title="Next Phase"
                 >
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -1226,7 +1226,7 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
               <div className="space-y-3.5 p-4 rounded-xl border border-slate-800 bg-slate-950/60 text-left">
                 <div>
                   <span className="text-[9px] font-mono text-slate-500 uppercase block tracking-wider">Dynamic Age sway</span>
-                  <span className="text-sm font-bold font-mono text-yellow-400 block mt-0.5">
+                  <span className="text-sm font-bold font-mono text-turquoise block mt-0.5">
                     🌕 {targetAge.toFixed(2)} Days
                   </span>
                 </div>
@@ -1293,7 +1293,7 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
               <div className="space-y-3.5 p-4 rounded-xl border border-slate-800 bg-slate-950/60 text-left">
                 <div>
                   <span className="text-[9px] font-mono text-slate-500 uppercase block tracking-wider">Moon Rise Time</span>
-                  <span className="text-sm font-bold font-mono text-yellow-400 flex items-center gap-1.5 mt-0.5">
+                  <span className="text-sm font-bold font-mono text-turquoise flex items-center gap-1.5 mt-0.5">
                     🌅 {targetRiseSet.rise}
                   </span>
                 </div>
@@ -1321,7 +1321,7 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
 
       {/* 3. Weather & Local Conditions */}
       <section className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl backdrop-blur-md">
-        <h3 className="text-xs font-bold font-mono text-yellow-400 uppercase tracking-widest mb-3">
+        <h3 className="text-xs font-bold font-mono text-turquoise uppercase tracking-widest mb-3">
           🌤️ Local Weather Conditions
         </h3>
         {weatherLoading ? (

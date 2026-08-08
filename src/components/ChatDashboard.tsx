@@ -256,7 +256,7 @@ How are you handling your processed sugar elimination challenge today? Let's for
         onMouseLeave={() => setHoveredMetrics(null)}
       >
         <div className="flex items-center gap-2.5">
-          <Bot className="w-5 h-5 text-yellow-400" />
+          <Bot className="w-5 h-5 text-turquoise" />
           <div>
             <span className="text-xs font-mono font-bold text-slate-100 block">💬 Decent_Community_Chat_Gate & AI Companion</span>
             <span className="text-[10px] text-slate-400 font-mono">Anti-spam transaction system live: custom broadcasts cost 5 XP</span>
@@ -265,7 +265,7 @@ How are you handling your processed sugar elimination challenge today? Let's for
 
         <div className="flex items-center gap-3">
           <span className="text-[10px] text-slate-500 font-mono">
-            Token Queries Today: <span className={aiMessagesCount >= 5 ? "text-red-400 font-bold" : "text-yellow-400"}>{aiMessagesCount}/5</span>
+            Token Queries Today: <span className={aiMessagesCount >= 5 ? "text-red-400 font-bold" : "text-turquoise"}>{aiMessagesCount}/5</span>
           </span>
           {isPremium ? (
             <span className="px-2.5 py-0.5 rounded-md border border-emerald-500/30 bg-emerald-950/20 text-[9px] font-mono text-emerald-400 uppercase font-bold">
@@ -274,7 +274,7 @@ How are you handling your processed sugar elimination challenge today? Let's for
           ) : (
             <button
               onClick={handleResetTokens}
-              className="px-2.5 py-1 rounded bg-gradient-to-r from-pink-500 to-yellow-500 text-slate-950 text-[9px] font-mono font-extrabold uppercase hover:opacity-90 transition-opacity"
+              className="px-2.5 py-1 rounded bg-gradient-to-r from-pink-500 to-turquoise-500 text-slate-950 text-[9px] font-mono font-extrabold uppercase hover:opacity-90 transition-opacity"
             >
               💖 Sponsor & Reset
             </button>
@@ -296,7 +296,7 @@ How are you handling your processed sugar elimination challenge today? Let's for
       {/* Online Peer Discovery Row */}
       <div className="bg-slate-950/40 border border-slate-800 p-3.5 rounded-2xl space-y-2.5">
         <h4 className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-          <Users className="w-3.5 h-3.5 text-yellow-500" />
+          <Users className="w-3.5 h-3.5 text-turquoise-dim" />
           <span>Active Online Nodes (Discovery Panel)</span>
         </h4>
         
@@ -314,7 +314,7 @@ How are you handling your processed sugar elimination challenge today? Let's for
               </div>
               <a 
                 href={peer.link}
-                className="p-1 rounded bg-slate-950 border border-slate-800 text-slate-400 hover:text-yellow-400 transition-colors"
+                className="p-1 rounded bg-slate-950 border border-slate-800 text-slate-400 hover:text-turquoise transition-colors"
                 title="View Portfolio Grid"
               >
                 <ArrowUpRight className="w-3 h-3" />
@@ -352,7 +352,7 @@ How are you handling your processed sugar elimination challenge today? Let's for
                       key={oIdx}
                       className={`flex items-start gap-1.5 p-2 rounded-lg border text-[9.5px] font-mono cursor-pointer transition-colors ${
                         selectedSurveyOption === oIdx
-                          ? "border-yellow-500/50 bg-yellow-500/5 text-yellow-300"
+                          ? "border-turquoise-500/50 bg-turquoise-500/5 text-turquoise-bright"
                           : "border-slate-800 bg-slate-900 hover:border-slate-750 text-slate-400"
                       }`}
                     >
@@ -403,7 +403,7 @@ How are you handling your processed sugar elimination challenge today? Let's for
 
           {/* AI Message limits warning */}
           <div className="p-3.5 rounded-2xl border border-slate-800/80 bg-slate-900/40 text-[10px] font-mono space-y-2">
-            <span className="text-yellow-400 font-bold uppercase flex items-center gap-1">
+            <span className="text-turquoise font-bold uppercase flex items-center gap-1">
               <AlertTriangle className="w-3.5 h-3.5" />
               <span>Query Token Cap</span>
             </span>
@@ -414,7 +414,7 @@ How are you handling your processed sugar elimination challenge today? Let's for
               <div className="pt-1.5 border-t border-slate-800 text-center">
                 <button
                   onClick={handleResetTokens}
-                  className="w-full py-1.5 rounded bg-gradient-to-r from-pink-500 to-yellow-500 text-slate-950 font-extrabold uppercase text-[9px]"
+                  className="w-full py-1.5 rounded bg-gradient-to-r from-pink-500 to-turquoise-500 text-slate-950 font-extrabold uppercase text-[9px]"
                 >
                   Unlock Unlimited with $5 P2P Donation
                 </button>
@@ -432,22 +432,22 @@ How are you handling your processed sugar elimination challenge today? Let's for
               onClick={() => setChatTab("ai")}
               className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold font-mono transition-all duration-300 focus:outline-none ${
                 chatTab === "ai"
-                  ? "bg-yellow-500/10 border border-yellow-500/30 text-yellow-300"
+                  ? "bg-turquoise-500/10 border border-turquoise-500/30 text-turquoise-bright"
                   : "text-slate-500 hover:text-slate-300 hover:bg-slate-900/30"
               }`}
             >
-              <Bot className="w-4 h-4 text-yellow-500" />
+              <Bot className="w-4 h-4 text-turquoise-dim" />
               <span>AI Companion (Streak Helper)</span>
             </button>
             <button
               onClick={() => setChatTab("tribe")}
               className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold font-mono transition-all duration-300 focus:outline-none ${
                 chatTab === "tribe"
-                  ? "bg-yellow-500/10 border border-yellow-500/30 text-yellow-300"
+                  ? "bg-turquoise-500/10 border border-turquoise-500/30 text-turquoise-bright"
                   : "text-slate-500 hover:text-slate-300 hover:bg-slate-900/30"
               }`}
             >
-              <MessageSquare className="w-4 h-4 text-yellow-500" />
+              <MessageSquare className="w-4 h-4 text-turquoise-dim" />
               <span>Tribe Broadcast (SSE Sync)</span>
             </button>
           </div>
@@ -463,11 +463,11 @@ How are you handling your processed sugar elimination challenge today? Let's for
                     className={`flex flex-col max-w-[85%] rounded-2xl p-3 border leading-relaxed text-xs shadow-md ${
                       isAi
                         ? "mr-auto rounded-tl-none border-slate-800/80 bg-slate-950/50 text-slate-200"
-                        : "ml-auto rounded-tr-none border-yellow-500/20 bg-yellow-500/10 text-yellow-100"
+                        : "ml-auto rounded-tr-none border-turquoise-500/20 bg-turquoise-500/10 text-turquoise-bright"
                     }`}
                   >
                     <div className="flex items-center justify-between border-b border-slate-800/40 pb-1 mb-1.5 text-[9px] font-mono font-semibold">
-                      <span className={isAi ? "text-yellow-400" : "text-slate-400"}>
+                      <span className={isAi ? "text-turquoise" : "text-slate-400"}>
                         {isAi ? "🤖 Moonbug Companion" : `👤 ${m.senderName}`}
                       </span>
                     </div>
@@ -477,7 +477,7 @@ How are you handling your processed sugar elimination challenge today? Let's for
                       <div className="flex justify-end mt-1.5 pt-1 border-t border-slate-900">
                         <button
                           onClick={() => handleSpeakText(m.text)}
-                          className="p-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-yellow-400 flex items-center gap-1 text-[8px] font-mono transition-colors"
+                          className="p-1 rounded bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-turquoise flex items-center gap-1 text-[8px] font-mono transition-colors"
                         >
                           <Volume2 className="w-3 h-3" />
                           <span>Narration</span>
@@ -496,11 +496,11 @@ How are you handling your processed sugar elimination challenge today? Let's for
                     className={`flex flex-col max-w-[85%] rounded-2xl p-3 border leading-relaxed text-xs shadow-md ${
                       !isMe
                         ? "mr-auto rounded-tl-none border-slate-800/85 bg-[#10121e]/50 text-slate-200"
-                        : "ml-auto rounded-tr-none border-yellow-500/20 bg-yellow-500/10 text-yellow-100"
+                        : "ml-auto rounded-tr-none border-turquoise-500/20 bg-turquoise-500/10 text-turquoise-bright"
                     }`}
                   >
                     <div className="flex items-center justify-between border-b border-slate-800/40 pb-1 mb-1.5 text-[9px] font-mono font-semibold">
-                      <span className={!isMe ? "text-cyan-400" : "text-yellow-400"}>
+                      <span className={!isMe ? "text-cyan-400" : "text-turquoise"}>
                         {m.senderName}
                       </span>
                       <span className="text-[8px] text-slate-500">
@@ -536,7 +536,7 @@ How are you handling your processed sugar elimination challenge today? Let's for
                   <button
                     key={cIdx}
                     onClick={() => handleSendTribeMessage(comment)}
-                    className="px-2 py-0.5 rounded border border-slate-800 hover:border-yellow-500/40 bg-slate-950 text-[9px] font-mono text-slate-400 hover:text-yellow-400 transition-colors"
+                    className="px-2 py-0.5 rounded border border-slate-800 hover:border-turquoise-500/40 bg-slate-950 text-[9px] font-mono text-slate-400 hover:text-turquoise transition-colors"
                   >
                     {comment}
                   </button>
@@ -566,11 +566,11 @@ How are you handling your processed sugar elimination challenge today? Let's for
                       value={aiInput}
                       onChange={(e) => setAiInput(e.target.value)}
                       placeholder="Coordinate with AI: Ask about routines, metrics, goals..."
-                      className="flex-1 p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-yellow-500/60 font-mono"
+                      className="flex-1 p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-turquoise-500/60 font-mono"
                     />
                     <button
                       type="submit"
-                      className="p-2.5 rounded-xl bg-yellow-500 text-slate-950 hover:bg-yellow-400 transition-colors focus:outline-none"
+                      className="p-2.5 rounded-xl bg-turquoise-500 text-slate-950 hover:bg-turquoise-400 transition-colors focus:outline-none"
                     >
                       <Send className="w-4 h-4" />
                     </button>
@@ -590,11 +590,11 @@ How are you handling your processed sugar elimination challenge today? Let's for
                   value={tribeInput}
                   onChange={(e) => setTribeInput(e.target.value)}
                   placeholder="Broadcast live custom message (costs exactly 5 XP)..."
-                  className="flex-1 p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-yellow-500/60 font-mono"
+                  className="flex-1 p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-turquoise-500/60 font-mono"
                 />
                 <button
                   type="submit"
-                  className="p-2.5 rounded-xl bg-yellow-500 text-slate-950 hover:bg-yellow-400 transition-colors focus:outline-none font-mono font-bold text-xs flex items-center gap-1 shrink-0"
+                  className="p-2.5 rounded-xl bg-turquoise-500 text-slate-950 hover:bg-turquoise-400 transition-colors focus:outline-none font-mono font-bold text-xs flex items-center gap-1 shrink-0"
                 >
                   <span>Broadcast</span>
                   <Send className="w-3.5 h-3.5" />

@@ -127,7 +127,7 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
       uncommon: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30",
       rare: "bg-indigo-500/10 text-indigo-400 border border-indigo-500/30",
       epic: "bg-fuchsia-500/10 text-fuchsia-400 border border-fuchsia-500/30",
-      legendary: "bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 animate-pulse"
+      legendary: "bg-turquoise-500/10 text-turquoise border border-turquoise-500/30 animate-pulse"
     };
     return badges[rarity] || badges.common;
   };
@@ -159,7 +159,7 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
           onClick={() => { setActiveTab("events"); setSearchQuery(""); }}
           className={`flex-1 py-2 rounded-xl text-xs font-bold font-mono transition-all duration-300 focus:outline-none ${
             activeTab === "events"
-              ? "bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 shadow"
+              ? "bg-turquoise-500/10 border border-turquoise-500/30 text-turquoise-bright shadow"
               : "text-slate-500 hover:text-slate-300"
           }`}
         >
@@ -169,7 +169,7 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
           onClick={() => { setActiveTab("challenges"); setSearchQuery(""); }}
           className={`flex-1 py-2 rounded-xl text-xs font-bold font-mono transition-all duration-300 focus:outline-none ${
             activeTab === "challenges"
-              ? "bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 shadow"
+              ? "bg-turquoise-500/10 border border-turquoise-500/30 text-turquoise-bright shadow"
               : "text-slate-500 hover:text-slate-300"
           }`}
         >
@@ -184,7 +184,7 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={activeTab === "events" ? "🔍 Search all 2026 events offline..." : "🔍 Search community challenges..."}
-          className="w-full p-2.5 rounded-xl border border-slate-800 bg-slate-950/80 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-yellow-500/50 font-mono transition-all shadow-inner focus:ring-1 focus:ring-yellow-500/30"
+          className="w-full p-2.5 rounded-xl border border-slate-800 bg-slate-950/80 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-turquoise-500/50 font-mono transition-all shadow-inner focus:ring-1 focus:ring-turquoise-500/30"
         />
         {searchQuery && (
           <button
@@ -207,7 +207,7 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
                 onMouseEnter={() => setHoveredId(ev.id)}
                 onMouseLeave={() => setHoveredId(null)}
                 onClick={() => setSelectedItem({ type: "event", data: ev })}
-                className="group relative cursor-pointer p-4 rounded-2xl border border-slate-800 bg-slate-900/40 hover:border-yellow-500/40 hover:shadow-2xl hover:shadow-yellow-500/5 transition-all duration-300 flex flex-col justify-between h-48 overflow-hidden"
+                className="group relative cursor-pointer p-4 rounded-2xl border border-slate-800 bg-slate-900/40 hover:border-turquoise-500/40 hover:shadow-2xl hover:shadow-turquoise-500/5 transition-all duration-300 flex flex-col justify-between h-48 overflow-hidden"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">
@@ -219,7 +219,7 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
                     </span>
                   </div>
 
-                  <h4 className="text-sm font-bold font-mono text-slate-100 group-hover:text-yellow-400 transition-colors">
+                  <h4 className="text-sm font-bold font-mono text-slate-100 group-hover:text-turquoise transition-colors">
                     {ev.title}
                   </h4>
 
@@ -230,7 +230,7 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
 
                 <div className="flex items-center justify-between border-t border-slate-800/80 pt-2 text-[10px] font-mono">
                   {/* Majestic Popout (Click Me) Hint */}
-                  <span className={`text-yellow-400 font-bold transition-all duration-300 ${
+                  <span className={`text-turquoise font-bold transition-all duration-300 ${
                     isHovered ? "translate-x-1 opacity-100 animate-pulse" : "opacity-0"
                   }`}>
                     (click to view simulation) &rarr;
@@ -259,7 +259,7 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
                 onMouseEnter={() => setHoveredId(ch.id)}
                 onMouseLeave={() => setHoveredId(null)}
                 onClick={() => setSelectedItem({ type: "challenge", data: ch })}
-                className="group relative cursor-pointer p-4 rounded-2xl border border-slate-800 bg-[#0c0d16]/40 hover:border-yellow-500/40 hover:shadow-2xl hover:shadow-yellow-500/5 transition-all duration-300 flex flex-col justify-between h-48 overflow-hidden"
+                className="group relative cursor-pointer p-4 rounded-2xl border border-slate-800 bg-[#0c0d16]/40 hover:border-turquoise-500/40 hover:shadow-2xl hover:shadow-turquoise-500/5 transition-all duration-300 flex flex-col justify-between h-48 overflow-hidden"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">
@@ -271,13 +271,13 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
                         ✓ Complete
                       </span>
                     ) : (
-                      <span className="text-[8px] font-mono font-bold px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 uppercase tracking-wider animate-pulse">
+                      <span className="text-[8px] font-mono font-bold px-2 py-0.5 rounded-full bg-turquoise-500/10 text-turquoise border border-turquoise-500/30 uppercase tracking-wider animate-pulse">
                         Active
                       </span>
                     )}
                   </div>
 
-                  <h4 className="text-sm font-bold font-mono text-slate-100 group-hover:text-yellow-400 transition-colors">
+                  <h4 className="text-sm font-bold font-mono text-slate-100 group-hover:text-turquoise transition-colors">
                     {ch.title}
                   </h4>
 
@@ -288,7 +288,7 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
 
                 <div className="flex items-center justify-between border-t border-slate-800/80 pt-2 text-[10px] font-mono">
                   {/* Majestic Popout Hint */}
-                  <span className={`text-yellow-400 font-bold transition-all duration-300 ${
+                  <span className={`text-turquoise font-bold transition-all duration-300 ${
                     isHovered ? "translate-x-1 opacity-100 animate-pulse" : "opacity-0"
                   }`}>
                     (details forum) &rarr;
@@ -325,14 +325,14 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
                   Astronomy Portal Forum
                 </span>
                 <span className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ${
-                  selectedItem.type === "event" ? getRarityBadge(selectedItem.data.rarity) : "bg-yellow-500 text-slate-950 font-extrabold"
+                  selectedItem.type === "event" ? getRarityBadge(selectedItem.data.rarity) : "bg-turquoise-500 text-slate-950 font-extrabold"
                 }`}>
                   {selectedItem.type === "event" ? selectedItem.data.rarity : `Reward: +${selectedItem.data.rewardXp} XP`}
                 </span>
               </div>
 
               <h3 className="text-base font-bold font-mono text-slate-100 flex items-center gap-2">
-                <Compass className="w-5 h-5 text-yellow-500" />
+                <Compass className="w-5 h-5 text-turquoise-dim" />
                 <span>{selectedItem.data.title}</span>
               </h3>
 
@@ -351,7 +351,7 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
                   <button
                     onClick={startTransitSimulation}
                     disabled={isTransiting}
-                    className="absolute top-2 right-2 px-2 py-0.5 rounded bg-yellow-500 hover:bg-yellow-400 text-[8px] font-mono font-bold text-slate-950 flex items-center gap-1 transition-all disabled:opacity-50"
+                    className="absolute top-2 right-2 px-2 py-0.5 rounded bg-turquoise-500 hover:bg-turquoise-400 text-[8px] font-mono font-bold text-slate-950 flex items-center gap-1 transition-all disabled:opacity-50"
                   >
                     <Play className="w-2 h-2" />
                     <span>{isTransiting ? "Simulating..." : "Trigger Simulation"}</span>
@@ -362,12 +362,12 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
                     {selectedItem.data.id === "eclipse-2026" && (
                       <div className="relative">
                         {/* Starry corona glow backdrop */}
-                        <div className="absolute inset-0 bg-yellow-100 rounded-full w-20 h-20 blur-xl opacity-70 animate-pulse" />
+                        <div className="absolute inset-0 bg-turquoise-100 rounded-full w-20 h-20 blur-xl opacity-70 animate-pulse" />
                         {/* Sun base */}
-                        <div className="bg-yellow-400 rounded-full w-20 h-20 shadow-lg shadow-yellow-500/50" />
+                        <div className="bg-turquoise-400 rounded-full w-20 h-20 shadow-lg shadow-turquoise-500/50" />
                         {/* Shadow Moon covering */}
                         <div
-                          className="absolute bg-[#05060b] rounded-full w-20 h-20 border-2 border-yellow-500/20"
+                          className="absolute bg-[#05060b] rounded-full w-20 h-20 border-2 border-turquoise-500/20"
                           style={{
                             left: isTransiting ? `${(transitPercent / 100) * 80 - 40}px` : "0px",
                             opacity: isTransiting ? 1 : 0.9
@@ -380,7 +380,7 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
                       <div className="relative w-full h-full">
                         {/* Meteor shower streaks */}
                         <div className="absolute top-2 left-2 bg-gradient-to-r from-transparent via-white to-cyan-300 w-16 h-0.5 -rotate-45 opacity-80" />
-                        <div className="absolute top-10 left-12 bg-gradient-to-r from-transparent via-white to-amber-300 w-24 h-0.5 -rotate-45 opacity-60" />
+                        <div className="absolute top-10 left-12 bg-gradient-to-r from-transparent via-white to-turquoise-300 w-24 h-0.5 -rotate-45 opacity-60" />
                         <div className="absolute top-6 left-28 bg-gradient-to-r from-transparent via-white to-cyan-300 w-12 h-0.5 -rotate-45 opacity-90 animate-pulse" />
                         {/* Big shooting meteor */}
                         <div
@@ -397,7 +397,7 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
                     {selectedItem.data.id === "iss-lunar-transit" && (
                       <div className="relative w-24 h-24">
                         {/* Moon Sphere */}
-                        <div className="bg-amber-100/90 rounded-full w-24 h-24 shadow-inner border border-slate-700/60 overflow-hidden relative">
+                        <div className="bg-turquoise-100/90 rounded-full w-24 h-24 shadow-inner border border-slate-700/60 overflow-hidden relative">
                           <div className="absolute top-4 left-6 bg-slate-300/40 rounded-full w-4 h-4" />
                           <div className="absolute top-12 left-12 bg-slate-300/30 rounded-full w-6 h-6" />
                         </div>
@@ -418,14 +418,14 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
                     {selectedItem.data.id === "supermoon-july" && (
                       <div className="relative">
                         <div
-                          className="bg-gradient-to-r from-amber-200 to-yellow-500 rounded-full w-24 h-24 shadow-2xl border border-yellow-400 overflow-hidden relative transition-all duration-1000"
+                          className="bg-gradient-to-r from-turquoise-200 to-turquoise-500 rounded-full w-24 h-24 shadow-2xl border border-turquoise-400 overflow-hidden relative transition-all duration-1000"
                           style={{
                             transform: isTransiting ? "scale(1.2)" : "scale(1.0)",
                             boxShadow: isTransiting ? "0 0 40px #f59e0b" : "0 0 20px rgba(245, 158, 11, 0.4)"
                           }}
                         >
-                          <div className="absolute top-4 left-6 bg-yellow-600/20 rounded-full w-6 h-6" />
-                          <div className="absolute top-12 left-12 bg-yellow-600/10 rounded-full w-8 h-8" />
+                          <div className="absolute top-4 left-6 bg-turquoise-600/20 rounded-full w-6 h-6" />
+                          <div className="absolute top-12 left-12 bg-turquoise-600/10 rounded-full w-8 h-8" />
                         </div>
                       </div>
                     )}
@@ -439,10 +439,10 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
 
               {/* CHALLENGE COMPONENT MODULE */}
               {selectedItem.type === "challenge" && (
-                <div className="p-4 rounded-xl border border-yellow-500/20 bg-yellow-500/5 space-y-2">
+                <div className="p-4 rounded-xl border border-turquoise-500/20 bg-turquoise-500/5 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold font-mono text-yellow-300 flex items-center gap-1">
-                      <Award className="w-4 h-4 text-yellow-500 animate-spin-slow" />
+                    <span className="text-xs font-bold font-mono text-turquoise-bright flex items-center gap-1">
+                      <Award className="w-4 h-4 text-turquoise-dim animate-spin-slow" />
                       <span>Assignment Protocol</span>
                     </span>
                     <span className="text-[10px] font-mono text-slate-400 font-bold">Value: +{selectedItem.data.rewardXp} XP</span>
@@ -462,7 +462,7 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
                       ) : (
                         <button
                           onClick={() => handleCompleteChallenge(selectedItem.data.id)}
-                          className="px-4 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-slate-950 text-xs font-extrabold uppercase shadow transition-colors"
+                          className="px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 text-xs font-extrabold uppercase shadow transition-colors"
                         >
                           Log Challenge Complete
                         </button>
@@ -485,7 +485,7 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
                     selectedItem.data.comments.map((c: any) => (
                       <div key={c.id} className="p-2.5 rounded-xl border border-slate-800/80 bg-slate-950/60 leading-normal">
                         <div className="flex items-center justify-between mb-1 text-[9px] font-mono">
-                          <span className="text-yellow-400 font-bold">{c.author}</span>
+                          <span className="text-turquoise font-bold">{c.author}</span>
                           <span className="text-slate-500">{new Date(c.timestamp).toLocaleString()}</span>
                         </div>
                         <p className="text-[11px] text-slate-300">{c.text}</p>
@@ -500,11 +500,11 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
                     placeholder="Log your observation details, clarity reports, or remarks..."
-                    className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 placeholder-slate-500 flex-1 focus:outline-none focus:border-yellow-500/50"
+                    className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 placeholder-slate-500 flex-1 focus:outline-none focus:border-turquoise-500/50"
                   />
                   <button
                     onClick={handlePostComment}
-                    className="p-2.5 rounded-xl bg-yellow-500 text-slate-950 hover:bg-yellow-400 font-bold text-xs"
+                    className="p-2.5 rounded-xl bg-turquoise-500 text-slate-950 hover:bg-turquoise-400 font-bold text-xs"
                   >
                     Post Log
                   </button>

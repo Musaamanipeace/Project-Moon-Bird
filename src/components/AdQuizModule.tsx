@@ -164,7 +164,7 @@ export default function AdQuizModule({ xp, onAddXp }: AdQuizModuleProps) {
     <section className="bg-[#0b0c15] border border-slate-800 p-5 rounded-2xl backdrop-blur-md relative space-y-4">
       <div className="flex items-center justify-between border-b border-slate-800/85 pb-3">
         <div>
-          <h3 className="text-xs font-bold font-mono text-yellow-400 uppercase tracking-widest flex items-center gap-2">
+          <h3 className="text-xs font-bold font-mono text-turquoise uppercase tracking-widest flex items-center gap-2">
             📢 ADVERTISER ECONOMIC LOOP (Bypass Google Ads)
           </h3>
           <p className="text-[10px] text-slate-400 font-mono mt-0.5">
@@ -186,12 +186,12 @@ export default function AdQuizModule({ xp, onAddXp }: AdQuizModuleProps) {
                 className={`p-4 rounded-xl border transition-all ${
                   isDone 
                     ? "border-emerald-500/20 bg-emerald-950/5 opacity-80" 
-                    : "border-slate-800/80 bg-slate-950/30 hover:border-yellow-500/25"
+                    : "border-slate-800/80 bg-slate-950/30 hover:border-turquoise-500/25"
                 }`}
               >
                 <div className="flex justify-between items-start gap-2">
                   <span className="text-[9px] font-mono text-slate-500 uppercase">{ad.sponsor}</span>
-                  <span className="text-[9px] font-mono font-bold text-yellow-400">
+                  <span className="text-[9px] font-mono font-bold text-turquoise">
                     +{ad.payout} XP Reward
                   </span>
                 </div>
@@ -206,7 +206,7 @@ export default function AdQuizModule({ xp, onAddXp }: AdQuizModuleProps) {
                   ) : (
                     <button
                       onClick={() => handleStartEngagement(ad)}
-                      className="px-3 py-1.5 rounded-lg bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-mono font-bold text-[9.5px] uppercase transition-colors"
+                      className="px-3 py-1.5 rounded-lg bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-mono font-bold text-[9.5px] uppercase transition-colors"
                     >
                       Voluntary Engage & Earn &rarr;
                     </button>
@@ -218,7 +218,7 @@ export default function AdQuizModule({ xp, onAddXp }: AdQuizModuleProps) {
           })}
         </div>
       ) : (
-        <div className="p-4 rounded-xl border border-yellow-500/25 bg-slate-950/60 space-y-4">
+        <div className="p-4 rounded-xl border border-turquoise-500/25 bg-slate-950/60 space-y-4">
           {/* Active Engagement Sub-panel */}
           <div className="flex justify-between items-center border-b border-slate-900 pb-2">
             <div>
@@ -262,7 +262,7 @@ export default function AdQuizModule({ xp, onAddXp }: AdQuizModuleProps) {
                   <button
                     key={oIdx}
                     onClick={() => handleSelectOption(oIdx)}
-                    className="w-full text-left p-2.5 rounded-lg border border-slate-800 bg-slate-900 text-[10.5px] text-slate-300 hover:border-yellow-500/40 hover:bg-slate-950 transition-colors focus:outline-none font-sans"
+                    className="w-full text-left p-2.5 rounded-lg border border-slate-800 bg-slate-900 text-[10.5px] text-slate-300 hover:border-turquoise-500/40 hover:bg-slate-950 transition-colors focus:outline-none font-sans"
                   >
                     {oIdx + 1}. {opt}
                   </button>
@@ -284,11 +284,11 @@ export default function AdQuizModule({ xp, onAddXp }: AdQuizModuleProps) {
                 value={userComment}
                 onChange={(e) => setUserComment(e.target.value)}
                 placeholder="e.g. This seems like a great meetup, I want to write bare-metal Rust on lunar sensors."
-                className="w-full p-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs text-slate-200 focus:outline-none focus:border-yellow-500/50 min-h-[60px]"
+                className="w-full p-2.5 rounded-xl border border-slate-800 bg-slate-900 text-xs text-slate-200 focus:outline-none focus:border-turquoise-500/50 min-h-[60px]"
               />
               <button
                 onClick={handleSaveComment}
-                className="px-4 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-mono font-bold text-xs uppercase"
+                className="px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-mono font-bold text-xs uppercase"
               >
                 Log Comment & Claim {activeAd.payout} XP
               </button>
@@ -300,7 +300,7 @@ export default function AdQuizModule({ xp, onAddXp }: AdQuizModuleProps) {
               <span className="text-4xl block">✨</span>
               <h4 className="text-xs font-bold text-emerald-400">Escrow Payout Disbursed!</h4>
               <span className="text-[10.5px] text-slate-300 font-mono block">
-                Logged successfully. You earned <span className="font-bold text-yellow-400">+{activeAd.payout} XP</span>!
+                Logged successfully. You earned <span className="font-bold text-turquoise">+{activeAd.payout} XP</span>!
               </span>
               <div className="pt-2 flex justify-center gap-2">
                 <button
@@ -315,7 +315,7 @@ export default function AdQuizModule({ xp, onAddXp }: AdQuizModuleProps) {
                     setActiveAd(null);
                     setQuizStep(null);
                   }}
-                  className="px-4 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-slate-950 text-xs font-mono font-bold uppercase"
+                  className="px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 text-xs font-mono font-bold uppercase"
                 >
                   Back to Ads Directory
                 </button>

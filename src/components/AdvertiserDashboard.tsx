@@ -55,7 +55,7 @@ interface AdvertiserDashboardProps {
   onNavigateToView?: (view: string) => void;
 }
 
-const DEFAULT_ADS: Ad[] = [
+export const DEFAULT_ADS: Ad[] = [
   {
     id: "ad-sponsored-1",
     brandName: "AstroVibe Espresso",
@@ -522,14 +522,14 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
       
       {/* HEADER HUD */}
       <div className="bg-slate-900/40 border border-slate-800 p-6 rounded-2xl relative overflow-hidden backdrop-blur-xl">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-yellow-500/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-80 h-80 bg-turquoise-500/5 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
         
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold font-mono text-yellow-400 bg-yellow-400/10 px-2.5 py-0.5 rounded-full border border-yellow-400/20 uppercase tracking-widest flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-yellow-400" />
+              <span className="text-xs font-bold font-mono text-turquoise bg-turquoise-400/10 px-2.5 py-0.5 rounded-full border border-turquoise-400/20 uppercase tracking-widest flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-turquoise" />
                 <span>Dual-Tier Ad Registry</span>
               </span>
               <span className="text-xs font-bold font-mono text-emerald-400 bg-emerald-400/10 px-2.5 py-0.5 rounded-full border border-emerald-400/20 uppercase">
@@ -544,13 +544,13 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
 
           {/* User Scorebox */}
           <div className="bg-[#0b0c14] border border-slate-800 p-4 rounded-xl flex items-center gap-4 shadow-inner min-w-[200px]">
-            <div className="p-2.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-              <Award className="w-5 h-5 text-yellow-400" />
+            <div className="p-2.5 rounded-lg bg-turquoise-500/10 border border-turquoise-500/20">
+              <Award className="w-5 h-5 text-turquoise" />
             </div>
             <div className="font-mono space-y-0.5">
               <span className="text-[10px] text-slate-500 uppercase block">Watcher Profile</span>
               <span className="text-xs font-bold text-slate-300 block">{nickname || "Cosmic Traveler"}</span>
-              <span className="text-xs font-black text-yellow-400 flex items-center gap-1">
+              <span className="text-xs font-black text-turquoise flex items-center gap-1">
                 {xp} <span className="text-[10px] text-slate-500 font-bold">XP Level</span>
               </span>
             </div>
@@ -567,7 +567,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                 : "text-slate-400 hover:text-slate-200"
             }`}
           >
-            <Play className="w-4 h-4 text-yellow-400" />
+            <Play className="w-4 h-4 text-turquoise" />
             <span>📺 Watcher Feed</span>
           </button>
           
@@ -605,8 +605,8 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-2 h-2 rounded-full bg-yellow-400 animate-ping" />
-                <h3 className="text-sm font-bold font-mono uppercase tracking-wider text-yellow-400">
+                <div className="w-2 h-2 rounded-full bg-turquoise-400 animate-ping" />
+                <h3 className="text-sm font-bold font-mono uppercase tracking-wider text-turquoise">
                   ⚡ Premium Sponsored Campaigns (Guaranteed XP Payouts)
                 </h3>
               </div>
@@ -617,10 +617,10 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
               {ads.filter(a => a.category === "sponsored" && a.status === "active").map(ad => (
                 <div 
                   key={ad.id}
-                  className="bg-gradient-to-b from-[#161309] to-[#0a0a0c] border border-yellow-500/20 hover:border-yellow-500/40 p-4 rounded-2xl shadow-xl transition-all duration-300 relative group flex flex-col justify-between h-full"
+                  className="bg-gradient-to-b from-[#161309] to-[#0a0a0c] border border-turquoise-500/20 hover:border-turquoise-500/40 p-4 rounded-2xl shadow-xl transition-all duration-300 relative group flex flex-col justify-between h-full"
                 >
                   <div className="absolute top-3 right-3 z-10">
-                    <span className="bg-yellow-400 text-slate-950 font-black font-mono text-[9px] px-2 py-0.5 rounded-full uppercase tracking-widest shadow-md flex items-center gap-1 animate-pulse">
+                    <span className="bg-turquoise-400 text-slate-950 font-black font-mono text-[9px] px-2 py-0.5 rounded-full uppercase tracking-widest shadow-md flex items-center gap-1 animate-pulse">
                       <Award className="w-2.5 h-2.5" />
                       <span>+{ad.rewardAmount} XP</span>
                     </span>
@@ -628,7 +628,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
 
                   <div>
                     {/* Media frame */}
-                    <div className="relative aspect-video rounded-xl overflow-hidden bg-black/60 border border-slate-800 mb-3.5 group-hover:border-yellow-500/10 transition-all">
+                    <div className="relative aspect-video rounded-xl overflow-hidden bg-black/60 border border-slate-800 mb-3.5 group-hover:border-turquoise-500/10 transition-all">
                       <img 
                         src={ad.mediaUrl} 
                         alt={ad.title} 
@@ -637,7 +637,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                       <div className="absolute bottom-2 left-2 flex items-center gap-1.5">
-                        <span className="text-[8px] font-mono font-bold bg-slate-900/90 text-yellow-400 px-1.5 py-0.5 rounded uppercase border border-yellow-500/10">
+                        <span className="text-[8px] font-mono font-bold bg-slate-900/90 text-turquoise px-1.5 py-0.5 rounded uppercase border border-turquoise-500/10">
                           {ad.adType === "tv_commercial" ? "📺 TV Commercial" : ad.adType === "review" ? "🎤 Video Review" : "🖼️ Banner"}
                         </span>
                       </div>
@@ -647,14 +647,14 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                         onClick={() => handleWatchAd(ad)}
                         className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-all duration-300"
                       >
-                        <div className="p-3.5 rounded-full bg-yellow-400 text-slate-950 shadow-lg transform scale-90 group-hover:scale-100 transition-all duration-300">
+                        <div className="p-3.5 rounded-full bg-turquoise-400 text-slate-950 shadow-lg transform scale-90 group-hover:scale-100 transition-all duration-300">
                           <Play className="w-5 h-5 fill-current" />
                         </div>
                       </button>
                     </div>
 
                     <div className="space-y-1.5">
-                      <span className="text-[10px] font-mono text-yellow-500 uppercase font-black tracking-wider block">
+                      <span className="text-[10px] font-mono text-turquoise-dim uppercase font-black tracking-wider block">
                         Sponsored • {ad.brandName}
                       </span>
                       <h4 className="text-xs font-bold font-mono text-slate-100 line-clamp-1 leading-snug">
@@ -670,7 +670,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                   <div className="mt-4 pt-3.5 border-t border-slate-900 flex flex-col gap-2">
                     <button
                       onClick={() => handleWatchAd(ad)}
-                      className="w-full py-2 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-black font-mono text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-md"
+                      className="w-full py-2 rounded-xl bg-turquoise-400 hover:bg-turquoise-300 text-slate-950 font-black font-mono text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-md"
                     >
                       <Play className="w-3.5 h-3.5 fill-current" />
                       <span>Watch & Earn +{ad.rewardAmount} XP</span>
@@ -681,7 +681,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                       <div className="flex items-center gap-3">
                         <button 
                           onClick={() => handleLikeAd(ad.id, true)}
-                          className="hover:text-yellow-400 flex items-center gap-1.5 transition-all"
+                          className="hover:text-turquoise flex items-center gap-1.5 transition-all"
                           title="Like sponsored ad"
                         >
                           <ThumbsUp className="w-3 h-3" />
@@ -689,7 +689,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                         </button>
                         <button 
                           onClick={() => handleShareAd(ad.id, true)}
-                          className="hover:text-yellow-400 flex items-center gap-1.5 transition-all"
+                          className="hover:text-turquoise flex items-center gap-1.5 transition-all"
                           title="Share ad"
                         >
                           <Share2 className="w-3 h-3" />
@@ -858,13 +858,13 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                     }}
                     className={`p-3.5 rounded-xl border text-left transition-all ${
                       adCategory === "sponsored"
-                        ? "border-yellow-500/50 bg-yellow-500/10"
+                        ? "border-turquoise-500/50 bg-turquoise-500/10"
                         : "border-slate-800 bg-[#0c0d16] hover:border-slate-700"
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs font-bold font-mono text-slate-200">Corporate Sponsored</span>
-                      <Sparkles className={`w-4 h-4 ${adCategory === "sponsored" ? "text-yellow-400 animate-pulse" : "text-slate-600"}`} />
+                      <Sparkles className={`w-4 h-4 ${adCategory === "sponsored" ? "text-turquoise animate-pulse" : "text-slate-600"}`} />
                     </div>
                     <p className="text-[10px] text-slate-400 leading-normal">
                       Requires funding budget. Watchers get paid profile XP upon completion. Displays at top with upper-hand priority.
@@ -1031,10 +1031,10 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
 
               {/* Dynamic Budget Slider */}
               {adCategory === "sponsored" && (
-                <div className="p-4 rounded-xl border border-yellow-500/10 bg-yellow-500/5 space-y-2">
+                <div className="p-4 rounded-xl border border-turquoise-500/10 bg-turquoise-500/5 space-y-2">
                   <div className="flex justify-between items-center font-mono text-xs">
                     <span className="text-slate-400 uppercase tracking-wide font-bold">Campaign Payout Bid Budget</span>
-                    <span className="text-yellow-400 font-black">${budget}.00 USD</span>
+                    <span className="text-turquoise font-black">${budget}.00 USD</span>
                   </div>
                   <input
                     type="range"
@@ -1043,11 +1043,11 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                     step="50"
                     value={budget}
                     onChange={(e) => setBudget(Number(e.target.value))}
-                    className="w-full accent-yellow-400 h-1 bg-slate-800 rounded-lg cursor-pointer"
+                    className="w-full accent-turquoise-400 h-1 bg-slate-800 rounded-lg cursor-pointer"
                   />
                   <div className="flex justify-between text-[10px] text-slate-400 font-mono pt-1">
                     <span>Est. Watcher Impressions: {(budget * 100).toLocaleString()}</span>
-                    <span className="text-yellow-400 font-bold">
+                    <span className="text-turquoise font-bold">
                       Payout: {budget >= 500 ? "30 XP / watcher" : budget >= 250 ? "25 XP / watcher" : "15 XP / watcher"}
                     </span>
                   </div>
@@ -1058,7 +1058,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                 type="submit"
                 className={`w-full py-3 rounded-xl font-bold font-mono text-xs uppercase tracking-widest transition-all ${
                   adCategory === "sponsored"
-                    ? "bg-yellow-400 hover:bg-yellow-300 text-slate-950"
+                    ? "bg-turquoise-400 hover:bg-turquoise-300 text-slate-950"
                     : "bg-emerald-500 hover:bg-emerald-400 text-slate-950"
                 }`}
               >
@@ -1070,7 +1070,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
           {/* RIGHT 1 COL: RUNNING LEDGER */}
           <div className="space-y-6">
             <div className="bg-[#0b0c15]/90 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
-              <h3 className="text-xs font-bold font-mono text-yellow-500 uppercase tracking-wider">
+              <h3 className="text-xs font-bold font-mono text-turquoise-dim uppercase tracking-wider">
                 📂 Active Registry Ledger
               </h3>
               <p className="text-[10px] text-slate-500 font-mono leading-relaxed">
@@ -1088,7 +1088,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                         <span className="font-bold text-slate-300 block font-mono line-clamp-1">{ad.brandName}</span>
                         <span className={`text-[8px] font-mono uppercase px-1.5 py-0.2 rounded ${
                           ad.category === "sponsored" 
-                            ? "bg-yellow-400/10 text-yellow-400 border border-yellow-400/20" 
+                            ? "bg-turquoise-400/10 text-turquoise border border-turquoise-400/20" 
                             : "bg-emerald-400/10 text-emerald-400 border border-emerald-400/20"
                         }`}>
                           {ad.category === "sponsored" ? "Sponsored" : "Free User"}
@@ -1155,7 +1155,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
 
             <div className="p-5 rounded-2xl border border-slate-800 bg-[#0b0c15]/80 space-y-1.5">
               <span className="text-[10px] font-mono text-slate-500 uppercase tracking-wider block">Total Clicks</span>
-              <span className="text-2xl font-black font-mono text-yellow-400 block">
+              <span className="text-2xl font-black font-mono text-turquoise block">
                 {totalClicks.toLocaleString()}
               </span>
               <span className="text-[9px] text-slate-500 font-mono block">Direct traffic redirects</span>
@@ -1188,8 +1188,8 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                   <p className="text-[10px] text-slate-500 font-mono">Comparing total impressions over lunar cycles</p>
                 </div>
                 <div className="flex items-center gap-3 text-[10px] font-mono">
-                  <span className="flex items-center gap-1.5 text-yellow-400">
-                    <span className="w-2.5 h-2.5 rounded-full bg-yellow-400" /> Sponsored Ads
+                  <span className="flex items-center gap-1.5 text-turquoise">
+                    <span className="w-2.5 h-2.5 rounded-full bg-turquoise-400" /> Sponsored Ads
                   </span>
                   <span className="flex items-center gap-1.5 text-emerald-400">
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Free User Ads
@@ -1219,10 +1219,10 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                       <div className="w-full flex justify-center gap-1 items-end h-32">
                         {/* Sponsored Column */}
                         <div 
-                          className="w-3 rounded-t-sm bg-gradient-to-t from-yellow-600 to-yellow-400 hover:brightness-110 transition-all relative group" 
+                          className="w-3 rounded-t-sm bg-gradient-to-t from-turquoise-600 to-turquoise-400 hover:brightness-110 transition-all relative group" 
                           style={{ height: `${(cycle.sponsored / 150) * 100}%` }}
                         >
-                          <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-slate-950 border border-slate-800 p-1 rounded font-mono text-[8px] text-yellow-400 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all z-20">
+                          <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 bg-slate-950 border border-slate-800 p-1 rounded font-mono text-[8px] text-turquoise whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all z-20">
                             {cycle.sponsored * 100} views
                           </div>
                         </div>
@@ -1310,8 +1310,8 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                   {/* Dynamic Playback controls simulation */}
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-[11px] font-mono text-white">
-                      <span className="bg-slate-900/90 border border-slate-800/80 text-yellow-400 px-2 py-0.5 rounded font-bold uppercase tracking-wider flex items-center gap-1">
-                        <Sparkles className="w-3 h-3 text-yellow-400" />
+                      <span className="bg-slate-900/90 border border-slate-800/80 text-turquoise px-2 py-0.5 rounded font-bold uppercase tracking-wider flex items-center gap-1">
+                        <Sparkles className="w-3 h-3 text-turquoise" />
                         <span>Corporate Sponsor Feed</span>
                       </span>
                       <span>Simulated High-Definition Playback</span>
@@ -1324,7 +1324,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                       {/* Progress bar */}
                       <div className="flex-1 bg-slate-800/80 h-1.5 rounded-full overflow-hidden border border-slate-950">
                         <div 
-                          className="bg-yellow-400 h-full rounded-full transition-all duration-1000"
+                          className="bg-turquoise-400 h-full rounded-full transition-all duration-1000"
                           style={{ width: `${progressPercent}%` }}
                         />
                       </div>
@@ -1341,14 +1341,14 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                   {canSkip ? (
                     <button
                       onClick={handleClaimReward}
-                      className="px-4 py-2 bg-yellow-400 hover:bg-yellow-300 text-slate-950 text-xs font-black font-mono uppercase tracking-widest rounded-xl shadow-2xl transition-all flex items-center gap-1.5 animate-bounce"
+                      className="px-4 py-2 bg-turquoise-400 hover:bg-turquoise-300 text-slate-950 text-xs font-black font-mono uppercase tracking-widest rounded-xl shadow-2xl transition-all flex items-center gap-1.5 animate-bounce"
                     >
                       <span>Claim +{watchingAd.rewardAmount} XP Reward</span>
                       <Award className="w-4 h-4 fill-current" />
                     </button>
                   ) : (
                     <div className="px-3 py-1.5 bg-black/80 backdrop-blur-md rounded-lg border border-slate-800 text-[10px] font-mono text-slate-300 flex items-center gap-2">
-                      <div className="w-3 h-3 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-3 h-3 border-2 border-turquoise-400 border-t-transparent rounded-full animate-spin" />
                       <span>Skippable in {secondsRemaining}s...</span>
                     </div>
                   )}
@@ -1368,7 +1368,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
               <div className="p-6 space-y-4 bg-[#080910]">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold font-mono text-yellow-400 uppercase tracking-widest">
+                    <span className="text-xs font-bold font-mono text-turquoise uppercase tracking-widest">
                       {watchingAd.brandName}
                     </span>
                     <span className="text-[10px] font-mono text-slate-500">
@@ -1381,7 +1381,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
 
                 <div className="pt-4 border-t border-slate-900 flex justify-between items-center text-xs font-mono">
                   <div className="text-slate-500">
-                    Watching awards you guaranteed <span className="text-yellow-400 font-bold">{watchingAd.rewardAmount} XP</span>.
+                    Watching awards you guaranteed <span className="text-turquoise font-bold">{watchingAd.rewardAmount} XP</span>.
                   </div>
                   <div className="flex gap-2">
                     {canSkip && (
@@ -1418,7 +1418,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
               className="w-full max-w-md rounded-2xl border border-slate-800 bg-[#080911] p-6 shadow-2xl space-y-4 relative"
             >
               <div className="border-b border-slate-850 pb-3">
-                <span className="text-[9px] font-mono text-yellow-400 uppercase tracking-widest block">Simulation Payment Gateway</span>
+                <span className="text-[9px] font-mono text-turquoise uppercase tracking-widest block">Simulation Payment Gateway</span>
                 <h3 className="text-sm font-bold text-slate-100 font-mono">Sponsored B2B Campaign Invoice</h3>
                 <p className="text-[10px] text-slate-500 font-mono mt-0.5">Brand: {checkoutAd.brandName}</p>
               </div>
@@ -1442,7 +1442,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                     <button 
                       type="button"
                       onClick={() => setCardNumber("4242 4242 4242 4242")}
-                      className="text-[9px] font-mono text-yellow-400 hover:underline"
+                      className="text-[9px] font-mono text-turquoise hover:underline"
                     >
                       Autofill Test Card
                     </button>
@@ -1455,7 +1455,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                       placeholder="4242 4242 4242 4242"
                       value={cardNumber}
                       onChange={(e) => setCardNumber(e.target.value)}
-                      className="w-full p-2.5 pl-9 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 placeholder-slate-700 font-mono focus:outline-none focus:border-yellow-500"
+                      className="w-full p-2.5 pl-9 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 placeholder-slate-700 font-mono focus:outline-none focus:border-turquoise-500"
                     />
                     <CreditCard className="w-4 h-4 text-slate-600 absolute left-3 top-3.5" />
                   </div>
@@ -1471,7 +1471,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                       placeholder="12/28"
                       value={cardExpiry}
                       onChange={(e) => setCardExpiry(e.target.value)}
-                      className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 placeholder-slate-700 font-mono text-center focus:outline-none focus:border-yellow-500"
+                      className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 placeholder-slate-700 font-mono text-center focus:outline-none focus:border-turquoise-500"
                     />
                   </div>
                   <div className="flex flex-col gap-1">
@@ -1483,7 +1483,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                       placeholder="***"
                       value={cardCvc}
                       onChange={(e) => setCardCvc(e.target.value)}
-                      className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 placeholder-slate-700 font-mono text-center focus:outline-none focus:border-yellow-500"
+                      className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 placeholder-slate-700 font-mono text-center focus:outline-none focus:border-turquoise-500"
                     />
                   </div>
                 </div>
@@ -1500,7 +1500,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                 <button
                   type="submit"
                   disabled={paymentSuccess}
-                  className="px-5 py-2 rounded-xl bg-yellow-400 hover:bg-yellow-300 disabled:bg-slate-800 text-slate-950 text-xs uppercase font-mono font-bold transition-all flex items-center gap-1.5"
+                  className="px-5 py-2 rounded-xl bg-turquoise-400 hover:bg-turquoise-300 disabled:bg-slate-800 text-slate-950 text-xs uppercase font-mono font-bold transition-all flex items-center gap-1.5"
                 >
                   {paymentSuccess ? (
                     <>
@@ -1524,10 +1524,10 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-[#0c0e17] border border-yellow-500/30 px-5 py-3.5 rounded-xl shadow-2xl flex items-center gap-3"
+            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 bg-[#0c0e17] border border-turquoise-500/30 px-5 py-3.5 rounded-xl shadow-2xl flex items-center gap-3"
           >
-            <div className="p-1 rounded-full bg-yellow-400/20">
-              <Sparkles className="w-4 h-4 text-yellow-400 animate-pulse" />
+            <div className="p-1 rounded-full bg-turquoise-400/20">
+              <Sparkles className="w-4 h-4 text-turquoise animate-pulse" />
             </div>
             <span className="text-xs font-mono font-bold text-slate-100">{claimToast.text}</span>
           </motion.div>

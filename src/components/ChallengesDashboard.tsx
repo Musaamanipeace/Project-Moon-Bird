@@ -624,18 +624,18 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
       
       {/* Top Banner & Stats */}
       <div 
-        className="bg-[#090b14] border border-yellow-500/30 p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 cursor-help relative group"
+        className="bg-[#090b14] border border-turquoise-500/30 p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 cursor-help relative group"
         onMouseEnter={() => setHoveredMetrics(`Active_Streak: ${activeStreak} days | XP_Ledger: ${xp} | Completed_Count: ${Object.keys(userChallengeStates).length}`)}
         onMouseLeave={() => setHoveredMetrics(null)}
       >
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-xl text-yellow-400">
+          <div className="p-3 bg-turquoise-500/10 border border-turquoise-500/30 rounded-xl text-turquoise">
             <Award className="w-6 h-6 animate-pulse" />
           </div>
           <div>
             <h2 className="text-sm font-bold font-mono text-slate-100 flex items-center gap-2">
               <span>🚀 MoonBird Challenge Engine & Builder</span>
-              <span className="px-2 py-0.5 bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 rounded text-[10px]">Active</span>
+              <span className="px-2 py-0.5 bg-turquoise-500/10 text-turquoise border border-turquoise-500/30 rounded text-[10px]">Active</span>
             </h2>
             <p className="text-[11px] text-slate-400 font-mono">
               Complete onboarding habit, vital, sky watcher, and blueprint challenges or build your own.
@@ -646,7 +646,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
         <div className="flex items-center gap-3 shrink-0">
           <div className="bg-slate-900 border border-slate-800 px-3.5 py-1.5 rounded-xl text-center">
             <span className="text-[9px] font-mono text-slate-500 block uppercase">STREAK</span>
-            <span className="text-sm font-bold font-mono text-yellow-400">🔥 {activeStreak} Days</span>
+            <span className="text-sm font-bold font-mono text-turquoise">🔥 {activeStreak} Days</span>
           </div>
 
           <div className="bg-slate-900 border border-slate-800 px-3.5 py-1.5 rounded-xl text-center">
@@ -668,7 +668,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
           onClick={() => setActiveTab("catalogued")}
           className={`py-2.5 rounded-xl uppercase transition-all flex items-center justify-center gap-2 ${
             activeTab === "catalogued"
-              ? "bg-yellow-500 text-slate-950 shadow-md"
+              ? "bg-turquoise-500 text-slate-950 shadow-md"
               : "text-slate-400 hover:text-slate-200"
           }`}
         >
@@ -680,7 +680,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
           onClick={() => setActiveTab("milestones")}
           className={`py-2.5 rounded-xl uppercase transition-all flex items-center justify-center gap-2 ${
             activeTab === "milestones"
-              ? "bg-yellow-500 text-slate-950 shadow-md"
+              ? "bg-turquoise-500 text-slate-950 shadow-md"
               : "text-slate-400 hover:text-slate-200"
           }`}
         >
@@ -692,7 +692,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
           onClick={() => setActiveTab("builder")}
           className={`py-2.5 rounded-xl uppercase transition-all flex items-center justify-center gap-2 ${
             activeTab === "builder"
-              ? "bg-yellow-500 text-slate-950 shadow-md animate-pulse"
+              ? "bg-turquoise-500 text-slate-950 shadow-md animate-pulse"
               : "text-slate-400 hover:text-slate-200"
           }`}
         >
@@ -714,7 +714,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                 placeholder="Search challenges by title or keyword..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-yellow-500 font-mono"
+                className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-turquoise-500 font-mono"
               />
             </div>
 
@@ -725,7 +725,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                   onClick={() => setCategoryFilter(cat)}
                   className={`px-3 py-1.5 rounded-xl border font-mono text-[10px] font-bold uppercase transition-all whitespace-nowrap ${
                     categoryFilter === cat
-                      ? "border-yellow-500 bg-yellow-500/10 text-yellow-300"
+                      ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright"
                       : "border-slate-800 bg-slate-950 text-slate-400 hover:text-slate-200"
                   }`}
                 >
@@ -746,18 +746,18 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                   className={`p-4 rounded-2xl border transition-all flex flex-col justify-between space-y-3 ${
                     isFinished
                       ? "border-emerald-900/60 bg-emerald-950/10 text-slate-300"
-                      : "border-slate-800 bg-slate-950/40 hover:border-yellow-500/40 hover:bg-slate-950/80"
+                      : "border-slate-800 bg-slate-950/40 hover:border-turquoise-500/40 hover:bg-slate-950/80"
                   }`}
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between gap-2 flex-wrap">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         {ch.number && (
-                          <span className="w-5 h-5 rounded-full bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 font-mono text-[10px] font-bold flex items-center justify-center">
+                          <span className="w-5 h-5 rounded-full bg-turquoise-500/10 border border-turquoise-500/30 text-turquoise font-mono text-[10px] font-bold flex items-center justify-center">
                             #{ch.number}
                           </span>
                         )}
-                        <span className="text-[9px] font-mono text-yellow-400 uppercase tracking-wider font-semibold px-1.5 py-0.5 bg-yellow-500/5 rounded border border-yellow-500/20">
+                        <span className="text-[9px] font-mono text-turquoise uppercase tracking-wider font-semibold px-1.5 py-0.5 bg-turquoise-500/5 rounded border border-turquoise-500/20">
                           {ch.category}
                         </span>
                         <span className="text-[8px] font-mono text-slate-400 border border-slate-800 px-1 py-0.5 rounded">
@@ -803,7 +803,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                     ) : (
                       <button
                         onClick={() => handleOpenChallenge(ch)}
-                        className="px-3 py-1.5 rounded-lg bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-bold font-mono text-[10px] uppercase tracking-wider transition-all shadow-md shadow-yellow-500/10 flex items-center gap-1"
+                        className="px-3 py-1.5 rounded-lg bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-bold font-mono text-[10px] uppercase tracking-wider transition-all shadow-md shadow-turquoise-500/10 flex items-center gap-1"
                       >
                         <span>Start</span>
                         <span>&rarr;</span>
@@ -822,7 +822,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
       {activeTab === "milestones" && (
         <div className="space-y-6">
           <div className="bg-slate-900/40 p-4 rounded-2xl border border-slate-800 space-y-2">
-            <h3 className="text-xs font-bold font-mono text-yellow-400 uppercase tracking-wider">
+            <h3 className="text-xs font-bold font-mono text-turquoise uppercase tracking-wider">
               🏆 Level Progress & Celestial Milestones
             </h3>
             <p className="text-xs text-slate-300 font-sans leading-relaxed">
@@ -832,19 +832,19 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-[#0b0c15] border border-slate-800 p-4 rounded-2xl space-y-3">
-              <span className="text-xs font-mono text-yellow-400 font-bold uppercase block">Level One: Beginner</span>
+              <span className="text-xs font-mono text-turquoise font-bold uppercase block">Level One: Beginner</span>
               <p className="text-[11px] text-slate-400">Complete News Perspective Audit, Vital Check, and Life Blueprint.</p>
               <div className="text-[10px] font-mono text-emerald-400 font-bold">Unlocks: Basic Journal & Health Templates</div>
             </div>
 
             <div className="bg-[#0b0c15] border border-slate-800 p-4 rounded-2xl space-y-3">
-              <span className="text-xs font-mono text-yellow-400 font-bold uppercase block">Level Two: Stargazer</span>
+              <span className="text-xs font-mono text-turquoise font-bold uppercase block">Level Two: Stargazer</span>
               <p className="text-[11px] text-slate-400">Complete Cut the Habit (James Clear) and Sky Watcher Astro Event Log.</p>
               <div className="text-[10px] font-mono text-emerald-400 font-bold">Unlocks: Sound Reminders & Challenge Builder</div>
             </div>
 
             <div className="bg-[#0b0c15] border border-slate-800 p-4 rounded-2xl space-y-3">
-              <span className="text-xs font-mono text-yellow-400 font-bold uppercase block">Level Three: Cosmic Master</span>
+              <span className="text-xs font-mono text-turquoise font-bold uppercase block">Level Three: Cosmic Master</span>
               <p className="text-[11px] text-slate-400">Maintain a 10-day streak & share custom challenges with peers.</p>
               <div className="text-[10px] font-mono text-emerald-400 font-bold">Unlocks: Tribe Chat Broadcast Badges</div>
             </div>
@@ -854,10 +854,10 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
 
       {/* TAB 3: CHALLENGE BUILDER */}
       {activeTab === "builder" && (
-        <form onSubmit={handleCreateChallenge} className="bg-[#0b0d18] border border-yellow-500/30 p-6 rounded-2xl space-y-5 max-h-[70vh] overflow-y-auto">
+        <form onSubmit={handleCreateChallenge} className="bg-[#0b0d18] border border-turquoise-500/30 p-6 rounded-2xl space-y-5 max-h-[70vh] overflow-y-auto">
           <div className="border-b border-slate-800 pb-3">
-            <h3 className="text-sm font-bold font-mono text-yellow-400 uppercase tracking-wider flex items-center gap-2">
-              <Edit3 className="w-4 h-4 text-yellow-400" />
+            <h3 className="text-sm font-bold font-mono text-turquoise uppercase tracking-wider flex items-center gap-2">
+              <Edit3 className="w-4 h-4 text-turquoise" />
               <span>Construct a Custom MoonBird Challenge</span>
             </h3>
             <p className="text-xs text-slate-400 font-mono mt-0.5">
@@ -875,7 +875,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
                 placeholder="e.g., Morning Solar Hydration Sprint"
-                className="w-full p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-yellow-500"
+                className="w-full p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-turquoise-500"
               />
             </div>
 
@@ -929,7 +929,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
               placeholder="Explain the background purpose, steps involved, and intended outcome..."
-              className="w-full p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-yellow-500"
+              className="w-full p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-turquoise-500"
             />
           </div>
 
@@ -940,7 +940,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
               value={newGoal}
               onChange={(e) => setNewGoal(e.target.value)}
               placeholder="e.g., Build lunar observation habit and connect celestial data to real-world events."
-              className="w-full p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-yellow-500"
+              className="w-full p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-turquoise-500"
             />
           </div>
 
@@ -985,7 +985,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                     setNewSteps(updated);
                   }}
                   placeholder={`Step ${idx + 1} description`}
-                  className="flex-1 p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-yellow-500"
+                  className="flex-1 p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-turquoise-500"
                 />
                 <label className="flex items-center gap-1 text-[10px] font-mono text-slate-400 whitespace-nowrap pt-2">
                   <input
@@ -1019,7 +1019,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                 setNewSteps([...newSteps, ""]);
                 setNewStepOptionalFlags([...newStepOptionalFlags, false]);
               }}
-              className="text-[10px] font-mono text-yellow-400 hover:text-yellow-300 uppercase"
+              className="text-[10px] font-mono text-turquoise hover:text-turquoise-bright uppercase"
             >
               + Add Step
             </button>
@@ -1032,7 +1032,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
               id="dynamicSteps"
               checked={newDynamicSteps}
               onChange={(e) => setNewDynamicSteps(e.target.checked)}
-              className="accent-yellow-400"
+              className="accent-turquoise-400"
             />
             <label htmlFor="dynamicSteps" className="text-xs font-mono text-slate-300">
               Allow dynamic (addable) steps during challenge execution
@@ -1043,7 +1043,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
           <button
             type="button"
             onClick={() => setShowAdvancedBuilder(!showAdvancedBuilder)}
-            className="text-xs font-mono text-yellow-400 uppercase tracking-wider flex items-center gap-1"
+            className="text-xs font-mono text-turquoise uppercase tracking-wider flex items-center gap-1"
           >
             {showAdvancedBuilder ? '▼' : '▶'} Advanced Builder Blocks
           </button>
@@ -1064,14 +1064,14 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                         setNewSurveyPrompts(updated);
                       }}
                       placeholder="Survey prompt..."
-                      className="flex-1 p-2 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-yellow-500"
+                      className="flex-1 p-2 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-turquoise-500"
                     />
                     {newSurveyPrompts.length > 1 && (
                       <button type="button" onClick={() => setNewSurveyPrompts(newSurveyPrompts.filter((_, i) => i !== idx))} className="text-red-400 text-xs">&times;</button>
                     )}
                   </div>
                 ))}
-                <button type="button" onClick={() => setNewSurveyPrompts([...newSurveyPrompts, ""])} className="text-[10px] font-mono text-yellow-400 uppercase">+ Add Prompt</button>
+                <button type="button" onClick={() => setNewSurveyPrompts([...newSurveyPrompts, ""])} className="text-[10px] font-mono text-turquoise uppercase">+ Add Prompt</button>
               </div>
 
               {/* Auditor Questionnaire */}
@@ -1088,14 +1088,14 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                         setNewAuditorPrompts(updated);
                       }}
                       placeholder="Auditor evaluation prompt..."
-                      className="flex-1 p-2 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-yellow-500"
+                      className="flex-1 p-2 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-turquoise-500"
                     />
                     {newAuditorPrompts.length > 1 && (
                       <button type="button" onClick={() => setNewAuditorPrompts(newAuditorPrompts.filter((_, i) => i !== idx))} className="text-red-400 text-xs">&times;</button>
                     )}
                   </div>
                 ))}
-                <button type="button" onClick={() => setNewAuditorPrompts([...newAuditorPrompts, ""])} className="text-[10px] font-mono text-yellow-400 uppercase">+ Add Prompt</button>
+                <button type="button" onClick={() => setNewAuditorPrompts([...newAuditorPrompts, ""])} className="text-[10px] font-mono text-turquoise uppercase">+ Add Prompt</button>
               </div>
 
               {/* Bonus Tasks */}
@@ -1112,14 +1112,14 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                         setNewBonusTasks(updated);
                       }}
                       placeholder="Bonus task description..."
-                      className="flex-1 p-2 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-yellow-500"
+                      className="flex-1 p-2 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-turquoise-500"
                     />
                     {newBonusTasks.length > 1 && (
                       <button type="button" onClick={() => setNewBonusTasks(newBonusTasks.filter((_, i) => i !== idx))} className="text-red-400 text-xs">&times;</button>
                     )}
                   </div>
                 ))}
-                <button type="button" onClick={() => setNewBonusTasks([...newBonusTasks, ""])} className="text-[10px] font-mono text-yellow-400 uppercase">+ Add Bonus Task</button>
+                <button type="button" onClick={() => setNewBonusTasks([...newBonusTasks, ""])} className="text-[10px] font-mono text-turquoise uppercase">+ Add Bonus Task</button>
               </div>
 
               {/* Checkpoints */}
@@ -1165,7 +1165,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                     </div>
                   </div>
                 ))}
-                <button type="button" onClick={() => setNewCheckpoints([...newCheckpoints, { label: "", description: "", stepNumber: 1 }])} className="text-[10px] font-mono text-yellow-400 uppercase">+ Add Checkpoint</button>
+                <button type="button" onClick={() => setNewCheckpoints([...newCheckpoints, { label: "", description: "", stepNumber: 1 }])} className="text-[10px] font-mono text-turquoise uppercase">+ Add Checkpoint</button>
               </div>
 
               {/* Target Milestones */}
@@ -1211,7 +1211,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                     </div>
                   </div>
                 ))}
-                <button type="button" onClick={() => setNewMilestones([...newMilestones, { label: "", description: "", rewardXp: 0 }])} className="text-[10px] font-mono text-yellow-400 uppercase">+ Add Milestone</button>
+                <button type="button" onClick={() => setNewMilestones([...newMilestones, { label: "", description: "", rewardXp: 0 }])} className="text-[10px] font-mono text-turquoise uppercase">+ Add Milestone</button>
               </div>
 
               {/* Creator-Sponsored Rewards */}
@@ -1259,7 +1259,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                     </div>
                   </div>
                 ))}
-                <button type="button" onClick={() => setNewRewards([...newRewards, { type: "cash", description: "", value: "" }])} className="text-[10px] font-mono text-yellow-400 uppercase">+ Add Reward</button>
+                <button type="button" onClick={() => setNewRewards([...newRewards, { type: "cash", description: "", value: "" }])} className="text-[10px] font-mono text-turquoise uppercase">+ Add Reward</button>
               </div>
 
               {/* Media Assets */}
@@ -1318,7 +1318,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                     </div>
                   </div>
                 ))}
-                <button type="button" onClick={() => setNewMediaAssets([...newMediaAssets, { id: "ma-" + Date.now(), type: "image", url: "", caption: "" }])} className="text-[10px] font-mono text-yellow-400 uppercase">+ Add Media Asset</button>
+                <button type="button" onClick={() => setNewMediaAssets([...newMediaAssets, { id: "ma-" + Date.now(), type: "image", url: "", caption: "" }])} className="text-[10px] font-mono text-turquoise uppercase">+ Add Media Asset</button>
               </div>
 
               {/* Completion Requirement */}
@@ -1329,7 +1329,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                   value={newCompletionRequirement}
                   onChange={(e) => setNewCompletionRequirement(e.target.value)}
                   placeholder="Exact final step and criteria required to deem the challenge Finished."
-                  className="w-full p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-yellow-500"
+                  className="w-full p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-turquoise-500"
                 />
               </div>
             </div>
@@ -1337,7 +1337,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
 
           <button
             type="submit"
-            className="w-full py-3 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-mono font-extrabold text-xs uppercase tracking-wider transition-all shadow-lg shadow-yellow-500/10"
+            className="w-full py-3 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-mono font-extrabold text-xs uppercase tracking-wider transition-all shadow-lg shadow-turquoise-500/10"
           >
             Publish Custom Challenge
           </button>
@@ -1349,13 +1349,13 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
         <div className="fixed inset-0 bg-[#000000]/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto">
           <form
             onSubmit={handleSubmitChallenge}
-            className="w-full max-w-2xl bg-[#090b14] border border-yellow-500/40 rounded-2xl shadow-2xl space-y-4 my-4 sm:my-8 relative max-h-[90vh] flex flex-col"
+            className="w-full max-w-2xl bg-[#090b14] border border-turquoise-500/40 rounded-2xl shadow-2xl space-y-4 my-4 sm:my-8 relative max-h-[90vh] flex flex-col"
           >
             <div className="p-4 sm:p-5 border-b border-slate-800 shrink-0">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-[9px] font-mono text-yellow-400 uppercase px-2 py-0.5 bg-yellow-500/10 border border-yellow-500/30 rounded">
+                    <span className="text-[9px] font-mono text-turquoise uppercase px-2 py-0.5 bg-turquoise-500/10 border border-turquoise-500/30 rounded">
                       {selectedChallenge.category}
                     </span>
                     <span className="text-[9px] font-mono text-slate-400 border border-slate-800 px-2 py-0.5 rounded">
@@ -1391,7 +1391,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                               stepProgress[s.stepNumber]
                                 ? "w-4 bg-emerald-400"
                                 : s.stepNumber === unlockedStepNumber && !allDone
-                                ? "w-4 bg-yellow-400 animate-pulse"
+                                ? "w-4 bg-turquoise-400 animate-pulse"
                                 : "w-2 bg-slate-700"
                             }`}
                           />
@@ -1418,7 +1418,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
 
             {selectedChallenge.participantRoles && selectedChallenge.participantRoles.length > 0 && (
               <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-850 space-y-1">
-                <span className="text-[10px] font-mono text-yellow-400 uppercase block font-semibold">👥 Participant Roles</span>
+                <span className="text-[10px] font-mono text-turquoise uppercase block font-semibold">👥 Participant Roles</span>
                 {selectedChallenge.participantRoles.map((r, i) => (
                   <span key={i} className="text-[11px] text-slate-300 font-mono block">
                     {r.isLeader ? '👑 ' : ''}{r.role}: {r.description}
@@ -1429,7 +1429,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
 
             {selectedChallenge.checkpoints && selectedChallenge.checkpoints.length > 0 && (
               <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-850 space-y-1">
-                <span className="text-[10px] font-mono text-yellow-400 uppercase block font-semibold">🚩 Checkpoints</span>
+                <span className="text-[10px] font-mono text-turquoise uppercase block font-semibold">🚩 Checkpoints</span>
                 {selectedChallenge.checkpoints.map((cp, i) => (
                   <span key={i} className="text-[11px] text-slate-300 font-mono block">
                     Step {cp.stepNumber}: {cp.label} — {cp.description}
@@ -1440,7 +1440,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
 
             {selectedChallenge.targetMilestones && selectedChallenge.targetMilestones.length > 0 && (
               <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-850 space-y-1">
-                <span className="text-[10px] font-mono text-yellow-400 uppercase block font-semibold">🎯 Target Milestones</span>
+                <span className="text-[10px] font-mono text-turquoise uppercase block font-semibold">🎯 Target Milestones</span>
                 {selectedChallenge.targetMilestones.map((m, i) => (
                   <span key={i} className="text-[11px] text-slate-300 font-mono block">
                     {m.label}: {m.description} (+{m.rewardXp} XP)
@@ -1451,7 +1451,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
 
             {selectedChallenge.creatorSponsoredRewards && selectedChallenge.creatorSponsoredRewards.length > 0 && (
               <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-850 space-y-1">
-                <span className="text-[10px] font-mono text-yellow-400 uppercase block font-semibold">💎 Creator-Sponsored Rewards</span>
+                <span className="text-[10px] font-mono text-turquoise uppercase block font-semibold">💎 Creator-Sponsored Rewards</span>
                 {selectedChallenge.creatorSponsoredRewards.map((r, i) => (
                   <span key={i} className="text-[11px] text-slate-300 font-mono block">
                     {r.type.toUpperCase()}: {r.description} ({r.value})
@@ -1462,7 +1462,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
 
             {selectedChallenge.mediaAssets && selectedChallenge.mediaAssets.length > 0 && (
               <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-850 space-y-1">
-                <span className="text-[10px] font-mono text-yellow-400 uppercase block font-semibold">🖼️ Media Assets</span>
+                <span className="text-[10px] font-mono text-turquoise uppercase block font-semibold">🖼️ Media Assets</span>
                 {selectedChallenge.mediaAssets.map((ma, i) => (
                   <span key={i} className="text-[11px] text-slate-300 font-mono block">
                     [{ma.type}] {ma.caption || ma.url} {ma.stepNumber ? `(at step ${ma.stepNumber})` : ''}
@@ -1477,8 +1477,8 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
 
             {/* MANDATORY STEPS CHECKLIST */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold font-mono text-yellow-400 uppercase flex items-center gap-1.5">
-                <CheckSquare className="w-4 h-4 text-yellow-400" />
+              <h4 className="text-xs font-bold font-mono text-turquoise uppercase flex items-center gap-1.5">
+                <CheckSquare className="w-4 h-4 text-turquoise" />
                 <span>Mandatory Execution Steps</span>
               </h4>
 
@@ -1497,14 +1497,14 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                       className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
                         isChecked
                           ? "border-emerald-500/40 bg-emerald-950/20 text-slate-200"
-                          : "border-yellow-500/30 bg-yellow-500/5 text-slate-200"
+                          : "border-turquoise-500/30 bg-turquoise-500/5 text-slate-200"
                       }`}
                     >
                       <input
                         type="checkbox"
                         checked={isChecked}
                         onChange={() => handleToggleStep(st.stepNumber)}
-                        className="mt-0.5 accent-yellow-400 w-4 h-4"
+                        className="mt-0.5 accent-turquoise-400 w-4 h-4"
                       />
                       <div className="flex-1">
                         <span className="text-xs font-bold font-mono text-slate-200 block">
@@ -1521,7 +1521,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                               e.stopPropagation();
                               navigateToTool(st.toolAction!.view, selectedChallenge.id, st.stepNumber);
                             }}
-                            className="mt-2 px-3 py-1.5 rounded-lg bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-mono text-[10px] font-bold uppercase tracking-wider transition-all flex items-center gap-1"
+                            className="mt-2 px-3 py-1.5 rounded-lg bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-mono text-[10px] font-bold uppercase tracking-wider transition-all flex items-center gap-1"
                           >
                             <span>Open {st.toolAction.label}</span>
                             <span>&rarr;</span>
@@ -1555,7 +1555,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                         key={st.stepNumber}
                         className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
                           isChecked
-                            ? "border-yellow-500/40 bg-yellow-500/10 text-yellow-300"
+                            ? "border-turquoise-500/40 bg-turquoise-500/10 text-turquoise-bright"
                             : "border-slate-850 bg-slate-950 text-slate-400 hover:text-slate-200"
                         }`}
                       >
@@ -1563,7 +1563,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => handleToggleStep(st.stepNumber)}
-                          className="mt-0.5 accent-yellow-400 w-4 h-4"
+                          className="mt-0.5 accent-turquoise-400 w-4 h-4"
                         />
                         <div>
                           <span className="text-xs font-bold font-mono text-slate-200 block">
@@ -1583,8 +1583,8 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
             {/* TAILORED SURVEY QUESTIONS */}
             {selectedChallenge.surveyQuestions.length > 0 && (
               <div className="space-y-3 pt-2 border-t border-slate-800">
-                <h4 className="text-xs font-bold font-mono text-yellow-400 uppercase flex items-center gap-1.5">
-                  <HelpCircle className="w-4 h-4 text-yellow-400" />
+                <h4 className="text-xs font-bold font-mono text-turquoise uppercase flex items-center gap-1.5">
+                  <HelpCircle className="w-4 h-4 text-turquoise" />
                   <span>Tailored Survey & Feedback Prompts</span>
                 </h4>
 
@@ -1604,7 +1604,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                               onClick={() => setSurveyAnswers({ ...surveyAnswers, [q.id]: num })}
                               className={`w-9 h-8 rounded-lg font-mono text-xs font-bold transition-all ${
                                 surveyAnswers[q.id] === num
-                                  ? "bg-yellow-500 text-slate-950 shadow-md"
+                                  ? "bg-turquoise-500 text-slate-950 shadow-md"
                                   : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200"
                               }`}
                             >
@@ -1621,7 +1621,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                               onClick={() => setSurveyAnswers({ ...surveyAnswers, [q.id]: opt })}
                               className={`px-4 py-1.5 rounded-lg font-mono text-xs font-bold transition-all ${
                                 surveyAnswers[q.id] === opt
-                                  ? "bg-yellow-500 text-slate-950"
+                                  ? "bg-turquoise-500 text-slate-950"
                                   : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200"
                               }`}
                             >
@@ -1638,7 +1638,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                               onClick={() => setSurveyAnswers({ ...surveyAnswers, [q.id]: opt })}
                               className={`px-3 py-1.5 rounded-lg font-mono text-xs font-bold transition-all ${
                                 surveyAnswers[q.id] === opt
-                                  ? "bg-yellow-500 text-slate-950"
+                                  ? "bg-turquoise-500 text-slate-950"
                                   : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200"
                               }`}
                             >
@@ -1664,8 +1664,8 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
             {/* AUDITOR QUESTIONNAIRE */}
             {selectedChallenge.auditorQuestionnaire && selectedChallenge.auditorQuestionnaire.length > 0 && (
               <div className="space-y-3 pt-2 border-t border-slate-800">
-                <h4 className="text-xs font-bold font-mono text-yellow-400 uppercase flex items-center gap-1.5">
-                  <ClipboardList className="w-4 h-4 text-yellow-400" />
+                <h4 className="text-xs font-bold font-mono text-turquoise uppercase flex items-center gap-1.5">
+                  <ClipboardList className="w-4 h-4 text-turquoise" />
                   <span>Auditor Evaluation Questionnaire</span>
                 </h4>
                 <p className="text-[10px] text-slate-400 font-mono">This section will be completed by an assigned auditor after you submit the challenge.</p>
@@ -1685,7 +1685,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                               type="button"
                               className={`w-9 h-8 rounded-lg font-mono text-xs font-bold transition-all ${
                                 surveyAnswers[q.id] === num
-                                  ? "bg-yellow-500 text-slate-950 shadow-md"
+                                  ? "bg-turquoise-500 text-slate-950 shadow-md"
                                   : "bg-slate-900 border border-slate-800 text-slate-400"
                               }`}
                             >
@@ -1701,7 +1701,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                               type="button"
                               className={`px-4 py-1.5 rounded-lg font-mono text-xs font-bold transition-all ${
                                 surveyAnswers[q.id] === opt
-                                  ? "bg-yellow-500 text-slate-950"
+                                  ? "bg-turquoise-500 text-slate-950"
                                   : "bg-slate-900 border border-slate-800 text-slate-400"
                               }`}
                             >
@@ -1717,7 +1717,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                               type="button"
                               className={`px-3 py-1.5 rounded-lg font-mono text-xs font-bold transition-all ${
                                 surveyAnswers[q.id] === opt
-                                  ? "bg-yellow-500 text-slate-950"
+                                  ? "bg-turquoise-500 text-slate-950"
                                   : "bg-slate-900 border border-slate-800 text-slate-400"
                               }`}
                             >
@@ -1743,8 +1743,8 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
             {/* BONUS TASKS */}
             {unlockedStepNumber === 999 && selectedChallenge.bonusTasks.length > 0 && (
               <div className="space-y-3 pt-2 border-t border-slate-800">
-                <h4 className="text-xs font-bold font-mono text-yellow-400 uppercase flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-yellow-400" />
+                <h4 className="text-xs font-bold font-mono text-turquoise uppercase flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-turquoise" />
                   <span>Bonus Tasks (+ Extra XP)</span>
                 </h4>
 
@@ -1756,7 +1756,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                         key={b.id}
                         className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all ${
                           isChecked
-                            ? "border-yellow-500/40 bg-yellow-500/10 text-yellow-300"
+                            ? "border-turquoise-500/40 bg-turquoise-500/10 text-turquoise-bright"
                             : "border-slate-850 bg-slate-950 text-slate-400 hover:text-slate-200"
                         }`}
                       >
@@ -1765,14 +1765,14 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                             type="checkbox"
                             checked={!!isChecked}
                             onChange={() => handleToggleBonus(b.id)}
-                            className="accent-yellow-400 w-4 h-4"
+                            className="accent-turquoise-400 w-4 h-4"
                           />
                           <div>
                             <span className="text-xs font-bold font-mono text-slate-200 block">{b.title}</span>
                             <span className="text-[11px] text-slate-400 font-sans block">{b.description}</span>
                           </div>
                         </div>
-                        <span className="text-xs font-mono font-bold text-yellow-400 shrink-0">+{b.xpReward} XP</span>
+                        <span className="text-xs font-mono font-bold text-turquoise shrink-0">+{b.xpReward} XP</span>
                       </label>
                     );
                   })}
@@ -1783,7 +1783,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
             {/* MANDATORY SUBMISSION NOTE */}
             {unlockedStepNumber === 999 && (
               <div className="space-y-2 pt-2 border-t border-slate-800">
-                <label className="text-xs font-mono font-bold text-yellow-400 uppercase block">
+                <label className="text-xs font-mono font-bold text-turquoise uppercase block">
                   Completion Submission Entry (Required)
                 </label>
                 <p className="text-[11px] text-slate-400 font-sans">
@@ -1795,7 +1795,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
                   value={submissionNote}
                   onChange={(e) => setSubmissionNote(e.target.value)}
                   placeholder="Write your reflection, trigger log details, health vitals summary, observation experience, or blueprint action steps here..."
-                  className="w-full p-3 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-yellow-500 font-mono"
+                  className="w-full p-3 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-100 focus:outline-none focus:border-turquoise-500 font-mono"
                 />
               </div>
              )}
@@ -1819,7 +1819,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-mono font-extrabold text-xs uppercase tracking-wider transition-all shadow-lg shadow-yellow-500/10 flex items-center gap-1.5"
+                className="px-5 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-mono font-extrabold text-xs uppercase tracking-wider transition-all shadow-lg shadow-turquoise-500/10 flex items-center gap-1.5"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>Finish & Claim XP</span>

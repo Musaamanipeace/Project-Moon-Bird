@@ -378,14 +378,14 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-4 text-slate-100 max-w-6xl mx-auto">
       {pendingChallengeAction && (
-        <div className="col-span-full bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3 flex items-center justify-between">
+        <div className="col-span-full bg-turquoise-500/10 border border-turquoise-500/30 rounded-xl p-3 flex items-center justify-between">
           <div>
-            <span className="text-[10px] font-mono text-yellow-400 uppercase block font-bold">Challenge Action Required</span>
+            <span className="text-[10px] font-mono text-turquoise uppercase block font-bold">Challenge Action Required</span>
             <span className="text-xs text-slate-200 font-mono">{pendingChallengeAction.description || 'Complete this step to continue your challenge'}</span>
           </div>
           <button
             onClick={recordChallengeStepCompletion}
-            className="px-3 py-1.5 rounded-lg bg-yellow-500 hover:bg-yellow-400 text-slate-950 font-mono text-[10px] font-bold uppercase tracking-wider transition-all"
+            className="px-3 py-1.5 rounded-lg bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-mono text-[10px] font-bold uppercase tracking-wider transition-all"
           >
             Done — Return to Challenge
           </button>
@@ -397,7 +397,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
           onClick={() => setActiveScope("diary")}
           className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border font-mono text-xs text-left min-w-[130px] transition-all duration-300 focus:outline-none ${
             activeScope === "diary"
-              ? "border-yellow-500 bg-yellow-500/10 text-yellow-300 shadow-md shadow-yellow-500/5"
+              ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright shadow-md shadow-turquoise-500/5"
               : "border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700 hover:text-slate-200"
           }`}
         >
@@ -409,7 +409,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
           onClick={() => setActiveScope("routine")}
           className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border font-mono text-xs text-left min-w-[130px] transition-all duration-300 focus:outline-none ${
             activeScope === "routine"
-              ? "border-yellow-500 bg-yellow-500/10 text-yellow-300 shadow-md shadow-yellow-500/5"
+              ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright shadow-md shadow-turquoise-500/5"
               : "border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700 hover:text-slate-200"
           }`}
         >
@@ -421,7 +421,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
           onClick={() => setActiveScope("goals")}
           className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border font-mono text-xs text-left min-w-[130px] transition-all duration-300 focus:outline-none ${
             activeScope === "goals"
-              ? "border-yellow-500 bg-yellow-500/10 text-yellow-300 shadow-md shadow-yellow-500/5"
+              ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright shadow-md shadow-turquoise-500/5"
               : "border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700 hover:text-slate-200"
           }`}
         >
@@ -433,7 +433,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
           onClick={() => setActiveScope("reminders")}
           className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border font-mono text-xs text-left min-w-[130px] transition-all duration-300 focus:outline-none ${
             activeScope === "reminders"
-              ? "border-yellow-500 bg-yellow-500/10 text-yellow-300 shadow-md shadow-yellow-500/5"
+              ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright shadow-md shadow-turquoise-500/5"
               : "border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700 hover:text-slate-200"
           }`}
         >
@@ -445,7 +445,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
           onClick={() => setActiveScope("ideas")}
           className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border font-mono text-xs text-left min-w-[130px] transition-all duration-300 focus:outline-none ${
             activeScope === "ideas"
-              ? "border-yellow-500 bg-yellow-500/10 text-yellow-300 shadow-md shadow-yellow-500/5"
+              ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright shadow-md shadow-turquoise-500/5"
               : "border-slate-800 bg-[#10121e]/60 text-slate-400 hover:border-slate-700 hover:text-slate-200"
           }`}
         >
@@ -461,7 +461,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
         {activeScope === "diary" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold font-mono text-yellow-400 tracking-wider uppercase">
+              <h3 className="text-sm font-bold font-mono text-turquoise tracking-wider uppercase">
                 🌙 PERSONAL EXPERIENCE DIARY (P.E.D.)
               </h3>
               <span className="text-[10px] font-mono text-slate-400">Award: +20 XP</span>
@@ -472,7 +472,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
                 value={journalText}
                 onChange={(e) => setJournalText(e.target.value)}
                 placeholder="Transcribe your deepest physical and meditative feeling as you coordinate with current Moon cycles..."
-                className="w-full h-28 p-3 rounded-xl border border-slate-800 bg-slate-950/80 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-yellow-500/60 transition-colors"
+                className="w-full h-28 p-3 rounded-xl border border-slate-800 bg-slate-950/80 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-turquoise-500/60 transition-colors"
               />
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -532,7 +532,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
 
                 <button
                   onClick={handleAddJournal}
-                  className="flex items-center gap-1 px-4 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-xs font-bold text-slate-950 transition-all duration-300 shadow-lg shadow-yellow-500/10"
+                  className="flex items-center gap-1 px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-xs font-bold text-slate-950 transition-all duration-300 shadow-lg shadow-turquoise-500/10"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Save Journal Entry</span>
@@ -565,7 +565,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
                             isFlipped ? "rotate-y-180" : ""
                           } ${
                             j.theme === "Starry Spark"
-                              ? "border-amber-500/30 bg-amber-950/20"
+                              ? "border-turquoise-500/30 bg-turquoise-950/20"
                               : j.theme === "Solar Flare"
                               ? "border-red-500/30 bg-red-950/20"
                               : j.theme === "Cozy Earth"
@@ -580,7 +580,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
                                 <span className="text-[9px] font-mono uppercase tracking-widest text-slate-400">
                                   {j.date}
                                 </span>
-                                <span className="px-2 py-0.5 rounded-full text-[8px] font-bold font-mono bg-slate-950 text-yellow-400 border border-slate-800">
+                                <span className="px-2 py-0.5 rounded-full text-[8px] font-bold font-mono bg-slate-950 text-turquoise border border-slate-800">
                                   {j.mood}
                                 </span>
                               </div>
@@ -592,7 +592,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
                               </p>
                             </div>
                             <div className="flex items-center justify-between border-t border-slate-800/80 pt-1.5">
-                              <span className="text-[9px] text-yellow-400 font-bold font-mono uppercase animate-pulse">
+                              <span className="text-[9px] text-turquoise font-bold font-mono uppercase animate-pulse">
                                 Click to Flip ↩
                               </span>
                               <button
@@ -608,7 +608,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
                           {/* BACK OF THE CARD */}
                           <div className="absolute inset-0 w-full h-full p-4 flex flex-col justify-between rotate-y-180 backface-hidden bg-slate-950/95 rounded-xl border border-slate-700/80">
                             <div className="overflow-y-auto max-h-28 pr-1 scrollbar-thin">
-                              <span className="text-[9px] font-mono text-yellow-400 uppercase tracking-wider block mb-1">
+                              <span className="text-[9px] font-mono text-turquoise uppercase tracking-wider block mb-1">
                                 Complete Entry Logs
                               </span>
                               <p className="text-[11px] text-slate-300 leading-relaxed font-sans whitespace-pre-line">
@@ -621,7 +621,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
                                   e.stopPropagation();
                                   handleSpeakJournal(j.content);
                                 }}
-                                className="flex items-center gap-1 text-[10px] text-slate-300 hover:text-yellow-400"
+                                className="flex items-center gap-1 text-[10px] text-slate-300 hover:text-turquoise"
                               >
                                 <Volume2 className="w-3.5 h-3.5" />
                                 <span>Narrate Log</span>
@@ -643,7 +643,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
         {activeScope === "routine" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold font-mono text-yellow-400 tracking-wider uppercase">
+              <h3 className="text-sm font-bold font-mono text-turquoise tracking-wider uppercase">
                 📅 LUNAR TIMETABLE & AUTORESETTING CHECKLIST
               </h3>
               <span className="text-[10px] font-mono text-slate-400">Award: +15 XP</span>
@@ -718,7 +718,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
               <div className="flex justify-end pt-1">
                 <button
                   onClick={handleAddRoutine}
-                  className="flex items-center gap-1 px-4 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-xs font-bold text-slate-950 transition-all duration-300"
+                  className="flex items-center gap-1 px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-xs font-bold text-slate-950 transition-all duration-300"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Save Routine Task</span>
@@ -759,7 +759,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
                             className={`flex items-center justify-center w-5 h-5 rounded-lg border transition-all duration-200 focus:outline-none ${
                               r.completed
                                 ? "border-emerald-500 bg-emerald-500 text-slate-950"
-                                : "border-slate-700 hover:border-yellow-500 bg-slate-950"
+                                : "border-slate-700 hover:border-turquoise-500 bg-slate-950"
                             }`}
                           >
                             {r.completed && <Check className="w-3.5 h-3.5" />}
@@ -772,11 +772,11 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
                               <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-slate-400">
                                 🕒 {r.timeFrame}
                               </span>
-                              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-yellow-400">
+                              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-turquoise">
                                 🔄 {r.recurrence} Reset
                               </span>
                               {r.lifespan === "Temporary" && r.expiryDate && (
-                                <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${isExpired ? "bg-red-950/40 text-red-400" : "bg-slate-900 text-amber-400"}`}>
+                                <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${isExpired ? "bg-red-950/40 text-red-400" : "bg-slate-900 text-turquoise"}`}>
                                   ⌛ Expiry: {r.expiryDate} {isExpired && "(Expired)"}
                                 </span>
                               )}
@@ -803,7 +803,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
         {activeScope === "goals" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold font-mono text-yellow-400 tracking-wider uppercase">
+              <h3 className="text-sm font-bold font-mono text-turquoise tracking-wider uppercase">
                 🌠 LONG TERM LIFE GOALS & MILESTONES
               </h3>
               <span className="text-[10px] font-mono text-slate-400">Award: +25 XP</span>
@@ -834,7 +834,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
               <div className="flex justify-end pt-1">
                 <button
                   onClick={handleAddGoal}
-                  className="flex items-center gap-1 px-4 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-xs font-bold text-slate-950 transition-all duration-300"
+                  className="flex items-center gap-1 px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-xs font-bold text-slate-950 transition-all duration-300"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Save Life Goal</span>
@@ -854,7 +854,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
                   {goals.map((g) => (
                     <div key={g.id} className="p-4 rounded-xl border border-slate-800 bg-slate-950/30 space-y-2">
                       <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
-                        <span className="text-xs font-bold font-mono text-yellow-400">
+                        <span className="text-xs font-bold font-mono text-turquoise">
                           {g.title}
                         </span>
                         <button
@@ -869,7 +869,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
                       </div>
                       {g.actionSteps && g.actionSteps.length > 0 && (
                         <div className="bg-slate-900/60 p-2 rounded-lg border border-slate-800 text-[10px] font-mono text-slate-400 space-y-1">
-                          <span className="text-yellow-400 font-bold block">Action Steps & Date:</span>
+                          <span className="text-turquoise font-bold block">Action Steps & Date:</span>
                           <span className="block text-slate-300">{g.actionSteps.join(" → ")}</span>
                           <span className="block text-emerald-400">Locked Date: {g.commencementDate}</span>
                         </div>
@@ -886,7 +886,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
         {activeScope === "reminders" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold font-mono text-yellow-400 tracking-wider uppercase">
+              <h3 className="text-sm font-bold font-mono text-turquoise tracking-wider uppercase">
                 ⏰ SYSTEM DEADLINES & RECURRING ALARMS
               </h3>
               <span className="text-[10px] font-mono text-slate-400">Award: +10 XP</span>
@@ -944,7 +944,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
               <div className="flex justify-end pt-1">
                 <button
                   onClick={handleAddReminder}
-                  className="flex items-center gap-1 px-4 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-xs font-bold text-slate-950 transition-all duration-300"
+                  className="flex items-center gap-1 px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-xs font-bold text-slate-950 transition-all duration-300"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Save Alarm Reminder</span>
@@ -981,7 +981,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
                             <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-slate-400">
                               🎯 Target: {new Date(rem.datetime).toLocaleString()}
                             </span>
-                            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-yellow-400">
+                            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-turquoise">
                               🔊 Mode: {rem.interval === "4x-daily" ? "4x Daily Alarm" : rem.interval === "custom" ? "Custom Alerts" : "One-Shot"}
                             </span>
                           </div>
@@ -991,7 +991,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
                           <span className={`text-[11px] font-bold font-mono px-2.5 py-1 rounded-lg border bg-slate-950 ${
                             isAlarming
                               ? "border-red-500 text-red-400 animate-pulse"
-                              : "border-slate-800 text-yellow-400"
+                              : "border-slate-800 text-turquoise"
                           }`}>
                             {remainingStr}
                           </span>
@@ -1015,7 +1015,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
         {activeScope === "ideas" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold font-mono text-yellow-400 tracking-wider uppercase">
+              <h3 className="text-sm font-bold font-mono text-turquoise tracking-wider uppercase">
                 💡 IDEAS BOARDS & COSMIC ACCESSIBILITY CAPTURES
               </h3>
               <span className="text-[10px] font-mono text-slate-400">Award: +15 XP</span>
@@ -1048,7 +1048,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
                 <div className="flex items-end justify-end">
                   <button
                     onClick={handleAddIdea}
-                    className="flex items-center gap-1 px-4 py-2 rounded-xl bg-yellow-500 hover:bg-yellow-400 text-xs font-bold text-slate-950 transition-all duration-300"
+                    className="flex items-center gap-1 px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-xs font-bold text-slate-950 transition-all duration-300"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Save Idea Snippet</span>
@@ -1067,7 +1067,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
                     onClick={() => setSelectedIdeaFilter(filter)}
                     className={`px-2.5 py-1 rounded-lg text-[10px] font-bold font-mono transition-all duration-200 focus:outline-none ${
                       selectedIdeaFilter === filter
-                        ? "bg-yellow-500 text-slate-950 shadow"
+                        ? "bg-turquoise-500 text-slate-950 shadow"
                         : "bg-slate-900 hover:bg-slate-800 text-slate-300"
                     }`}
                   >
@@ -1088,7 +1088,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
 
                     if (idea.theme === "dyslexia-friendly") {
                       fontClass = "font-serif tracking-widest leading-loose";
-                      bgClass = "bg-amber-100/5 border-amber-500/20";
+                      bgClass = "bg-turquoise-100/5 border-turquoise-500/20";
                     } else if (idea.theme === "high-contrast") {
                       bgClass = "bg-black border-white/60";
                       textClass = "text-white font-extrabold";
@@ -1107,7 +1107,7 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
                             <span className="text-[9px] font-mono text-slate-400">
                               Log: {idea.timestamp}
                             </span>
-                            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-yellow-400">
+                            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-turquoise">
                               {idea.theme}
                             </span>
                           </div>

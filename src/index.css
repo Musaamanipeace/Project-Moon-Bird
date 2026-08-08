@@ -2,6 +2,46 @@
 
 @theme {
   --animate-spin-slow: spin 12s linear infinite;
+
+  /* Rebrand palette: golden yellow -> pale turquoise */
+  --color-turquoise: #afeeee;        /* primary pale turquoise text/accent */
+  --color-turquoise-bright: #d4ffff; /* emphasis / lighter */
+  --color-turquoise-dim: #7fcfcf;    /* dimmer (was yellow-500 text) */
+  --color-turquoise-deep: #2a9d9d;  /* deeper fill for solid buttons */
+  --color-turquoise-50: #effdfd;
+  --color-turquoise-100: #c9f5f5;
+  --color-turquoise-200: #9fecec;
+  --color-turquoise-300: #7fdede;
+  --color-turquoise-400: #5fd0d0;
+  --color-turquoise-500: #3fbbbb;
+  --color-turquoise-600: #2f9d9d;
+  --color-turquoise-700: #257c7c;
+  --color-turquoise-800: #1d6363;
+  --color-turquoise-900: #144a4a;
+  --color-turquoise-950: #0b2e2e;
+}
+
+/* Pale turquoise utility helpers (keep opaque where needed for contrast) */
+.text-turquoise { color: var(--color-turquoise); }
+.text-turquoise-bright { color: var(--color-turquoise-bright); }
+.text-turquoise-dim { color: var(--color-turquoise-dim); }
+.border-turquoise { border-color: var(--color-turquoise); }
+.bg-turquoise { background-color: var(--color-turquoise-deep); }
+
+html,
+body {
+  /* Prevent horizontal scrollbar from the 1.35 scale baseline while
+     keeping vertical scroll usable. */
+  overflow-x: hidden;
+}
+
+/* Default HUD layout scale baseline: 135% (1.35).
+   Using `zoom` (not `transform`) so the layout box itself reflows at 135%,
+   which keeps position:fixed (bottom nav) and position:sticky (header)
+   anchored to the viewport instead of becoming a transformed containing
+   block. Manual browser zoom remains allowed via the viewport meta. */
+.app-scale-root {
+  zoom: 1.35;
 }
 
 /* 3D Flip Book Utilities */

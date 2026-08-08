@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { User, Tag, Briefcase, MapPin, Image, Star, Trophy, Wallet, Plus, Trash2, CheckCircle, ShieldAlert, Eye, FileText, Upload, Sparkles, Megaphone } from "lucide-react";
+import { User, Tag, Briefcase, MapPin, Image, Star, Trophy, Wallet, Plus, Trash2, CheckCircle, ShieldAlert, Eye, FileText, Upload, Sparkles, Megaphone, ArrowUpRight, BookOpen } from "lucide-react";
 import { UserProfile } from "../types";
 
 interface ProfileDashboardProps {
@@ -153,7 +153,7 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
         onMouseLeave={() => setHoveredMetrics(null)}
       >
         <div className="flex items-center gap-2.5">
-          <User className="w-5 h-5 text-yellow-400" />
+          <User className="w-5 h-5 text-turquoise" />
           <div>
             <span className="text-xs font-mono font-bold text-slate-100 block">🖥️ GitHub-Style Anonymous Developer Workspace</span>
             <span className="text-[10px] text-slate-400 font-mono">Build local portfolio matrices, verify student safety, and display self-ad loops</span>
@@ -162,7 +162,7 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
 
         <div className="bg-slate-900 border border-slate-800 px-3 py-1 rounded-lg text-center">
           <span className="text-[9px] font-mono text-slate-500 block uppercase">cheese rank</span>
-          <span className="text-xs font-bold font-mono text-yellow-400">
+          <span className="text-xs font-bold font-mono text-turquoise">
             Level {currentRank.level} : {currentRank.title}
           </span>
         </div>
@@ -184,7 +184,7 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
         {/* Left Column: Standardized Identity and Under-18 Safeguard Gate */}
         <div className="space-y-6 bg-[#090b14]/80 p-5 rounded-2xl border border-slate-800/80 backdrop-blur-md">
           <div className="space-y-3">
-            <h3 className="text-xs font-bold font-mono text-yellow-400 uppercase tracking-widest flex items-center gap-2">
+            <h3 className="text-xs font-bold font-mono text-turquoise uppercase tracking-widest flex items-center gap-2">
               👤 Anonymous Ledger Profile
             </h3>
             <p className="text-[11px] text-slate-400 font-sans leading-relaxed">
@@ -199,7 +199,7 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
                 type="text"
                 value={profileId}
                 readOnly
-                className="p-2.5 rounded-xl border border-slate-850 bg-slate-950 text-xs font-mono text-yellow-500 select-all cursor-copy"
+                className="p-2.5 rounded-xl border border-slate-850 bg-slate-950 text-xs font-mono text-turquoise-dim select-all cursor-copy"
               />
             </div>
 
@@ -212,7 +212,7 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
                   onChangeNickname(e.target.value);
                   saveToStorage("mb_nickname", e.target.value);
                 }}
-                className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs font-mono text-slate-200 focus:outline-none focus:border-yellow-500/60"
+                className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs font-mono text-slate-200 focus:outline-none focus:border-turquoise-500/60"
                 placeholder="e.g. stargazer-99"
               />
             </div>
@@ -229,7 +229,7 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
                   setAnonMode(e.target.checked);
                   saveToStorage("mb_anon_mode", e.target.checked);
                 }}
-                className="w-4 h-4 rounded border-slate-800 text-yellow-500 focus:ring-0"
+                className="w-4 h-4 rounded border-slate-800 text-turquoise-dim focus:ring-0"
               />
             </div>
 
@@ -255,7 +255,7 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
           <div className="border-t border-slate-800/80 pt-4 space-y-3.5">
             <div className="flex items-start justify-between">
               <div>
-                <h4 className="text-[10px] font-mono font-bold text-yellow-400 uppercase tracking-wider flex items-center gap-1">
+                <h4 className="text-[10px] font-mono font-bold text-turquoise uppercase tracking-wider flex items-center gap-1">
                   <ShieldAlert className="w-3.5 h-3.5" />
                   <span>Under-18 Safeguard Gate</span>
                 </h4>
@@ -268,7 +268,7 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
                   Verified
                 </span>
               ) : ageVerified === "pending" ? (
-                <span className="px-2 py-0.5 rounded bg-amber-950/40 border border-amber-500/30 text-[8px] font-mono text-amber-400 uppercase font-bold animate-pulse">
+                <span className="px-2 py-0.5 rounded bg-turquoise-950/40 border border-turquoise-500/30 text-[8px] font-mono text-turquoise uppercase font-bold animate-pulse">
                   Syncing
                 </span>
               ) : (
@@ -279,7 +279,7 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
             </div>
 
             {ageVerified === "unverified" && (
-              <label className="flex flex-col items-center justify-center border border-dashed border-slate-800 bg-slate-950 p-4 rounded-xl text-center cursor-pointer hover:border-yellow-500/40 transition-colors">
+              <label className="flex flex-col items-center justify-center border border-dashed border-slate-800 bg-slate-950 p-4 rounded-xl text-center cursor-pointer hover:border-turquoise-500/40 transition-colors">
                 <Upload className="w-5 h-5 text-slate-500 mb-1" />
                 <span className="text-[10.5px] font-mono text-slate-300">Upload Student ID / Credential</span>
                 <span className="text-[8px] text-slate-500 font-mono mt-0.5">Processed 100% locally in browser</span>
@@ -294,7 +294,7 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
 
             {ageVerified === "pending" && (
               <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-850 flex items-center gap-2.5">
-                <div className="w-4 h-4 rounded-full border-2 border-yellow-500/30 border-t-yellow-500 animate-spin" />
+                <div className="w-4 h-4 rounded-full border-2 border-turquoise-500/30 border-t-turquoise-500 animate-spin" />
                 <span className="text-[9px] font-mono text-slate-400">Performing offline OCR decryption algorithms...</span>
               </div>
             )}
@@ -313,7 +313,7 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
           {/* Portfolio Canvas Header & Typewriter */}
           <div className="bg-[#090b14]/80 p-5 rounded-2xl border border-slate-800/80 space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-bold font-mono text-yellow-400 uppercase tracking-widest">
+              <h3 className="text-xs font-bold font-mono text-turquoise uppercase tracking-widest">
                 🚀 Dynamic Portfolio Canvas
               </h3>
               <span className="text-[9px] font-mono text-slate-500">stable_node_active: true</span>
@@ -350,7 +350,7 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
                       <div
                         key={day.day}
                         title={`Day ${day.day}: ${day.commits} contributions completed`}
-                        className={`w-5.5 h-5.5 rounded-sm border cursor-help hover:ring-1 hover:ring-yellow-400 transition-all ${colorShades[day.weight]}`}
+                        className={`w-5.5 h-5.5 rounded-sm border cursor-help hover:ring-1 hover:ring-turquoise-400 transition-all ${colorShades[day.weight]}`}
                       />
                     );
                   })}
@@ -377,7 +377,7 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
               <span className="text-[10px] font-mono text-slate-400 block uppercase font-bold">Interests Tags</span>
               <div className="flex flex-wrap gap-1.5 p-2 rounded-xl bg-slate-950/40 border border-slate-850">
                 {hobbies.map((h, index) => (
-                  <div key={index} className="flex items-center gap-1 px-2.5 py-0.5 rounded-full border border-yellow-500/30 bg-yellow-500/5 text-[10px] text-yellow-300 font-mono">
+                  <div key={index} className="flex items-center gap-1 px-2.5 py-0.5 rounded-full border border-turquoise-500/30 bg-turquoise-500/5 text-[10px] text-turquoise-bright font-mono">
                     <span>{h}</span>
                     <button onClick={() => handleDeleteHobby(index)} className="hover:text-red-400 text-slate-500 font-bold focus:outline-none">
                       &times;
@@ -391,7 +391,7 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
                   value={newHobby}
                   onChange={(e) => setNewHobby(e.target.value)}
                   placeholder="New tag (max 3 words)..."
-                  className="p-2 rounded-xl border border-slate-850 bg-slate-950 text-[10px] text-slate-200 placeholder-slate-500 flex-1 focus:outline-none focus:border-yellow-500/30"
+                  className="p-2 rounded-xl border border-slate-850 bg-slate-950 text-[10px] text-slate-200 placeholder-slate-500 flex-1 focus:outline-none focus:border-turquoise-500/30"
                 />
                 <button
                   onClick={handleAddHobby}
@@ -457,7 +457,7 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
                       type="text"
                       value={selfAdTitle}
                       onChange={(e) => setSelfAdTitle(e.target.value)}
-                      className="p-1.5 rounded border border-slate-850 bg-slate-950 text-[10px] font-mono text-yellow-400"
+                      className="p-1.5 rounded border border-slate-850 bg-slate-950 text-[10px] font-mono text-turquoise"
                     />
                   </div>
                   <div className="flex flex-col gap-1">
@@ -474,7 +474,7 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
                       checked={selfAdEnabled}
                       onChange={(e) => setSelfAdEnabled(e.target.checked)}
                       id="enable-self-ad"
-                      className="rounded border-slate-800 text-yellow-500 focus:ring-0"
+                      className="rounded border-slate-800 text-turquoise-dim focus:ring-0"
                     />
                     <label htmlFor="enable-self-ad" className="text-[9px] font-mono text-slate-400 cursor-pointer">
                       Broadcast self-ad to my profile slot
@@ -482,8 +482,8 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
                   </div>
 
                   {selfAdEnabled && (
-                    <div className="p-2.5 border border-yellow-500/30 bg-yellow-500/5 rounded-xl space-y-1">
-                      <div className="flex items-center justify-between text-[8px] font-mono text-yellow-500 uppercase font-bold">
+                    <div className="p-2.5 border border-turquoise-500/30 bg-turquoise-500/5 rounded-xl space-y-1">
+                      <div className="flex items-center justify-between text-[8px] font-mono text-turquoise-dim uppercase font-bold">
                         <span>📢 Sponsor Ad (P2P Node)</span>
                         <span>Level {currentRank.level} Sponsor</span>
                       </div>
@@ -500,7 +500,25 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
                 </div>
               )}
             </div>
-          </div>
+            </div>
+
+            {/* Catalogues access */}
+            <div className="bg-[#090b14]/80 p-4 rounded-2xl border border-slate-800/80 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <BookOpen className="w-5 h-5 text-turquoise" />
+                <div>
+                  <span className="text-xs font-mono font-bold text-slate-100 block">📚 Unified Catalogues</span>
+                  <span className="text-[9px] text-slate-400 font-mono">Astro events & campaigns by category</span>
+                </div>
+              </div>
+              <button
+                onClick={() => onNavigateToView?.("catalogues")}
+                className="px-3.5 py-1.5 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-mono font-bold text-[10px] uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0"
+              >
+                <span>Open</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
 
         </div>
 
