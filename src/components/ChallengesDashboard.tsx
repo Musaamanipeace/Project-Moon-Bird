@@ -2,6 +2,35 @@ import React, { useState, useEffect } from "react";
 import { Award, Lock, CheckCircle, Flame, ShieldAlert, Archive, HelpCircle, Users, Sun, Moon, Sparkles, Plus, AlertCircle, Filter, BookOpen, Compass, Search, Heart, Feather, Edit3, Share2, CheckSquare, ListPlus, Send, Flag, Target, Gift, Image, Video, Music, DollarSign, Eye, ClipboardList } from "lucide-react";
 import { Challenge, ChallengeStep, SurveyQuestion, BonusTask, ChallengeStepAction } from "../types";
 
+// Per-challenge display images (src/assets/challenge-1.png .. challenge-8.png).
+// Renamed to code-safe, consistent names so Vite can statically import them.
+import challengeImg1 from "../assets/challenge-1.png";
+import challengeImg2 from "../assets/challenge-2.png";
+import challengeImg3 from "../assets/challenge-3.png";
+import challengeImg4 from "../assets/challenge-4.png";
+import challengeImg5 from "../assets/challenge-5.png";
+import challengeImg6 from "../assets/challenge-6.png";
+import challengeImg7 from "../assets/challenge-7.png";
+import challengeImg8 from "../assets/challenge-8.png";
+
+// PREVIEW MODE: "predisplayed" shows the image in the card immediately.
+// Switch to "on-interaction" later to reveal only when the card is opened/hovered.
+const CHALLENGE_IMAGE_MODE: "predisplayed" | "on-interaction" = "predisplayed";
+
+const challengeImagesByNumber: Record<number, string> = {
+  1: challengeImg1,
+  2: challengeImg2,
+  3: challengeImg3,
+  4: challengeImg4,
+  5: challengeImg5,
+  6: challengeImg6,
+  7: challengeImg7,
+  8: challengeImg8,
+};
+
+const getChallengeImage = (num?: number): string | null =>
+  num && challengeImagesByNumber[num] ? challengeImagesByNumber[num] : null;
+
 interface ChallengesDashboardProps {
   xp: number;
   onAddXp: (amount: number) => void;
@@ -26,6 +55,14 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
 
   // Detailed Challenge Execution Modal
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);
+  // Lock background scroll while the challenge modal is open
+  useEffect(() => {
+    if (selectedChallenge) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [selectedChallenge]);
   const [stepProgress, setStepProgress] = useState<Record<number, boolean>>({});
   const [bonusProgress, setBonusProgress] = useState<Record<string, boolean>>({});
   const [unlockedStepNumber, setUnlockedStepNumber] = useState<number>(1);
@@ -743,13 +780,42 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
               return (
                 <div
                   key={ch.id}
-                  className={`p-4 rounded-2xl border transition-all flex flex-col justify-between space-y-3 ${
+                  className={`group p-4 rounded-2xl border transition-all flex flex-col justify-between space-y-3 ${
                     isFinished
                       ? "border-emerald-900/60 bg-emerald-950/10 text-slate-300"
                       : "border-slate-800 bg-slate-950/40 hover:border-turquoise-500/40 hover:bg-slate-950/80"
                   }`}
                 >
                   <div className="space-y-2">
+                    {/* Per-challenge display image (preview mode driven by CHALLENGE_IMAGE_MODE) */}
+                    {(() => {
+                      const img = getChallengeImage(ch.number);
+                      if (!img) return null;
+                      if (CHALLENGE_IMAGE_MODE === "predisplayed") {
+                        return (
+                          <div className="w-full aspect-[16/9] rounded-xl overflow-hidden border border-slate-800 bg-slate-950">
+                            <img
+                              src={img}
+                              alt={`${ch.title} preview`}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          </div>
+                        );
+                      }
+                      // on-interaction: reveal on hover
+                      return (
+                        <div className="w-full aspect-[16/9] rounded-xl overflow-hidden border border-slate-800 bg-slate-950 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <img
+                            src={img}
+                            alt={`${ch.title} preview`}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
+                      );
+                    })()}
+
                     <div className="flex items-center justify-between gap-2 flex-wrap">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         {ch.number && (
@@ -1345,11 +1411,12 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
       )}
 
       {/* DETAILED CHALLENGE EXECUTION MODAL */}
-      {selectedChallenge && (
-        <div className="fixed inset-0 bg-[#000000]/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto">
+       {selectedChallenge && (
+        <div className="fixed inset-0 bg-[#000000]/85 backdrop-blur-md z-50 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-3 sm:p-4">
           <form
             onSubmit={handleSubmitChallenge}
-            className="w-full max-w-2xl bg-[#090b14] border border-turquoise-500/40 rounded-2xl shadow-2xl space-y-4 my-4 sm:my-8 relative max-h-[90vh] flex flex-col"
+            className="w-full max-w-2xl bg-[#090b14] border border-turquoise-500/40 rounded-2xl shadow-2xl space-y-4 my-4 sm:my-8 relative max-h-[calc(100vh-2rem)] sm:max-h-[90vh] flex flex-col"
           >
             <div className="p-4 sm:p-5 border-b border-slate-800 shrink-0">
               <div className="flex items-start justify-between gap-3">
@@ -1414,7 +1481,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
               </div>
             </div>
 
-            <div className="px-4 sm:px-5 space-y-4 overflow-y-auto flex-1 py-2">
+            <div className="px-4 sm:px-5 space-y-4 overflow-y-auto flex-1 min-h-0 py-2">
 
             {selectedChallenge.participantRoles && selectedChallenge.participantRoles.length > 0 && (
               <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-850 space-y-1">
@@ -1826,6 +1893,7 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
               </button>
             </div>
           </form>
+          </div>
         </div>
       )}
 

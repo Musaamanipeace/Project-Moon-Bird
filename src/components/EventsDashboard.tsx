@@ -25,6 +25,15 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
   const [transitPercent, setTransitPercent] = useState(0);
   const [isTransiting, setIsTransiting] = useState(false);
 
+  // Lock background scroll while the detail modal is open
+  useEffect(() => {
+    if (selectedItem) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [selectedItem]);
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -306,8 +315,9 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
 
       {/* DETAILED MODAL: WITH CUSTOM SPACE EVENT SIMULATOR */}
       {selectedItem && (
-        <div className="fixed inset-0 bg-[#000000]/80 flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="w-full max-w-2xl rounded-2xl border border-slate-700/80 bg-[#0a0b12] p-5 space-y-4 my-8 shadow-2xl relative">
+        <div className="fixed inset-0 bg-[#000000]/80 z-50 overflow-y-auto">
+          <div className="flex min-h-full items-start sm:items-center justify-center p-4">
+          <div className="w-full max-w-2xl rounded-2xl border border-slate-700/80 bg-[#0a0b12] p-5 space-y-4 my-4 sm:my-8 shadow-2xl relative max-h-[calc(100vh-2rem)] sm:max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => {
                 setSelectedItem(null);
@@ -512,6 +522,7 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
               </div>
 
             </div>
+          </div>
           </div>
         </div>
       )}

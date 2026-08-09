@@ -22,7 +22,8 @@ import {
   Image as ImageIcon,
   CheckCircle2,
   Lock,
-  ArrowRight
+  ArrowRight,
+  X
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -230,6 +231,14 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
 
   // Payment Simulation Modal State
   const [checkoutAd, setCheckoutAd] = useState<Ad | null>(null);
+  // Lock background scroll while an overlay (watcher/checkout) is open
+  useEffect(() => {
+    if (watchingAd || checkoutAd) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [watchingAd, checkoutAd]);
   const [cardNumber, setCardNumber] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvc, setCardCvc] = useState("");
@@ -1283,30 +1292,41 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
       {/* AD WATCHER SIMULATOR PLAYER OVERLAY */}
       <AnimatePresence>
         {watchingAd && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 overflow-y-auto"
           >
-            <motion.div 
+            <div className="flex min-h-full items-start sm:items-center justify-center p-4">
+            <motion.div
               initial={{ scale: 0.95, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 15 }}
-              className="w-full max-w-2xl rounded-2xl border border-slate-800 bg-[#080910] overflow-hidden shadow-2xl relative"
+              className="w-full max-w-2xl rounded-2xl border border-slate-800 bg-[#080910] overflow-hidden shadow-2xl relative flex flex-col max-h-[calc(100vh-2rem)] sm:max-h-[90vh]"
             >
-              
+
               {/* Cinema Media Screen area */}
-              <div className="relative aspect-video bg-black flex items-center justify-center overflow-hidden border-b border-slate-900">
-                <img 
-                  src={watchingAd.mediaUrl} 
-                  alt={watchingAd.title} 
+              <div className="relative aspect-video bg-black flex items-center justify-center overflow-hidden border-b border-slate-900 shrink-0">
+                <img
+                  src={watchingAd.mediaUrl}
+                  alt={watchingAd.title}
                   className="w-full h-full object-cover opacity-85"
                 />
-                
+
+                {/* Always-available Cancel button */}
+                <button
+                  onClick={() => setWatchingAd(null)}
+                  className="absolute top-4 left-4 z-30 p-2 rounded-full bg-black/70 hover:bg-black/90 border border-slate-700 text-slate-200 hover:text-white transition-all"
+                  title="Cancel playback"
+                  aria-label="Cancel playback"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+
                 {/* Simulated playback visual bar */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex flex-col justify-end p-5">
-                  
+
                   {/* Dynamic Playback controls simulation */}
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-[11px] font-mono text-white">
@@ -1320,10 +1340,10 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                     <div className="flex items-center gap-3">
                       {/* Play pause icon */}
                       <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
-                      
+
                       {/* Progress bar */}
                       <div className="flex-1 bg-slate-800/80 h-1.5 rounded-full overflow-hidden border border-slate-950">
-                        <div 
+                        <div
                           className="bg-turquoise-400 h-full rounded-full transition-all duration-1000"
                           style={{ width: `${progressPercent}%` }}
                         />
@@ -1364,8 +1384,8 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                 </button>
               </div>
 
-              {/* Informational section */}
-              <div className="p-6 space-y-4 bg-[#080910]">
+              {/* Informational section (scrolls if needed) */}
+              <div className="p-6 space-y-4 bg-[#080910] overflow-y-auto">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold font-mono text-turquoise uppercase tracking-widest">
@@ -1384,6 +1404,12 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                     Watching awards you guaranteed <span className="text-turquoise font-bold">{watchingAd.rewardAmount} XP</span>.
                   </div>
                   <div className="flex gap-2">
+                    <button
+                      onClick={() => setWatchingAd(null)}
+                      className="px-4 py-2 border border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900 rounded-xl transition-all"
+                    >
+                      Cancel
+                    </button>
                     {canSkip && (
                       <button
                         onClick={handleSkipAd}
@@ -1397,6 +1423,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
               </div>
 
             </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -1408,14 +1435,15 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 overflow-y-auto"
           >
+            <div className="flex min-h-full items-start sm:items-center justify-center p-4">
             <motion.form
               onSubmit={handleSimulatePayment}
               initial={{ scale: 0.95, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 15 }}
-              className="w-full max-w-md rounded-2xl border border-slate-800 bg-[#080911] p-6 shadow-2xl space-y-4 relative"
+              className="w-full max-w-md rounded-2xl border border-slate-800 bg-[#080911] p-6 shadow-2xl space-y-4 relative max-h-[calc(100vh-2rem)] sm:max-h-[90vh] overflow-y-auto"
             >
               <div className="border-b border-slate-850 pb-3">
                 <span className="text-[9px] font-mono text-turquoise uppercase tracking-widest block">Simulation Payment Gateway</span>
@@ -1513,6 +1541,7 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
                 </button>
               </div>
             </motion.form>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

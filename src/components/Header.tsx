@@ -73,7 +73,6 @@ export default function Header({ activeView, isOnline, theme, onThemeToggle, isL
           <span className="bg-gradient-to-r from-turquoise-200 via-turquoise-300 to-turquoise-500 bg-clip-text text-transparent">
             MoonBird
           </span>
-          <span className="text-[10px] px-1.5 py-0.2 bg-turquoise-500/10 border border-turquoise-500/30 text-turquoise rounded-md font-mono">v2.0</span>
         </h1>
       </div>
 
