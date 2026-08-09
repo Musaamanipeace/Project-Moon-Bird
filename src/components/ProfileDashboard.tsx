@@ -28,6 +28,28 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
     }).catch(() => {});
   }, [nickname]);
 
+  // Custom fields (documented: "lets users add custom fields")
+  const [customFields, setCustomFields] = useState<{ key: string; value: string }[]>([]);
+  const [newFieldKey, setNewFieldKey] = useState("");
+  const [newFieldVal, setNewFieldVal] = useState("");
+  useEffect(() => {
+    const saved = localStorage.getItem("mb_custom_fields");
+    if (saved) setCustomFields(JSON.parse(saved));
+  }, []);
+  const saveCustomFields = (next: { key: string; value: string }[]) => {
+    setCustomFields(next);
+    localStorage.setItem("mb_custom_fields", JSON.stringify(next));
+  };
+  const handleAddField = () => {
+    const k = newFieldKey.trim();
+    const v = newFieldVal.trim();
+    if (!k) return;
+    if (customFields.some(f => f.key.toLowerCase() === k.toLowerCase())) return;
+    saveCustomFields([...customFields, { key: k, value: v }]);
+    setNewFieldKey(""); setNewFieldVal("");
+  };
+  const handleDeleteField = (idx: number) => saveCustomFields(customFields.filter((_, i) => i !== idx));
+
   // Hobbies list
   const [hobbies, setHobbies] = useState<string[]>(["[Physics] Space mechanics", "[Sky] Crescent tracking"]);
   const [newHobby, setNewHobby] = useState("");
@@ -414,35 +436,77 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
                 </button>
               </div>
             </div>
+
+            {/* Custom Fields (documented: "lets users add custom fields") */}
+            <div className="space-y-2.5">
+              <span className="text-[10px] font-mono text-slate-400 block uppercase font-bold">⚙️ Custom Fields</span>
+              <p className="text-[8.5px] text-slate-500 font-sans leading-normal">
+                Add your own portfolio fields — the page ships with fields out of the box, and you can extend it freely.
+              </p>
+              <div className="flex flex-wrap gap-1.5 p-2 rounded-xl bg-slate-950/40 border border-slate-850">
+                {customFields.length === 0 ? (
+                  <span className="text-[9px] text-slate-500 font-mono">No custom fields yet. Add one below.</span>
+                ) : (
+                  customFields.map((f, idx) => (
+                    <div key={idx} className="flex items-center gap-1 px-2.5 py-0.5 rounded-full border border-turquoise-500/30 bg-turquoise-500/5 text-[10px] text-turquoise-bright font-mono">
+                      <span className="font-bold">{f.key}:</span>
+                      <span>{f.value || "—"}</span>
+                      <button onClick={() => handleDeleteField(idx)} className="hover:text-red-400 text-slate-500 font-bold focus:outline-none">&times;</button>
+                    </div>
+                  ))
+                )}
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newFieldKey}
+                  onChange={(e) => setNewFieldKey(e.target.value)}
+                  placeholder="Field name (e.g. Favorite Telescope)"
+                  className="p-2 rounded-xl border border-slate-850 bg-slate-950 text-[10px] text-slate-200 placeholder-slate-500 flex-1 focus:outline-none focus:border-turquoise-500/30"
+                />
+                <input
+                  type="text"
+                  value={newFieldVal}
+                  onChange={(e) => setNewFieldVal(e.target.value)}
+                  placeholder="Value"
+                  className="p-2 rounded-xl border border-slate-850 bg-slate-950 text-[10px] text-slate-200 placeholder-slate-500 w-28 focus:outline-none focus:border-turquoise-500/30"
+                />
+                <button
+                  onClick={handleAddField}
+                  className="px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-[10px] font-mono font-bold"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
           </div>
 
-          {/* Project Screenshot Slots & Self Ad slot */}
+          {/* Curated Catalogues showcase & Self Ad slot */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Viewports */}
+            {/* Curated catalogues (documented portfolio lists) */}
             <div className="bg-[#090b14]/80 p-4 rounded-2xl border border-slate-800/80 space-y-3">
-              <span className="text-[10px] font-mono text-slate-400 uppercase block font-bold">🖼️ active Project Viewports</span>
-              <div className="space-y-3.5">
-                <div className="border border-slate-850 rounded-xl overflow-hidden bg-slate-950">
-                  <div className="bg-slate-900 px-3 py-1 text-[8.5px] font-mono text-slate-500 border-b border-slate-850 flex justify-between">
-                    <span>lunar_map_engine_v1.bin</span>
-                    <span className="text-emerald-400">● LIVE</span>
-                  </div>
-                  <div className="h-20 bg-slate-950 flex items-center justify-center flex-col text-center">
-                    <span className="text-lg">🗺️</span>
-                    <span className="text-[9px] font-mono text-slate-300 mt-1 font-bold">Atmospheric Sky Clarity Map</span>
-                  </div>
-                </div>
-
-                <div className="border border-slate-850 rounded-xl overflow-hidden bg-slate-950">
-                  <div className="bg-slate-900 px-3 py-1 text-[8.5px] font-mono text-slate-500 border-b border-slate-850 flex justify-between">
-                    <span>dusk_breather.so</span>
-                    <span className="text-emerald-400">● LIVE</span>
-                  </div>
-                  <div className="h-20 bg-slate-950 flex items-center justify-center flex-col text-center">
-                    <span className="text-lg">🧘</span>
-                    <span className="text-[9px] font-mono text-slate-300 mt-1 font-bold">Calm Dusk Breather Logic</span>
-                  </div>
-                </div>
+              <span className="text-[10px] font-mono text-slate-400 uppercase block font-bold">🗂️ Curated Catalogues</span>
+              <p className="text-[8.5px] text-slate-500 font-sans leading-normal">
+                The portfolio curates lists of things. Open the full catalogue to explore each.
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { label: "Skills", icon: "🛠️", kind: "skill" },
+                  { label: "Books", icon: "📚", kind: "book" },
+                  { label: "Brands", icon: "🏷️", kind: "brand" },
+                  { label: "Astro Events", icon: "🌌", kind: "astro_event" },
+                  { label: "Disease / Health", icon: "🩺", kind: "disease" },
+                  { label: "Charities", icon: "🤝", kind: "charity" },
+                ].map((c) => (
+                  <button
+                    key={c.kind}
+                    onClick={() => onNavigateToView?.("catalogues")}
+                    className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-850 bg-slate-950/50 hover:border-turquoise-500/30 transition-all text-left"
+                  >
+                    <span className="text-base">{c.icon}</span>
+                    <span className="text-[10px] font-mono font-bold text-slate-200">{c.label}</span>
+                  </button>
+                ))}
               </div>
             </div>
 

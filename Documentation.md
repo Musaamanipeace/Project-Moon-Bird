@@ -187,14 +187,23 @@ Global Sidebar (Homepage HUD)
 Catalogues (Unified, Decluttered)
 - `src/components/CataloguesDashboard.tsx` now unifies five catalogue kinds behind a left filter rail:
   - astro_event (from `lib/events` astroCatalogue)
-  - brand (from `GET /api/catalogue/brands`)
-  - book  (from `GET /api/catalogue/books`) — a catalogue of books, not the books themselves
-  - campaign / ad (from `AdvertiserDashboard` DEFAULT_ADS)
-  - general (reserved)
+   - brand (from `GET /api/catalogue/brands`)
+   - book  (from `GET /api/catalogue/books`) — a catalogue of books, not the books themselves
+   - skill (from `GET /api/catalogue/skills`)
+   - disease (from `GET /api/catalogue/diseases`) — disease / health catalogue
+   - charity (from `GET /api/catalogue/charities`) — charities / non-profit programmes
+   - campaign / ad (from `AdvertiserDashboard` DEFAULT_ADS)
+   - general (reserved)
+- These map to the six curated lists documented in the Portfolio section: skills, books, brands/company, astro-events, disease, charities.
 - Each card has a "Share to Feed" action (calls `onShareFeed` -> backend `POST /api/feed` with kind `catalogue_share`).
 
+Portfolio (`src/components/ProfileDashboard.tsx`)
+- Customizable, informal portfolio. Out-of-the-box fields: standardized Moonbug ID, local nickname, incognito shield, broad occupation, interests tags, Lunar Contribution Log, Curated Catalogues showcase, host Self-Ads slot, My Feed.
+- Users can add their own **custom fields** (key/value) persisted to `localStorage mb_custom_fields` (documented requirement: "lets users add custom fields").
+- The "Curated Catalogues" card links to the six documented catalogues (skills, books, brands, astro-events, disease, charities).
+
 Meet People Like Me (`src/components/MeetPeople.tsx`)
-- Renders an animated starfield overlay where each online user is a "bird" (emoji) flying across the screen via the `flyAcross` keyframe (`src/index.css`). Hovering a bird shows a call-to-action popover: View Portfolio, Chat, View Feed.
+- Lists online users and best matches; each user is openable to a profile modal (View Portfolio, Chat, View Feed). (The earlier animated "flying birds" overlay was removed; interactions remain via the lists.)
 - Matchmaking: `GET /api/matchmaking?nickname=&interests=&brandLinks=` scores other users by shared interests (x2) and shared brand links (x3), sorted descending. Priority is given to users with the most overlap. The user's own interests/brands are read from `localStorage` (`mb_hobbies`, `mb_brand_links`).
 - Online presence: `GET /api/online-users/extended` enriches the existing online-users map with registered profile data (interests, brand links, avatar).
 - Clicking a user opens a profile modal showing avatar, bio, interests, and that user's feed (`GET /api/users/:id` returns `{...profile, feed}`).
@@ -210,12 +219,12 @@ Feeds (Shareable from Many Sources)
 - Feed visibility: a user's own feed is shown in their Profile ("My Feed" card, `ProfileDashboard`), and another user's feed is shown in the Meet-People profile modal. A completed challenge, created challenge, ad, event comment, or catalogue entry can each be shared to the feed.
 
 Backend Endpoints (server.ts) — Social Layer
-- GET  /api/catalogue/brands, GET /api/catalogue/books
+- GET  /api/catalogue/brands, /api/catalogue/books, /api/catalogue/skills, /api/catalogue/diseases, /api/catalogue/charities
 - GET  /api/feed?author=&kind=, POST /api/feed {author,kind,title,body,refId,refType,experience}
 - GET  /api/users, GET /api/users/:id (returns profile + feed)
 - GET  /api/matchmaking?nickname=&interests=&brandLinks=
 - GET  /api/online-users/extended
-- Seed data: 4 brands, 4 books, 4 demo users with interests + brand links; feeds persist to disk.
+- Seed data: 4 brands, 4 books, 5 skills, 4 diseases, 4 charities, 4 demo users with interests + brand links; feeds persist to disk.
 
 Notes / Caveats
 - "Real backend" here means the Express server already running (server.ts) extended with JSON-backed stores; there is no SQL/Auth provider. User identity is the local nickname; profiles are keyed by nickname.

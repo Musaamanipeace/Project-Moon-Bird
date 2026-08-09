@@ -1,10 +1,10 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { BookOpen, Sparkles, Megaphone, Tag, Filter, Star, Calendar, ArrowUpRight, Telescope, Store, Library, LayoutGrid, Share2 } from "lucide-react";
+import { BookOpen, Sparkles, Megaphone, Tag, Filter, Star, Calendar, ArrowUpRight, Telescope, Store, Library, LayoutGrid, Share2, HeartPulse, HandHeart } from "lucide-react";
 import { astroCatalogue } from "../lib/events";
 import { DEFAULT_ADS } from "./AdvertiserDashboard";
 import { api, Brand, Book } from "../lib/api";
 
-type CatalogueKind = "all" | "astro_event" | "brand" | "book" | "campaign" | "general";
+type CatalogueKind = "all" | "astro_event" | "brand" | "book" | "campaign" | "skill" | "disease" | "charity" | "general";
 
 interface CataloguesDashboardProps {
   onNavigateToView?: (view: string) => void;
@@ -28,6 +28,9 @@ const KIND_META: Record<Exclude<CatalogueKind, "all">, { label: string; icon: Re
   brand: { label: "Brands", icon: <Store className="w-4 h-4" />, color: "text-turquoise-bright" },
   book: { label: "Books", icon: <Library className="w-4 h-4" />, color: "text-turquoise-dim" },
   campaign: { label: "Campaigns / Ads", icon: <Megaphone className="w-4 h-4" />, color: "text-emerald-400" },
+  skill: { label: "Skills", icon: <Sparkles className="w-4 h-4" />, color: "text-turquoise" },
+  disease: { label: "Disease / Health", icon: <HeartPulse className="w-4 h-4" />, color: "text-rose-300" },
+  charity: { label: "Charities", icon: <HandHeart className="w-4 h-4" />, color: "text-amber-300" },
   general: { label: "General", icon: <LayoutGrid className="w-4 h-4" />, color: "text-slate-300" },
 };
 
@@ -36,10 +39,16 @@ export default function CataloguesDashboard({ onNavigateToView, onShareFeed }: C
   const [query, setQuery] = useState("");
   const [brands, setBrands] = useState<Brand[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
+  const [skills, setSkills] = useState<any[]>([]);
+  const [diseases, setDiseases] = useState<any[]>([]);
+  const [charities, setCharities] = useState<any[]>([]);
 
   useEffect(() => {
     api.brands().then(setBrands).catch(() => {});
     api.books().then(setBooks).catch(() => {});
+    api.skills().then(setSkills).catch(() => {});
+    api.diseases().then(setDiseases).catch(() => {});
+    api.charities().then(setCharities).catch(() => {});
   }, []);
 
   const items = useMemo<CatItem[]>(() => {
@@ -59,8 +68,20 @@ export default function CataloguesDashboard({ onNavigateToView, onShareFeed }: C
       id: b.id, kind: "book", title: b.title, description: `${b.tagline} — ${b.author}`,
       category: b.category, badge: b.interests.join(", "), icon: b.emoji || "📚",
     }));
-    return [...astro, ...brandItems, ...bookItems, ...campaigns];
-  }, [brands, books]);
+    const skillItems: CatItem[] = skills.map((s) => ({
+      id: s.id, kind: "skill", title: s.name, description: s.description,
+      category: s.category, badge: `Level: ${s.level}`, icon: "🛠️",
+    }));
+    const diseaseItems: CatItem[] = diseases.map((d) => ({
+      id: d.id, kind: "disease", title: d.name, description: d.summary,
+      category: d.category, badge: `Prevention: ${d.prevention}`, icon: "🩺",
+    }));
+    const charityItems: CatItem[] = charities.map((c) => ({
+      id: c.id, kind: "charity", title: c.name, description: c.tagline,
+      category: c.category, badge: c.region, icon: "🤝",
+    }));
+    return [...astro, ...brandItems, ...bookItems, ...campaigns, ...skillItems, ...diseaseItems, ...charityItems];
+  }, [brands, books, skills, diseases, charities]);
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
@@ -71,7 +92,7 @@ export default function CataloguesDashboard({ onNavigateToView, onShareFeed }: C
     });
   }, [items, kind, query]);
 
-  const kinds: CatalogueKind[] = ["all", "astro_event", "brand", "book", "campaign", "general"];
+  const kinds: CatalogueKind[] = ["all", "astro_event", "brand", "book", "campaign", "skill", "disease", "charity", "general"];
 
   const handleShare = (it: CatItem) => {
     onShareFeed?.({ kind: "catalogue_share", title: it.title, body: it.description, refId: it.id, refType: it.kind });

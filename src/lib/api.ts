@@ -32,6 +32,9 @@ export interface PublicUser {
 export const api = {
   brands: () => getJson<Brand[]>("/api/catalogue/brands"),
   books: () => getJson<Book[]>("/api/catalogue/books"),
+  skills: () => getJson<any[]>("/api/catalogue/skills"),
+  diseases: () => getJson<any[]>("/api/catalogue/diseases"),
+  charities: () => getJson<any[]>("/api/catalogue/charities"),
 
   feed: (params?: { author?: string; kind?: string }) => {
     const q = new URLSearchParams();

@@ -45,7 +45,7 @@ function getMoonPhasePath(age: number, radius: number = 40) {
 
 export default function App() {
   const [activeView, setActiveView] = useState<"home" | "dial" | "challenges" | "notes" | "profile" | "advertiser" | "chat" | "catalogues" | "meet">("home");
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [isOnline, setIsOnline] = useState(true);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
 

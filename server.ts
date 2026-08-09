@@ -648,6 +648,34 @@ const seedBooks = [
 ];
 let books = loadJson<any[]>("books.json", seedBooks);
 
+// ---- Skills catalogue ----
+const seedSkills = [
+  { id: "skill-astro-photography", name: "Astro-Photography", category: "Astronomy", description: "Capture the night sky with camera and tripod.", level: "Beginner", interests: ["Astronomy"] },
+  { id: "skill-journaling", name: "Reflective Journaling", category: "Self-Improvement", description: "Daily written reflection and goal tracking.", level: "Beginner", interests: ["Self-Improvement", "Mindfulness"] },
+  { id: "skill-telescope-use", name: "Telescope Operation", category: "Astronomy", description: "Align, focus, and track celestial objects.", level: "Intermediate", interests: ["Astronomy"] },
+  { id: "skill-meditation", name: "Mindfulness Meditation", category: "Mindfulness", description: "Breath and body-scan routines for calm.", level: "Beginner", interests: ["Mindfulness", "Health"] },
+  { id: "skill-orbital-mechanics", name: "Orbital Mechanics", category: "Science", description: "Keplerian models and ephemeris basics.", level: "Advanced", interests: ["Astronomy", "Self-Improvement"] },
+];
+let skills = loadJson<any[]>("skills.json", seedSkills);
+
+// ---- Disease / health catalogue ----
+const seedDiseases = [
+  { id: "disease-hypertension", name: "Hypertension", category: "Cardiovascular", summary: "Persistently high blood pressure; monitor and reduce sodium.", prevention: "Regular exercise, low-salt diet, sleep." },
+  { id: "disease-diabetes", name: "Type 2 Diabetes", category: "Metabolic", summary: "Impaired insulin use raising blood sugar.", prevention: "Balanced diet, activity, weight management." },
+  { id: "disease-asthma", name: "Asthma", category: "Respiratory", summary: "Airway inflammation causing breathlessness.", prevention: "Avoid triggers, air quality awareness." },
+  { id: "disease-insomnia", name: "Insomnia", category: "Sleep", summary: "Difficulty initiating or maintaining sleep.", prevention: "Consistent schedule, screen-down wind-down." },
+];
+let diseases = loadJson<any[]>("diseases.json", seedDiseases);
+
+// ---- Charities / non-profit programmes catalogue ----
+const seedCharities = [
+  { id: "charity-stars-for-kids", name: "Stars for Kids", tagline: "Free telescopes & night-sky clubs for schools.", category: "Education", region: "Global" },
+  { id: "charity-clean-air", name: "Clean Air Coalition", tagline: "Community air-quality monitoring grants.", category: "Environment", region: "Africa" },
+  { id: "charity-mind-matters", name: "Mind Matters", tagline: "Mental-health peer support programmes.", category: "Health", region: "Global" },
+  { id: "charity-orbit-academy", name: "Orbit Academy", tagline: "STEM scholarships for under-served regions.", category: "Education", region: "Kenya" },
+];
+let charities = loadJson<any[]>("charities.json", seedCharities);
+
 // ---- Feeds ----
 let feeds: any[] = loadJson<any[]>("feeds.json", []);
 function addFeed(entry: any) {
@@ -676,6 +704,9 @@ function publicUser(u: any) {
 // ---- Catalogue endpoints ----
 app.get("/api/catalogue/brands", (req, res) => res.json(brands));
 app.get("/api/catalogue/books", (req, res) => res.json(books));
+app.get("/api/catalogue/skills", (req, res) => res.json(skills));
+app.get("/api/catalogue/diseases", (req, res) => res.json(diseases));
+app.get("/api/catalogue/charities", (req, res) => res.json(charities));
 
 // ---- Feed endpoints ----
 app.get("/api/feed", (req, res) => {

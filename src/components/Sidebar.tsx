@@ -19,11 +19,11 @@ const ITEMS = [
 export default function Sidebar({ activeView, onNavigate, collapsed, onToggleCollapse }: SidebarProps) {
   return (
     <aside
-      className={`hidden md:flex flex-col shrink-0 border-r border-slate-800/80 bg-[#0a0b12]/90 backdrop-blur-md transition-all duration-300 ${
-        collapsed ? "w-16" : "w-60"
+      className={`flex flex-col shrink-0 border-r border-slate-800/80 bg-[#0a0b12]/90 backdrop-blur-md transition-all duration-300 ${
+        collapsed ? "w-14" : "w-56"
       }`}
     >
-      <div className="flex items-center justify-between p-3 border-b border-slate-800/80">
+      <div className="flex items-center justify-between p-2 border-b border-slate-800/80">
         {!collapsed && (
           <span className="text-[10px] font-mono text-turquoise uppercase tracking-widest font-bold flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5" /> Moonbug HUD
@@ -38,7 +38,7 @@ export default function Sidebar({ activeView, onNavigate, collapsed, onToggleCol
         </button>
       </div>
 
-      <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
+      <nav className="flex-1 p-1.5 space-y-1 overflow-y-auto">
         {ITEMS.map((it) => {
           const Icon = it.icon;
           const isActive = activeView === it.id;
@@ -47,7 +47,7 @@ export default function Sidebar({ activeView, onNavigate, collapsed, onToggleCol
               key={it.id}
               onClick={() => onNavigate(it.id)}
               title={it.label}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all group ${
+              className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-left transition-all group ${
                 isActive
                   ? "bg-turquoise-500/10 border border-turquoise-500/30 text-turquoise"
                   : "border border-transparent text-slate-300 hover:text-white hover:bg-slate-800/50"
@@ -66,7 +66,7 @@ export default function Sidebar({ activeView, onNavigate, collapsed, onToggleCol
       </nav>
 
       {!collapsed && (
-        <div className="p-3 border-t border-slate-800/80 text-[9px] font-mono text-slate-600">
+        <div className="p-2 border-t border-slate-800/80 text-[9px] font-mono text-slate-600">
           Global quick access · v2.0
         </div>
       )}
