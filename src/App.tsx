@@ -14,6 +14,9 @@ import DialDashboard from "./components/DialDashboard";
 import AdvertiserDashboard from "./components/AdvertiserDashboard";
 import AdQuizModule from "./components/AdQuizModule";
 import CataloguesDashboard from "./components/CataloguesDashboard";
+import Sidebar from "./components/Sidebar";
+import MeetPeople from "./components/MeetPeople";
+import { api } from "./lib/api";
 import { AstroEvent, Challenge, OnlineUser } from "./types";
 
 function getMoonPhasePath(age: number, radius: number = 40) {
@@ -41,7 +44,8 @@ function getMoonPhasePath(age: number, radius: number = 40) {
 }
 
 export default function App() {
-  const [activeView, setActiveView] = useState<"home" | "dial" | "challenges" | "notes" | "profile" | "advertiser" | "chat" | "catalogues">("home");
+  const [activeView, setActiveView] = useState<"home" | "dial" | "challenges" | "notes" | "profile" | "advertiser" | "chat" | "catalogues" | "meet">("home");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
   const [theme, setTheme] = useState<"dark" | "light">("dark");
 
@@ -214,6 +218,23 @@ export default function App() {
     const nextXp = Math.max(0, xp - amount);
     setXp(nextXp);
     localStorage.setItem("mb_xp", nextXp.toString());
+  };
+
+  // Global feed poster (backend + local cache for instant display)
+  const handleShareFeed = (entry: {
+    kind: any; title?: string; body?: string; refId?: string; refType?: string; experience?: string;
+  }) => {
+    const item = { author: nickname, ...entry };
+    // local cache
+    try {
+      const cached = JSON.parse(localStorage.getItem("mb_feed") || "[]");
+      cached.unshift({ id: `local-${Date.now()}`, timestamp: new Date().toISOString(), ...item });
+      if (cached.length > 200) cached.pop();
+      localStorage.setItem("mb_feed", JSON.stringify(cached));
+    } catch {}
+    // backend
+    api.postFeed(item).catch(() => {});
+    alert("Shared to your feed! ✓");
   };
 
   const handleThemeToggle = () => {
@@ -429,7 +450,19 @@ export default function App() {
         isLoggedIn={isLoggedIn}
         onLogout={handleLogout}
         onLoginClick={() => setIsOnlineLoggedIn(false)}
+        onHome={() => setActiveView("home")}
       />
+
+      {/* Sidebar + Main content row */}
+      <div className="flex flex-1 min-h-0">
+        {isLoggedIn && (
+          <Sidebar
+            activeView={activeView}
+            onNavigate={setActiveView}
+            collapsed={sidebarCollapsed}
+            onToggleCollapse={() => setSidebarCollapsed(v => !v)}
+          />
+        )}
 
       {/* 1. AUTH LOGIN IDENTITY MODAL */}
       {!isLoggedIn && (
@@ -490,9 +523,9 @@ export default function App() {
         </div>
       )}
 
-      {/* 2. MAIN ACTIVE VIEW RENDERER */}
-      <main className="flex-1 pb-24 overflow-x-hidden">
-        {isLoggedIn && (
+        {/* 2. MAIN ACTIVE VIEW RENDERER */}
+        <main className="flex-1 pb-24 overflow-x-hidden min-w-0">
+          {isLoggedIn && (
           <>
             {/* VIEW A: HOME VIEW (CONSOLIDATED CORE FEED) */}
             {activeView === "home" && (
@@ -826,6 +859,7 @@ export default function App() {
                 xp={xp}
                 onAddXp={handleAddXp}
                 onNavigateToView={setActiveView}
+                onShareFeed={handleShareFeed}
               />
             )}
 
@@ -857,6 +891,7 @@ export default function App() {
                 onAddXp={handleAddXp}
                 nickname={nickname}
                 onNavigateToView={setActiveView}
+                onShareFeed={handleShareFeed}
               />
             )}
 
@@ -878,16 +913,27 @@ export default function App() {
                 onAddXp={handleAddXp}
                 isOnline={isOnline}
                 onNavigateToView={setActiveView}
+                onShareFeed={handleShareFeed}
               />
             )}
 
             {/* VIEW J: UNIFIED CATALOGUES */}
             {activeView === "catalogues" && (
-              <CataloguesDashboard onNavigateToView={setActiveView} />
+              <CataloguesDashboard onNavigateToView={setActiveView} onShareFeed={handleShareFeed} />
+            )}
+
+            {/* VIEW K: MEET PEOPLE LIKE ME */}
+            {activeView === "meet" && (
+              <MeetPeople
+                nickname={nickname}
+                onNavigateToView={setActiveView}
+                onOpenProfile={(id) => setActiveView("meet")}
+              />
             )}
           </>
         )}
       </main>
+      </div>
 
       {/* BOTTOM PERSISTENT NAVIGATION BAR */}
       {isLoggedIn && (

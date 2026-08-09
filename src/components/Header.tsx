@@ -9,9 +9,10 @@ interface HeaderProps {
   isLoggedIn: boolean;
   onLogout: () => void;
   onLoginClick: () => void;
+  onHome: () => void;
 }
 
-export default function Header({ activeView, isOnline, theme, onThemeToggle, isLoggedIn, onLogout, onLoginClick }: HeaderProps) {
+export default function Header({ activeView, isOnline, theme, onThemeToggle, isLoggedIn, onLogout, onLoginClick, onHome }: HeaderProps) {
   const [showPopover, setShowPopover] = useState(false);
 
   // Dynamic dashboard text and tooltip description mapping
@@ -68,7 +69,7 @@ export default function Header({ activeView, isOnline, theme, onThemeToggle, isL
   return (
     <header className="sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-[#0a0b10]/80 dark:bg-[#0a0b10]/80 light:bg-slate-100/90 backdrop-blur-md transition-all duration-300">
       {/* Animated Logo Container */}
-      <div className="flex items-center gap-2 cursor-pointer group">
+      <div className="flex items-center gap-2 cursor-pointer group" onClick={onHome} title="Go to Home">
         <h1 className="text-xl font-bold font-mono tracking-wider text-slate-100 group-hover:text-white transition-colors duration-500 relative flex items-center gap-1">
           <span className="bg-gradient-to-r from-turquoise-200 via-turquoise-300 to-turquoise-500 bg-clip-text text-transparent">
             MoonBird

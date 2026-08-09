@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { User, Tag, Briefcase, MapPin, Image, Star, Trophy, Wallet, Plus, Trash2, CheckCircle, ShieldAlert, Eye, FileText, Upload, Sparkles, Megaphone, ArrowUpRight, BookOpen } from "lucide-react";
+import { User, Tag, Briefcase, MapPin, Image, Star, Trophy, Wallet, Plus, Trash2, CheckCircle, ShieldAlert, Eye, FileText, Upload, Sparkles, Megaphone, ArrowUpRight, BookOpen, Newspaper } from "lucide-react";
 import { UserProfile } from "../types";
+import { api, FeedItem } from "../lib/api";
 
 interface ProfileDashboardProps {
   nickname: string;
@@ -14,6 +15,18 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
   const [profileId, setProfileId] = useState("");
   const [anonMode, setAnonMode] = useState(true);
   const [occupation, setOccupation] = useState("Student");
+
+  // Personal feed (own posts)
+  const [myFeed, setMyFeed] = useState<FeedItem[]>([]);
+  useEffect(() => {
+    const cached = JSON.parse(localStorage.getItem("mb_feed") || "[]");
+    setMyFeed(cached);
+    api.feed({ author: nickname }).then((f) => {
+      // merge local + backend, dedupe by id
+      const merged = [...cached, ...f].filter((v, i, a) => a.findIndex(x => x.id === v.id) === i);
+      setMyFeed(merged);
+    }).catch(() => {});
+  }, [nickname]);
 
   // Hobbies list
   const [hobbies, setHobbies] = useState<string[]>(["[Physics] Space mechanics", "[Sky] Crescent tracking"]);
@@ -520,7 +533,36 @@ export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAdd
               </button>
             </div>
 
+            {/* Personal Feed */}
+            <div className="bg-[#090b14]/80 p-4 rounded-2xl border border-slate-800/80 space-y-2">
+              <div className="flex items-center gap-2">
+                <Newspaper className="w-5 h-5 text-turquoise" />
+                <span className="text-xs font-mono font-bold text-slate-100 block">📰 My Feed</span>
+              </div>
+              <div className="space-y-2 max-h-72 overflow-y-auto">
+                {myFeed.length === 0 ? (
+                  <p className="text-[10px] text-slate-500 font-mono">No posts yet. Share a catalogue, challenge, or badge!</p>
+                ) : (
+                  myFeed.map((f) => (
+                    <div key={f.id} className="p-2.5 rounded-xl border border-slate-850 bg-slate-950/60">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[9px] font-mono text-turquoise uppercase">{f.kind}</span>
+                        <span className="text-[8px] text-slate-500 font-mono">{new Date(f.timestamp).toLocaleString()}</span>
+                      </div>
+                      <p className="text-[11px] text-slate-200 mt-0.5">{f.title || f.body}</p>
+                      {f.experience && (
+                        <p className="text-[10px] text-turquoise mt-1 flex items-center gap-1">
+                          <Sparkles className="w-3 h-3" /> View player's challenge experience: {f.experience}
+                        </p>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
         </div>
+
 
       </div>
 

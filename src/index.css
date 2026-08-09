@@ -59,12 +59,20 @@ body {
   transform: rotateY(180deg);
 }
 
-@keyframes gradient-pulse {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+@keyframes flyAcross {
+  0% { transform: translateX(0) translateY(0); }
+  25% { transform: translateX(25vw) translateY(-12px); }
+  50% { transform: translateX(50vw) translateY(8px); }
+  75% { transform: translateX(75vw) translateY(-6px); }
+  100% { transform: translateX(105vw) translateY(0); }
 }
 
 .animate-gradient-pulse {
   animation: gradient-pulse 4s ease infinite;
+}
+
+@keyframes gradient-pulse {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 

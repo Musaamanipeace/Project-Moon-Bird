@@ -54,6 +54,7 @@ interface AdvertiserDashboardProps {
   onAddXp: (amount: number) => void;
   nickname: string;
   onNavigateToView?: (view: string) => void;
+  onShareFeed?: (entry: { kind: any; title?: string; body?: string; refId?: string; refType?: string }) => void;
 }
 
 export const DEFAULT_ADS: Ad[] = [
@@ -189,7 +190,7 @@ export const DEFAULT_ADS: Ad[] = [
   }
 ];
 
-export default function AdvertiserDashboard({ xp, onAddXp, nickname }: AdvertiserDashboardProps) {
+export default function AdvertiserDashboard({ xp, onAddXp, nickname, onNavigateToView, onShareFeed }: AdvertiserDashboardProps) {
   const [activeTab, setActiveTab] = useState<"feed" | "create" | "analytics">("feed");
   const [ads, setAds] = useState<Ad[]>(() => {
     const saved = localStorage.getItem("moonbug_all_ads");
@@ -457,8 +458,10 @@ export default function AdvertiserDashboard({ xp, onAddXp, nickname }: Advertise
 
     if (adCategory === "sponsored") {
       setCheckoutAd(newAd);
+      onShareFeed?.({ kind: "ad_share", title: newAd.title, body: newAd.description, refId: newAd.id, refType: "ad" });
     } else {
       setAds([newAd, ...ads]);
+      onShareFeed?.({ kind: "ad_share", title: newAd.title, body: newAd.description, refId: newAd.id, refType: "ad" });
       setBrandName("");
       setCreatorName("");
       setTitle("");

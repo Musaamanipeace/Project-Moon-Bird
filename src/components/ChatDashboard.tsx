@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { MessageSquare, Bot, Users, Send, Sparkles, Compass, UserCheck, Volume2, AlertTriangle, ShieldCheck, Heart, ArrowUpRight, HelpCircle } from "lucide-react";
+import { MessageSquare, Bot, Users, Send, Sparkles, Compass, UserCheck, Volume2, AlertTriangle, Heart, ArrowUpRight, HelpCircle } from "lucide-react";
 import { ChatMessage, OnlineUser } from "../types";
 
 interface ChatDashboardProps {
@@ -29,11 +29,8 @@ export default function ChatDashboard({ nickname, xp, onAddXp, onDeductXp, onNav
   const [aiMessagesCount, setAiMessagesCount] = useState<number>(0);
   const [isPremium, setIsPremium] = useState<boolean>(false);
 
-  // Survey State
-  const [surveyVoted, setSurveyVoted] = useState<boolean>(false);
-  const [selectedSurveyOption, setSelectedSurveyOption] = useState<number | null>(null);
-  const [surveyComment, setSurveyComment] = useState("");
-
+  // Chat state
+  const [activeChannel, setActiveChannel] = useState<"ai" | "tribe">("ai");
   // Custom Hover Metrics State
   const [hoveredMetrics, setHoveredMetrics] = useState<string | null>(null);
 
@@ -227,14 +224,6 @@ How are you handling your processed sugar elimination challenge today? Let's for
     alert("💖 Thank you for sponsoring the decentralized web! Computing tokens reset to UNLIMITED. Enjoy +500 XP!");
   };
 
-  const handleVoteSurvey = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (selectedSurveyOption === null) return;
-    setSurveyVoted(true);
-    onAddXp(25); // high payout for user feedback
-    alert("🗳️ Vote cast securely in the escrow pool! Thank you for participating. You earned +25 XP.");
-  };
-
   const handleSpeakText = (text: string) => {
     if ("speechSynthesis" in window) {
       const u = new SpeechSynthesisUtterance(text);
@@ -329,78 +318,6 @@ How are you handling your processed sugar elimination challenge today? Let's for
         
         {/* Sidebar */}
         <div className="space-y-4 md:col-span-1">
-          {/* Active Survey Module */}
-          <div className="bg-slate-950/60 border border-indigo-900/40 p-4 rounded-2xl space-y-3 shadow-lg">
-            <h4 className="text-[10px] font-mono font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Ethical Polling Module</span>
-            </h4>
-
-            {!surveyVoted ? (
-              <form onSubmit={handleVoteSurvey} className="space-y-2.5">
-                <p className="text-[10.5px] font-sans text-slate-300 leading-relaxed font-semibold">
-                  How should Moonbug distribute self-hosted advertising escrow pools?
-                </p>
-
-                <div className="space-y-1.5">
-                  {[
-                    "100% direct payouts to quiz passers",
-                    "70% direct payouts, 30% community treasury",
-                    "Distributed evenly to all active streak keepers"
-                  ].map((opt, oIdx) => (
-                    <label 
-                      key={oIdx}
-                      className={`flex items-start gap-1.5 p-2 rounded-lg border text-[9.5px] font-mono cursor-pointer transition-colors ${
-                        selectedSurveyOption === oIdx
-                          ? "border-turquoise-500/50 bg-turquoise-500/5 text-turquoise-bright"
-                          : "border-slate-800 bg-slate-900 hover:border-slate-750 text-slate-400"
-                      }`}
-                    >
-                      <input 
-                        type="radio" 
-                        name="survey-opt" 
-                        checked={selectedSurveyOption === oIdx}
-                        onChange={() => setSelectedSurveyOption(oIdx)}
-                        className="hidden" 
-                      />
-                      <span className="font-bold">{String.fromCharCode(65 + oIdx)}.</span>
-                      <span>{opt}</span>
-                    </label>
-                  ))}
-                </div>
-
-                <textarea
-                  value={surveyComment}
-                  onChange={(e) => setSurveyComment(e.target.value)}
-                  placeholder="Optional explanatory log..."
-                  className="w-full p-2 h-12 rounded bg-slate-900 border border-slate-800 text-[9.5px] text-slate-200 font-sans focus:outline-none focus:border-indigo-500/55 resize-none"
-                />
-
-                <button
-                  type="submit"
-                  disabled={selectedSurveyOption === null}
-                  className="w-full py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-[10px] font-mono font-bold uppercase transition-colors"
-                >
-                  Cast Verified Vote (+25 XP)
-                </button>
-              </form>
-            ) : (
-              <div className="space-y-2 text-center py-2">
-                <div className="w-8 h-8 rounded-full bg-emerald-950/40 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400">
-                  ✔
-                </div>
-                <p className="text-[10.5px] text-slate-400 font-mono">
-                  Your cryptographic vote was submitted securely to the escrow node.
-                </p>
-                <div className="space-y-1 text-left bg-slate-900/60 p-2 rounded-lg border border-slate-800 text-[8.5px] font-mono text-indigo-300">
-                  <div>A: 100% direct: 54%</div>
-                  <div>B: 70/30 division: 32%</div>
-                  <div>C: Streak pools: 14%</div>
-                </div>
-              </div>
-            )}
-          </div>
-
           {/* AI Message limits warning */}
           <div className="p-3.5 rounded-2xl border border-slate-800/80 bg-slate-900/40 text-[10px] font-mono space-y-2">
             <span className="text-turquoise font-bold uppercase flex items-center gap-1">

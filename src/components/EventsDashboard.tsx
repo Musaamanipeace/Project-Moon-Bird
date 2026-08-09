@@ -7,9 +7,10 @@ interface EventsDashboardProps {
   onAddXp: (amount: number) => void;
   isOnline: boolean;
   onNavigateToView?: (view: string) => void;
+  onShareFeed?: (entry: { kind: any; title?: string; body?: string; refId?: string; refType?: string }) => void;
 }
 
-export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigateToView }: EventsDashboardProps) {
+export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigateToView, onShareFeed }: EventsDashboardProps) {
   const [activeTab, setActiveTab] = useState<"events" | "challenges">("events");
   const [events, setEvents] = useState<AstroEvent[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
@@ -82,8 +83,11 @@ export default function EventsDashboard({ nickname, onAddXp, isOnline, onNavigat
         });
         setCommentText("");
         fetchData(); // reload arrays
-      }
-    } catch (err) {
+        if (selectedItem.type === "event") {
+          onShareFeed?.({ kind: "event_comment", title: selectedItem.data.title, body: commentText.trim(), refId: selectedItem.data.id, refType: "event" });
+        }
+        }
+     } catch (err) {
       console.error(err);
     }
   };

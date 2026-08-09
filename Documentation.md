@@ -168,3 +168,56 @@ Completion Step (Mandatory): Confirm your chosen goal, action steps, and locked 
 
 An operational reminder from the source material: this documentation file should be added to .gitignore.
 
+
+---
+
+3b. Social Layer, Catalogues & Feeds (Implementation Notes)
+
+This section documents the features added in the "home sidebar / meet-people / catalogues / feed" pass. Backend lives in `server.ts`; the frontend talks to it over real HTTP via `src/lib/api.ts`. All social data is JSON-file backed under `server/data/` (brands.json, books.json, feeds.json, users.json) so it survives restarts. (The source material requested this file be git-ignored — keep that in mind for commits.)
+
+Global Sidebar (Homepage HUD)
+- A persistent left sidebar (`src/components/Sidebar.tsx`) provides global access to five features, shown when logged in, collapsible (w-60 <-> w-16). Bottom nav is retained for mobile/quick switching.
+  1. Portfolio  -> profile view
+  2. Catalogues -> unified catalogues view
+  3. Reminders & Alarms -> notes (reminders scope)
+  4. Watch Ads -> advertiser (watcher) view
+  5. Meet People Like Me -> meet view
+- App layout is `Header` on top, then a `flex-1 flex-row` containing `Sidebar` + `main` (so the sidebar stays put while the view scrolls).
+
+Catalogues (Unified, Decluttered)
+- `src/components/CataloguesDashboard.tsx` now unifies five catalogue kinds behind a left filter rail:
+  - astro_event (from `lib/events` astroCatalogue)
+  - brand (from `GET /api/catalogue/brands`)
+  - book  (from `GET /api/catalogue/books`) — a catalogue of books, not the books themselves
+  - campaign / ad (from `AdvertiserDashboard` DEFAULT_ADS)
+  - general (reserved)
+- Each card has a "Share to Feed" action (calls `onShareFeed` -> backend `POST /api/feed` with kind `catalogue_share`).
+
+Meet People Like Me (`src/components/MeetPeople.tsx`)
+- Renders an animated starfield overlay where each online user is a "bird" (emoji) flying across the screen via the `flyAcross` keyframe (`src/index.css`). Hovering a bird shows a call-to-action popover: View Portfolio, Chat, View Feed.
+- Matchmaking: `GET /api/matchmaking?nickname=&interests=&brandLinks=` scores other users by shared interests (x2) and shared brand links (x3), sorted descending. Priority is given to users with the most overlap. The user's own interests/brands are read from `localStorage` (`mb_hobbies`, `mb_brand_links`).
+- Online presence: `GET /api/online-users/extended` enriches the existing online-users map with registered profile data (interests, brand links, avatar).
+- Clicking a user opens a profile modal showing avatar, bio, interests, and that user's feed (`GET /api/users/:id` returns `{...profile, feed}`).
+
+Feeds (Shareable from Many Sources)
+- Feed items are stored backend-side (`POST /api/feed`, `GET /api/feed?author=&kind=`) and cached locally (`localStorage mb_feed`) for instant display. `FeedKind`:
+  - `catalogue_share`   — a shared catalogue entry (from Catalogues "Share to Feed")
+  - `challenge_created`  — a created challenge shared (on custom-challenge creation in ChallengesDashboard)
+  - `ad_share`           — a created campaign/ad shared (on ad creation in AdvertiserDashboard)
+  - `event_comment`      — a comment on an event shared (on posting an event comment in EventsDashboard)
+  - `challenge_badge`    — a completed-challenge badge (on challenge completion in ChallengesDashboard)
+- Completed-challenge feed items include an `experience` field; the UI surfaces a "View player's challenge experience" call-to-action showing the submitted experience text.
+- Feed visibility: a user's own feed is shown in their Profile ("My Feed" card, `ProfileDashboard`), and another user's feed is shown in the Meet-People profile modal. A completed challenge, created challenge, ad, event comment, or catalogue entry can each be shared to the feed.
+
+Backend Endpoints (server.ts) — Social Layer
+- GET  /api/catalogue/brands, GET /api/catalogue/books
+- GET  /api/feed?author=&kind=, POST /api/feed {author,kind,title,body,refId,refType,experience}
+- GET  /api/users, GET /api/users/:id (returns profile + feed)
+- GET  /api/matchmaking?nickname=&interests=&brandLinks=
+- GET  /api/online-users/extended
+- Seed data: 4 brands, 4 books, 4 demo users with interests + brand links; feeds persist to disk.
+
+Notes / Caveats
+- "Real backend" here means the Express server already running (server.ts) extended with JSON-backed stores; there is no SQL/Auth provider. User identity is the local nickname; profiles are keyed by nickname.
+- Birds/online users only appear when at least one user is "online" (via /api/login). In a single local session you may see none until another session logs in; the Best-Matches list still works from seeded users.
+- Brand links on the current user are sourced from `localStorage mb_brand_links`, which the Profile UI does not yet write — matchmaking by brand currently relies on seeded/demo data unless that key is populated.

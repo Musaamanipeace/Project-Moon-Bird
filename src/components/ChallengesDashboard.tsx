@@ -35,9 +35,10 @@ interface ChallengesDashboardProps {
   xp: number;
   onAddXp: (amount: number) => void;
   onNavigateToView?: (view: string) => void;
+  onShareFeed?: (entry: { kind: any; title?: string; body?: string; refId?: string; refType?: string; experience?: string }) => void;
 }
 
-export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: ChallengesDashboardProps) {
+export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView, onShareFeed }: ChallengesDashboardProps) {
   const [activeTab, setActiveTab] = useState<"catalogued" | "milestones" | "builder">("catalogued");
 
   const nickname = localStorage.getItem("mb_nickname") || "anonymous";
@@ -555,6 +556,17 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
     localStorage.setItem("mb_journal_entries", JSON.stringify(journalLogs));
 
     alert(`Challenge "${selectedChallenge.title}" officially ${newState === 'Finished' ? 'FINISHED' : 'SUBMITTED FOR AUDIT'}!\n\nAwarded: +${earnedXp} XP!\nSaved entry to your Journal.`);
+
+    // Share a completed-challenge badge to the feed (with experience CTA)
+    onShareFeed?.({
+      kind: "challenge_badge",
+      title: `Completed: ${selectedChallenge.title}`,
+      body: `Earned +${earnedXp} XP — ${selectedChallenge.rewardXp} base.`,
+      refId: selectedChallenge.id,
+      refType: "challenge",
+      experience: submissionNote,
+    });
+
     setSelectedChallenge(null);
   };
 
@@ -654,6 +666,14 @@ export default function ChallengesDashboard({ xp, onAddXp, onNavigateToView }: C
     setShowAdvancedBuilder(false);
     setActiveTab("catalogued");
     alert("Custom Challenge created successfully! It is now live in your Catalogued list.");
+
+    onShareFeed?.({
+      kind: "challenge_created",
+      title: created.title,
+      body: created.description,
+      refId: created.id,
+      refType: "challenge",
+    });
   };
 
   return (

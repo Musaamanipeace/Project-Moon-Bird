@@ -605,6 +605,130 @@ app.get("/api/stream", (req, res) => {
   });
 });
 
+/* ============================================================
+   SOCIAL LAYER (Catalogues: Brands & Books, Feeds, Users,
+   Presence, Matchmaking) — JSON-file backed so data survives
+   restarts. See Documentation.md "Social & Catalogues Backend".
+   ============================================================ */
+
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const DATA_DIR = join(__dirname, "data");
+if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
+
+function loadJson<T>(file: string, fallback: T): T {
+  const p = join(DATA_DIR, file);
+  if (!existsSync(p)) return fallback;
+  try { return JSON.parse(readFileSync(p, "utf-8")); } catch { return fallback; }
+}
+function saveJson(file: string, data: any) {
+  writeFileSync(join(DATA_DIR, file), JSON.stringify(data, null, 2));
+}
+
+// ---- Brands catalogue ----
+const seedBrands = [
+  { id: "brand-astro-vibe", name: "AstroVibe Espresso", tagline: "Comet-cultivated cosmic coffee.", category: "Beverage", interests: ["Astronomy", "Mindfulness"], logoEmoji: "☕" },
+  { id: "brand-lunar-gear", name: "Lunar Gear Co.", tagline: "Telescopes & night-sky apparel.", category: "Outdoor", interests: ["Astronomy", "Health"], logoEmoji: "🔭" },
+  { id: "brand-quietmind", name: "QuietMind Journals", tagline: "Reflection notebooks for stargazers.", category: "Stationery", interests: ["Mindfulness", "Self-Improvement"], logoEmoji: "📓" },
+  { id: "brand-orbitfit", name: "OrbitFit", tagline: "Movement routines aligned to moon phases.", category: "Fitness", interests: ["Health", "Self-Improvement"], logoEmoji: "🧘" },
+];
+let brands = loadJson<any[]>("brands.json", seedBrands);
+
+// ---- Books catalogue (catalogue of books, not the books themselves) ----
+const seedBooks = [
+  { id: "book-cosmos", title: "Cosmos", author: "Carl Sagan", tagline: "A personal voyage through space and time.", category: "Science", interests: ["Astronomy", "Mindfulness"], emoji: "🪐" },
+  { id: "book-moon", title: "The Moon: Our Celestial Companion", author: "Various", tagline: "Lunar science for curious minds.", category: "Science", interests: ["Astronomy"], emoji: "🌙" },
+  { id: "book-atomic", title: "Atomic Habits", author: "James Clear", tagline: "Tiny changes, remarkable results.", category: "Self-Help", interests: ["Self-Improvement", "Health"], emoji: "⚛️" },
+  { id: "book-power", title: "The Power of Now", author: "Eckhart Tolle", tagline: "Spiritual awakening in everyday life.", category: "Mindfulness", interests: ["Mindfulness"], emoji: "🧘" },
+];
+let books = loadJson<any[]>("books.json", seedBooks);
+
+// ---- Feeds ----
+let feeds: any[] = loadJson<any[]>("feeds.json", []);
+function addFeed(entry: any) {
+  const item = { id: `feed-${Date.now()}`, timestamp: new Date().toISOString(), ...entry };
+  feeds.unshift(item);
+  if (feeds.length > 200) feeds.pop();
+  saveJson("feeds.json", feeds);
+  broadcastSSE("feed_new", item);
+  return item;
+}
+
+// ---- Registered users (profiles w/ interests + brand links) ----
+const seedUsers = [
+  { id: "nebula-rae", nickname: "NebulaRae", interests: ["Astronomy", "Mindfulness"], brandLinks: ["brand-astro-vibe", "brand-quietmind"], avatarEmoji: "🌌", bio: "Night-sky journaler." },
+  { id: "orbit-kai", nickname: "OrbitKai", interests: ["Astronomy", "Health"], brandLinks: ["brand-lunar-gear", "brand-orbitfit"], avatarEmoji: "🚀", bio: "Telescope runner." },
+  { id: "calm-sol", nickname: "CalmSol", interests: ["Mindfulness", "Self-Improvement"], brandLinks: ["brand-quietmind", "brand-orbitfit"], avatarEmoji: "🌞", bio: "Habit builder." },
+  { id: "star-mira", nickname: "StarMira", interests: ["Astronomy", "Self-Improvement"], brandLinks: ["brand-astro-vibe", "brand-lunar-gear"], avatarEmoji: "✨", bio: "Lunar photographer." },
+];
+let users = loadJson<any[]>("users.json", seedUsers);
+
+// Map online presence -> registered user for "meet people like me"
+function publicUser(u: any) {
+  return { id: u.id, nickname: u.nickname, interests: u.interests, brandLinks: u.brandLinks, avatarEmoji: u.avatarEmoji, bio: u.bio };
+}
+
+// ---- Catalogue endpoints ----
+app.get("/api/catalogue/brands", (req, res) => res.json(brands));
+app.get("/api/catalogue/books", (req, res) => res.json(books));
+
+// ---- Feed endpoints ----
+app.get("/api/feed", (req, res) => {
+  const { author, kind } = req.query;
+  let result = feeds;
+  if (author) result = result.filter((f: any) => f.author === author);
+  if (kind) result = result.filter((f: any) => f.kind === kind);
+  res.json(result);
+});
+app.post("/api/feed", (req, res) => {
+  const { author, kind, title, body, refId, refType, experience } = req.body;
+  if (!author || !kind) return res.status(400).json({ error: "author and kind required" });
+  const item = addFeed({ author, kind, title, body, refId, refType, experience });
+  res.json(item);
+});
+
+// ---- Users / profile endpoints ----
+app.get("/api/users", (req, res) => res.json(users.map(publicUser)));
+app.get("/api/users/:id", (req, res) => {
+  const u = users.find(x => x.id === req.params.id);
+  if (!u) return res.status(404).json({ error: "User not found" });
+  const uFeeds = feeds.filter(f => f.author === u.nickname);
+  res.json({ ...publicUser(u), feed: uFeeds });
+});
+
+// ---- Matchmaking: "people like me" ----
+app.get("/api/matchmaking", (req, res) => {
+  const { nickname, interests, brandLinks } = req.query;
+  const myInterests = (interests ? String(interests).split(",") : []) as string[];
+  const myBrands = (brandLinks ? String(brandLinks).split(",") : []) as string[];
+  const scored = users
+    .filter(u => u.nickname !== nickname)
+    .map(u => {
+      const sharedInterests = u.interests.filter((i: string) => myInterests.includes(i));
+      const sharedBrands = u.brandLinks.filter((b: string) => myBrands.includes(b));
+      const score = sharedInterests.length * 2 + sharedBrands.length * 3;
+      return { ...publicUser(u), score, sharedInterests, sharedBrands };
+    })
+    .filter(x => x.score > 0)
+    .sort((a, b) => b.score - a.score);
+  res.json(scored);
+});
+
+// ---- Online presence for "flying birds" ----
+app.get("/api/online-users/extended", (req, res) => {
+  const list = Array.from(onlineUsers.values()) as any[];
+  const enriched = list.map(o => {
+    const reg = users.find(u => u.nickname.toLowerCase() === o.nickname.toLowerCase());
+    return reg ? { ...o, ...publicUser(reg) } : { ...o, interests: [], brandLinks: [], avatarEmoji: "🐦" };
+  });
+  res.json(enriched);
+});
+
 // Setup custom full-stack dev server
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {

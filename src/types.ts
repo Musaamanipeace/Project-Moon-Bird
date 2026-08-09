@@ -201,6 +201,58 @@ export interface FeedPost {
   comments: Comment[];
 }
 
+// Social feed item (backend-driven, shareable from many sources)
+export type FeedKind =
+  | 'catalogue_share'   // a shared catalogue entry
+  | 'challenge_created' // a created challenge shared
+  | 'ad_share'          // a created campaign/ad shared
+  | 'event_comment'     // a comment on an event shared
+  | 'challenge_badge';  // a completed-challenge badge
+
+export interface FeedItem {
+  id: string;
+  author: string;
+  kind: FeedKind;
+  title?: string;
+  body?: string;
+  refId?: string;      // id of the referenced entity (event, challenge, ad, catalogue item)
+  refType?: string;    // 'event' | 'challenge' | 'ad' | 'brand' | 'book'
+  experience?: string; // challenge-completion experience text ("view player's challenge experience")
+  timestamp: string;
+  likes?: number;
+}
+
+export interface Brand {
+  id: string;
+  name: string;
+  tagline: string;
+  category: string;
+  interests: string[];
+  logoEmoji: string;
+}
+
+export interface Book {
+  id: string;
+  title: string;
+  author: string;
+  tagline: string;
+  category: string;
+  interests: string[];
+  emoji: string;
+}
+
+export interface PublicUser {
+  id: string;
+  nickname: string;
+  interests: string[];
+  brandLinks: string[];
+  avatarEmoji: string;
+  bio?: string;
+  score?: number;
+  sharedInterests?: string[];
+  sharedBrands?: string[];
+}
+
 export interface Reminder {
   id: string;
   text: string;
