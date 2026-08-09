@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Users, User, MessageSquare, Newspaper, X, Bird, Sparkles } from "lucide-react";
+import { Users, User, MessageSquare, Newspaper, X, Sparkles } from "lucide-react";
 import { api, PublicUser } from "../lib/api";
 
 interface MeetPeopleProps {
@@ -49,32 +49,6 @@ export default function MeetPeople({ nickname, onNavigateToView, onOpenProfile }
 
   return (
     <div className="relative space-y-6 p-4 max-w-5xl mx-auto text-slate-200 min-h-[70vh]">
-      {/* Flying birds overlay (online users) */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden z-0">
-        {online.map((u, i) => (
-          <div
-            key={u.id}
-            className="pointer-events-auto absolute group"
-            style={{
-              top: `${10 + ((i * 17) % 75)}%`,
-              left: "-5%",
-              animation: `flyAcross ${18 + (i % 7) * 3}s linear ${i * 2.3}s infinite`,
-            }}
-          >
-            <div className="relative">
-              <span className="text-2xl drop-shadow-[0_0_8px_rgba(175,238,238,0.8)]">{u.avatarEmoji || "🐦"}</span>
-              {/* Hover CTA */}
-              <div className="absolute left-1/2 -translate-x-1/2 top-8 hidden group-hover:flex flex-col gap-1 bg-[#0a0b12] border border-turquoise-500/30 rounded-xl p-2 shadow-2xl z-30 w-40">
-                <span className="text-[10px] font-mono text-turquoise font-bold text-center truncate">{u.nickname}</span>
-                <button onClick={() => openProfile(u.id)} className="flex items-center gap-1 text-[10px] font-mono px-2 py-1 rounded bg-slate-800 hover:bg-slate-700"><User className="w-3 h-3" /> Portfolio</button>
-                <button onClick={() => onNavigateToView?.("chat")} className="flex items-center gap-1 text-[10px] font-mono px-2 py-1 rounded bg-slate-800 hover:bg-slate-700"><MessageSquare className="w-3 h-3" /> Chat</button>
-                <button onClick={() => openProfile(u.id)} className="flex items-center gap-1 text-[10px] font-mono px-2 py-1 rounded bg-slate-800 hover:bg-slate-700"><Newspaper className="w-3 h-3" /> Feed</button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
       <div className="relative z-10">
         <div className="bg-slate-900/60 border border-slate-800 p-5 rounded-2xl backdrop-blur-md relative overflow-hidden">
           <div className="absolute top-0 right-0 w-48 h-48 bg-turquoise-500/5 rounded-full blur-3xl" />
@@ -82,7 +56,7 @@ export default function MeetPeople({ nickname, onNavigateToView, onOpenProfile }
             <Users className="w-4 h-4" /> Meet People Like Me
           </h2>
           <p className="text-[10px] text-slate-400 font-mono mt-0.5">
-            Birds flying across the starfield are online stargazers. Hover one to view portfolio, chat, or feed. Matches are prioritized by shared interests & linked brands.
+            Browse online stargazers and your best matches below. Open a profile to view portfolio, chat, or feed. Matches are prioritized by shared interests & linked brands.
           </p>
         </div>
 
