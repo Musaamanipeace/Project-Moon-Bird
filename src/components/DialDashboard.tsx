@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Compass, Calendar, RefreshCw, ArrowLeft, ArrowRight, AlertCircle, Eye, HelpCircle, Sun, Moon, Info, Cloud, Thermometer, Wind, Globe2, Clock, Waves } from "lucide-react";
+import { Calendar, RefreshCw, ArrowLeft, ArrowRight, Eye, HelpCircle, Moon, Cloud, Thermometer, Wind, Globe2, Clock, Waves } from "lucide-react";
 import { getLunarStatus, getMoonPhaseDetails, getIllumination, SYNODIC_MONTH } from "../lib/lunar";
 import { getSeason, getNextActiveEvent, getMoonRiseSetTimes } from "../lib/events";
 
@@ -438,36 +438,8 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
   return (
     <div className="space-y-8 p-4 max-w-5xl mx-auto text-slate-200">
       
-      {/* 1. Header Banner */}
+      {/* 1. Lunar Clock Display */}
       <section className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl backdrop-blur-md">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-3 mb-4">
-          <div>
-            <h2 className="text-sm font-bold font-mono text-turquoise uppercase tracking-wider">
-              🌙 Celestial Moon Dial
-            </h2>
-            <p className="text-[10px] text-slate-400 font-mono mt-0.5">Location Coordinated: {locationText} | Passive Sync</p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowSun(!showSun)}
-              className={`px-3 py-1 rounded-lg border text-[10px] font-mono font-bold transition-colors ${
-                showSun ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright" : "border-slate-850 bg-slate-950 text-slate-500"
-              }`}
-            >
-              ☀️ Sun Toggle
-            </button>
-            <button
-              onClick={() => setShowRealistic(!showRealistic)}
-              className={`px-3 py-1 rounded-lg border text-[10px] font-mono font-bold transition-colors ${
-                showRealistic ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright" : "border-slate-850 bg-slate-950 text-slate-500"
-              }`}
-            >
-              🌕 Realistic View
-            </button>
-          </div>
-        </div>
-
         {/* DISPLAY MODE SWITCHER — three lunar-clock visualizations */}
         <div className="p-3 mb-4 rounded-xl border border-slate-800/60 bg-slate-950/70 backdrop-blur-sm">
           <div className="flex items-center gap-2 mb-2.5">
@@ -499,11 +471,6 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
 
         {/* INTERACTIVE CUSTOM TIME CONTROL BLOCK */}
         <div className="p-3 mb-4 rounded-xl border border-slate-800/60 bg-slate-950/70 backdrop-blur-sm flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-turquoise-dim" />
-            <span className="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">Interactive Sky Clock</span>
-          </div>
-
           <div className="flex items-center gap-2.5 flex-wrap">
             <div className="flex items-center gap-1.5">
               <label className="text-[10px] font-mono text-slate-500 uppercase">Date:</label>
@@ -545,43 +512,6 @@ export default function DialDashboard({ locationText, birthDate, nickname, xp, o
               <RefreshCw className={`w-2.5 h-2.5 ${isLiveSync ? "animate-spin" : ""}`} />
               <span>{isLiveSync ? "LIVE SYNCED" : "FREEZED (Click to Sync)"}</span>
             </button>
-          </div>
-        </div>
-
-        {/* CLOCK CALIBRATION SLIDER BLOCK */}
-        <div className="p-3 mb-4 rounded-xl border border-indigo-950 bg-indigo-950/20 backdrop-blur-sm flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <Compass className="w-4.5 h-4.5 text-indigo-400" />
-            <div className="flex flex-col">
-              <span className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">Clock Calibration Coordinates</span>
-              <span className="text-[9px] text-slate-400">Calibrate local reference sunrise to match your exact coordinates and observations</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 flex-wrap w-full sm:w-auto sm:flex-nowrap">
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <span className="text-[10px] font-mono text-slate-400 uppercase whitespace-nowrap">Sunrise:</span>
-              <input
-                type="range"
-                min="5.0"
-                max="8.0"
-                step="0.01"
-                value={sunriseHour}
-                onChange={(e) => setSunriseHour(parseFloat(e.target.value))}
-                className="w-full sm:w-40 accent-turquoise-400 h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer"
-              />
-              <span className="text-xs font-mono text-turquoise font-bold bg-slate-950 px-2 py-0.5 rounded border border-slate-800 min-w-[70px] text-center">
-                {(() => {
-                  const h = Math.floor(sunriseHour);
-                  const m = Math.floor((sunriseHour - h) * 60);
-                  return `${h}:${String(m).padStart(2, '0')} AM`;
-                })()}
-              </span>
-            </div>
-
-            <div className="text-[9px] font-mono text-indigo-300 bg-indigo-950/40 px-2 py-1 rounded border border-indigo-900/30">
-              Today's Moonrise: <span className="font-bold text-turquoise">{activeRiseSet.rise}</span>
-            </div>
           </div>
         </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Calendar, Plus, Filter, Sparkles, Users, AlertCircle, Trash2, Tag, MapPin, CheckCircle, ChevronLeft, ChevronRight, Moon, Bell, Clock } from "lucide-react";
 import { getLunarStatus, getMoonPhaseDetails, SYNODIC_MONTH } from "../lib/lunar";
+import { getMoonRiseSetTimes } from "../lib/events";
 import { Reminder } from "../types";
 
 interface CalendarEvent {
@@ -74,6 +75,27 @@ export default function CalendarDashboard() {
   const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
   const [phaseFilter, setPhaseFilter] = useState<string>("all");
   const [showMoonPhases, setShowMoonPhases] = useState(true);
+  const [moonriseToggle, setMoonriseToggle] = useState<Record<string, boolean>>({});
+
+  const sunriseHour = (() => {
+    const savedLoc = localStorage.getItem("mb_location") || "";
+    if (savedLoc.toLowerCase().includes("kenya") || savedLoc.toLowerCase().includes("kisumu") || savedLoc.toLowerCase().includes("nairobi")) {
+      return 6.68;
+    }
+    return 6.0;
+  })();
+
+  const format24hr = (decimalHour: number) => {
+    const hh = Math.floor(decimalHour);
+    const mm = Math.floor((decimalHour - hh) * 60);
+    return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+  };
+
+  const getMoonriseForDate = (date: Date) => {
+    const lunarStatus = getLunarStatus(date);
+    const riseSet = getMoonRiseSetTimes(lunarStatus.age, sunriseHour, 0);
+    return format24hr(riseSet.riseDecimal);
+  };
 
   useEffect(() => {
     localStorage.setItem("mb_stored_calendar_events", JSON.stringify(events));
@@ -419,7 +441,7 @@ export default function CalendarDashboard() {
                     ? "border-turquoise-500 bg-turquoise-500/5"
                     : "border-slate-800 bg-slate-950/40 hover:border-slate-750"
                 } ${!isPhaseHighlighted && showMoonPhases ? "opacity-30" : ""}`}
-              >
+               >
                 <div className="flex items-center justify-between mb-1">
                   <span className={`text-[10px] sm:text-xs font-mono font-bold ${isToday ? "text-turquoise" : "text-slate-300"}`}>
                     {day}
@@ -445,6 +467,17 @@ export default function CalendarDashboard() {
                     <div className="text-[8px] font-mono text-slate-500">+{dayEvents.length - 2} more</div>
                   )}
                 </div>
+                <button
+                  onClick={() => setMoonriseToggle(prev => ({ ...prev, [dateStr]: !prev[dateStr] }))}
+                  className="mt-1 text-[9px] font-mono transition-colors flex items-center gap-0.5"
+                >
+                  <Moon className="w-2.5 h-2.5" />
+                  {moonriseToggle[dateStr] ? (
+                    <span className="text-turquoise">{getMoonriseForDate(dateObj)}</span>
+                  ) : (
+                    <span className="text-slate-500 hover:text-slate-300">Moonrise</span>
+                  )}
+                </button>
               </div>
             );
           })}
