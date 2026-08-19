@@ -1,5 +1,5 @@
 /**
- * Moonbug Lunar Calculations Engine
+ * moonrise Lunar Calculations Engine
  * UTC-based formulas for moon age, phase, illumination, distance (perigee/apogee), and birth calculations.
  */
 

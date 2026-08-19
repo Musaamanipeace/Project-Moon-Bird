@@ -1,4 +1,4 @@
-// Thin client for the Moonbug social/catalogue backend (server.ts).
+// Thin client for the moonrise social/catalogue backend (server.ts).
 // All endpoints are real HTTP calls to the running dev server.
 
 async function getJson<T>(url: string): Promise<T> {

@@ -45,11 +45,11 @@ export default function ChatDashboard({ nickname, xp, onAddXp, onDeductXp, onNav
 
   // Mock Active Online Members for horizontal scroll discovery
   const mockOnlinePeers = [
-    { id: "moonbug_48", xp: 1200, avatar: "🟢", link: "#/portfolio/48" },
-    { id: "moonbug_1.4k", xp: 4890, avatar: "🔵", link: "#/portfolio/1.4k" },
-    { id: "moonbug_950", xp: 850, avatar: "🟣", link: "#/portfolio/950" },
-    { id: "moonbug_12.5k", xp: 15400, avatar: "🟡", link: "#/portfolio/12.5k" },
-    { id: "moonbug_7", xp: 320, avatar: "🔴", link: "#/portfolio/7" }
+    { id: "moonrise_48", xp: 1200, avatar: "🟢", link: "#/portfolio/48" },
+    { id: "moonrise_1.4k", xp: 4890, avatar: "🔵", link: "#/portfolio/1.4k" },
+    { id: "moonrise_950", xp: 850, avatar: "🟣", link: "#/portfolio/950" },
+    { id: "moonrise_12.5k", xp: 15400, avatar: "🟡", link: "#/portfolio/12.5k" },
+    { id: "moonrise_7", xp: 320, avatar: "🔴", link: "#/portfolio/7" }
   ];
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export default function ChatDashboard({ nickname, xp, onAddXp, onDeductXp, onNav
               {
                 id: "ai-proactive-welcome",
                 sender: "AI",
-                senderName: "Moonbug Bot",
+                senderName: "moonrise Bot",
                 text: `Greetings, ${nickname}! I'm checking in on your active habits and lunar study metrics. I noticed you're on a solid 5-day stargazing streak! 
 
 How are you handling your processed sugar elimination challenge today? Let's formulate your focus roadmap for the current lunar phase.`,
@@ -385,7 +385,7 @@ How are you handling your processed sugar elimination challenge today? Let's for
                   >
                     <div className="flex items-center justify-between border-b border-slate-800/40 pb-1 mb-1.5 text-[9px] font-mono font-semibold">
                       <span className={isAi ? "text-turquoise" : "text-slate-400"}>
-                        {isAi ? "🤖 Moonbug Companion" : `👤 ${m.senderName}`}
+                        {isAi ? "🤖 moonrise Companion" : `👤 ${m.senderName}`}
                       </span>
                     </div>
                     <p className="whitespace-pre-line font-sans">{m.text}</p>

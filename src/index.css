@@ -76,3 +76,10 @@ body {
   50% { background-position: 100% 50%; }
 }
 
+
+/* Rebrand per-dashboard environmental theme tints (overlay above starry canvas) */
+.theme-twilight  { background: linear-gradient(165deg, rgba(26,27,58,0.55) 0%, rgba(16,17,36,0.40) 55%, rgba(10,11,20,0.30) 100%); }
+.theme-daytime   { background: linear-gradient(165deg, rgba(38,48,63,0.55) 0%, rgba(22,29,41,0.40) 55%, rgba(13,18,27,0.30) 100%); }
+.theme-nighttime { background: linear-gradient(165deg, rgba(10,15,31,0.60) 0%, rgba(7,11,22,0.45) 55%, rgba(4,6,13,0.35) 100%); }
+.theme-cloudy    { background: linear-gradient(165deg, rgba(42,46,51,0.55) 0%, rgba(26,29,34,0.40) 55%, rgba(16,18,22,0.30) 100%); }
+.theme-dynamic   { background: linear-gradient(165deg, rgba(16,42,46,0.55) 0%, rgba(12,28,34,0.5) 55%, rgba(8,18,26,0.30) 100%); }

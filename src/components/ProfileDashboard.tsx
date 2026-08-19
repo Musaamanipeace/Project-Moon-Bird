@@ -1,7 +1,42 @@
-import React, { useState, useEffect } from "react";
-import { User, Tag, Briefcase, MapPin, Image, Star, Trophy, Wallet, Plus, Trash2, CheckCircle, ShieldAlert, Eye, FileText, Upload, Sparkles, Megaphone, ArrowUpRight, BookOpen, Newspaper } from "lucide-react";
-import { UserProfile } from "../types";
+import React, { useEffect, useState } from "react";
+import {
+  ArrowUpRight,
+  Banknote,
+  BookOpen,
+  Briefcase,
+  Car,
+  ChevronDown,
+  Coins,
+  Cpu,
+  Film,
+  Gem,
+  Gift,
+  House,
+  Music,
+  Newspaper,
+  Pill,
+  Plus,
+  Refrigerator,
+  Shirt,
+  Sparkles,
+  Star,
+  Tag,
+  TreePalm,
+  Trophy,
+  User,
+  Users,
+  X,
+} from "lucide-react";
 import { api, FeedItem } from "../lib/api";
+
+/* ==========================================================================
+   Profile & Portfolio Page
+   Nighttime theme: deep sky shades + subtle star elements behind bordered
+   cards. Sections per spec:
+     1. User Overview
+     2. Possessions & Interests
+     3. Social & Community (recommendations, shared personal feed, donations)
+   ========================================================================== */
 
 interface ProfileDashboardProps {
   nickname: string;
@@ -11,625 +46,845 @@ interface ProfileDashboardProps {
   onNavigateToView?: (view: string) => void;
 }
 
-export default function ProfileDashboard({ nickname, onChangeNickname, xp, onAddXp, onNavigateToView }: ProfileDashboardProps) {
-  const [profileId, setProfileId] = useState("");
-  const [anonMode, setAnonMode] = useState(true);
-  const [occupation, setOccupation] = useState("Student");
+type IconType = React.ComponentType<{ className?: string }>;
 
-  // Personal feed (own posts)
-  const [myFeed, setMyFeed] = useState<FeedItem[]>([]);
-  useEffect(() => {
-    const cached = JSON.parse(localStorage.getItem("mb_feed") || "[]");
-    setMyFeed(cached);
-    api.feed({ author: nickname }).then((f) => {
-      // merge local + backend, dedupe by id
-      const merged = [...cached, ...f].filter((v, i, a) => a.findIndex(x => x.id === v.id) === i);
-      setMyFeed(merged);
-    }).catch(() => {});
-  }, [nickname]);
+/* ---------------------------- shared class names -------------------------- */
 
-  // Custom fields (documented: "lets users add custom fields")
-  const [customFields, setCustomFields] = useState<{ key: string; value: string }[]>([]);
-  const [newFieldKey, setNewFieldKey] = useState("");
-  const [newFieldVal, setNewFieldVal] = useState("");
-  useEffect(() => {
-    const saved = localStorage.getItem("mb_custom_fields");
-    if (saved) setCustomFields(JSON.parse(saved));
-  }, []);
-  const saveCustomFields = (next: { key: string; value: string }[]) => {
-    setCustomFields(next);
-    localStorage.setItem("mb_custom_fields", JSON.stringify(next));
-  };
-  const handleAddField = () => {
-    const k = newFieldKey.trim();
-    const v = newFieldVal.trim();
-    if (!k) return;
-    if (customFields.some(f => f.key.toLowerCase() === k.toLowerCase())) return;
-    saveCustomFields([...customFields, { key: k, value: v }]);
-    setNewFieldKey(""); setNewFieldVal("");
-  };
-  const handleDeleteField = (idx: number) => saveCustomFields(customFields.filter((_, i) => i !== idx));
+const CARD = "rounded-2xl border border-slate-800 bg-slate-950/40 backdrop-blur-md";
+const LABEL = "text-[9px] font-mono font-bold uppercase tracking-widest text-slate-500";
+const CARD_TITLE = "text-xs font-mono font-bold uppercase tracking-widest text-turquoise flex items-center gap-2";
+const INPUT =
+  "p-2 rounded-xl border border-slate-800 bg-slate-950/80 text-[11px] font-mono text-slate-200 placeholder-slate-600 focus:outline-none focus:border-turquoise-500/60";
+const BTN =
+  "px-3 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-mono text-[10px] font-bold uppercase tracking-wider transition-colors";
+const BTN_GHOST =
+  "px-3 py-2 rounded-xl border border-slate-800 bg-slate-950/60 hover:border-turquoise-500/40 text-slate-300 font-mono text-[10px] font-bold uppercase tracking-wider transition-colors";
+const CHIP =
+  "flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-turquoise-500/30 bg-turquoise-500/5 text-[10px] font-mono text-turquoise-bright";
 
-  // Hobbies list
-  const [hobbies, setHobbies] = useState<string[]>(["[Physics] Space mechanics", "[Sky] Crescent tracking"]);
-  const [newHobby, setNewHobby] = useState("");
-  const [hobbyCategory, setHobbyCategory] = useState("Stargaze");
+/* ------------------------- localStorage utilities ------------------------- */
 
-  // Under-18 Verification Gate
-  const [ageVerified, setAgeVerified] = useState<"unverified" | "pending" | "verified">("unverified");
-  const [verificationFile, setVerificationFile] = useState<string | null>(null);
+function readList(key: string, fallback: string[] = []): string[] {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return fallback;
+    return parsed.filter((v): v is string => typeof v === "string");
+  } catch {
+    return fallback;
+  }
+}
 
-  // Self-Ads permission and state
-  const [selfAdTitle, setSelfAdTitle] = useState("Hire my Python orbital plotter script!");
-  const [selfAdDesc, setSelfAdDesc] = useState("Fast, open-source Keplerian model solver. Fully offline-first.");
-  const [selfAdEnabled, setSelfAdEnabled] = useState(false);
+function writeList(key: string, list: string[]) {
+  try {
+    localStorage.setItem(key, JSON.stringify(list));
+  } catch {
+    /* storage unavailable — keep in-memory state only */
+  }
+}
 
-  // Custom Hover Metrics State
-  const [hoveredMetrics, setHoveredMetrics] = useState<string | null>(null);
+function readText(key: string, fallback = ""): string {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw === null ? fallback : raw;
+  } catch {
+    return fallback;
+  }
+}
 
-  // Typewriter Text lines
-  const typewriterQuotes = [
-    "Compiling celestial orbital coordinates...",
-    "Bypassing invasive marketing trackers...",
-    "Securing user data with offline-first local storage...",
-    "MoonBird Node v2.0 active. Stargaze safe."
-  ];
-  const [typewriterIndex, setTypewriterIndex] = useState(0);
+function writeText(key: string, value: string) {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    /* storage unavailable — keep in-memory state only */
+  }
+}
 
-  useEffect(() => {
-    // Generate/Fetch standardized Moonbug ID
-    let id = localStorage.getItem("mb_profile_id");
-    if (!id) {
-      // Pick a random standardized scaling Moonbug ID index e.g. moonbug_12.4k
-      const randomIdx = (Math.random() * 9 + 1).toFixed(1);
-      id = `moonbug_${randomIdx}k`;
-      localStorage.setItem("mb_profile_id", id);
-    }
-    setProfileId(id);
+/** Editable list persisted to localStorage under `key`. */
+function useStoredList(key: string, initial: string[] = []) {
+  const [items, setItems] = useState<string[]>(() => readList(key, initial));
 
-    const savedAnon = localStorage.getItem("mb_anon_mode");
-    if (savedAnon) setAnonMode(JSON.parse(savedAnon));
-
-    const savedOcc = localStorage.getItem("mb_occupation");
-    if (savedOcc) setOccupation(savedOcc);
-
-    const savedHobbies = localStorage.getItem("mb_hobbies");
-    if (savedHobbies) setHobbies(JSON.parse(savedHobbies));
-
-    const savedAgeVer = localStorage.getItem("mb_age_verified");
-    if (savedAgeVer) setAgeVerified(savedAgeVer as any);
-
-    // Swap typewriter lines periodically
-    const textInterval = setInterval(() => {
-      setTypewriterIndex(prev => (prev + 1) % typewriterQuotes.length);
-    }, 4500);
-
-    return () => clearInterval(textInterval);
-  }, []);
-
-  const saveToStorage = (key: string, data: any) => {
-    localStorage.setItem(key, typeof data === "string" ? data : JSON.stringify(data));
+  const add = (raw: string) => {
+    const value = raw.trim();
+    if (!value) return;
+    setItems((prev) => {
+      if (prev.some((i) => i.toLowerCase() === value.toLowerCase())) return prev;
+      const next = [...prev, value];
+      writeList(key, next);
+      return next;
+    });
   };
 
-  const handleAddHobby = () => {
-    const trimmed = newHobby.trim();
-    if (!trimmed) return;
-
-    const words = trimmed.split(/\s+/);
-    if (words.length > 3) {
-      alert("Hobby is strictly constrained to a maximum of 3 words for privacy sanitization.");
-      return;
-    }
-
-    const formattedHobby = `[${hobbyCategory}] ${trimmed}`;
-    if (hobbies.includes(formattedHobby)) return;
-
-    const updated = [...hobbies, formattedHobby];
-    setHobbies(updated);
-    saveToStorage("mb_hobbies", updated);
-    setNewHobby("");
-    onAddXp(10);
+  const remove = (index: number) => {
+    setItems((prev) => {
+      const next = prev.filter((_, i) => i !== index);
+      writeList(key, next);
+      return next;
+    });
   };
 
-  const handleDeleteHobby = (index: number) => {
-    const updated = hobbies.filter((_, i) => i !== index);
-    setHobbies(updated);
-    saveToStorage("mb_hobbies", updated);
+  return { items, add, remove };
+}
+
+/** Editable free text persisted to localStorage under `key`. */
+function useStoredText(key: string, initial = "") {
+  const [value, setValue] = useState<string>(() => readText(key, initial));
+  const update = (next: string) => {
+    setValue(next);
+    writeText(key, next);
   };
+  return { value, update };
+}
 
-  const handleCredentialUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+/* ------------------------------ rank & age -------------------------------- */
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setVerificationFile(reader.result as string);
-      setAgeVerified("pending");
-      saveToStorage("mb_age_verified", "pending");
-      
-      // Auto-verify after a few seconds mock delay
-      setTimeout(() => {
-        setAgeVerified("verified");
-        saveToStorage("mb_age_verified", "verified");
-        onAddXp(50);
-        alert("🛡️ Under-18 Safeguard Verified! Your account is protected and verified with a student badge (+50 XP).");
-      }, 3500);
-    };
-    reader.readAsDataURL(file);
+interface RankInfo {
+  level: number;
+  label: string;
+  floor: number;
+  next: number | null;
+}
+
+function getRank(xpValue: number): RankInfo {
+  if (xpValue < 100) return { level: 1, label: "Moon Muncher", floor: 0, next: 100 };
+  if (xpValue < 300) return { level: 2, label: "Crescent Nibbler", floor: 100, next: 300 };
+  if (xpValue < 600) return { level: 3, label: "Lunar Explorer", floor: 300, next: 600 };
+  return { level: 4, label: "Cosmic Oracle", floor: 600, next: null };
+}
+
+function getRankProgress(xpValue: number, rank: RankInfo): number {
+  if (rank.next === null) return 100;
+  const span = rank.next - rank.floor;
+  if (span <= 0) return 100;
+  return Math.max(0, Math.min(100, ((xpValue - rank.floor) / span) * 100));
+}
+
+function computeAgeYears(birthDate: string): number | null {
+  if (!birthDate) return null;
+  const born = new Date(birthDate);
+  if (Number.isNaN(born.getTime())) return null;
+  const now = new Date();
+  let years = now.getFullYear() - born.getFullYear();
+  const monthDiff = now.getMonth() - born.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < born.getDate())) years -= 1;
+  if (years < 0 || years > 150) return null;
+  return years;
+}
+
+/* --------------------------- subtle star field ---------------------------- */
+
+const STARS: { top: string; left: string; size: number; opacity: number }[] = [
+  { top: "6%", left: "8%", size: 2, opacity: 0.7 },
+  { top: "11%", left: "27%", size: 1, opacity: 0.45 },
+  { top: "4%", left: "52%", size: 2, opacity: 0.55 },
+  { top: "15%", left: "72%", size: 1, opacity: 0.6 },
+  { top: "9%", left: "91%", size: 2, opacity: 0.5 },
+  { top: "24%", left: "16%", size: 1, opacity: 0.5 },
+  { top: "31%", left: "44%", size: 2, opacity: 0.4 },
+  { top: "27%", left: "63%", size: 1, opacity: 0.65 },
+  { top: "36%", left: "86%", size: 2, opacity: 0.45 },
+  { top: "44%", left: "6%", size: 1, opacity: 0.55 },
+  { top: "51%", left: "34%", size: 2, opacity: 0.4 },
+  { top: "48%", left: "77%", size: 1, opacity: 0.6 },
+  { top: "62%", left: "21%", size: 2, opacity: 0.45 },
+  { top: "68%", left: "58%", size: 1, opacity: 0.5 },
+  { top: "72%", left: "89%", size: 2, opacity: 0.4 },
+  { top: "81%", left: "12%", size: 1, opacity: 0.55 },
+  { top: "86%", left: "47%", size: 2, opacity: 0.45 },
+  { top: "92%", left: "69%", size: 1, opacity: 0.5 },
+];
+
+function StarField() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      {STARS.map((s, i) => (
+        <span
+          key={i}
+          className="absolute rounded-full bg-white"
+          style={{ top: s.top, left: s.left, width: s.size, height: s.size, opacity: s.opacity }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ------------------------- reusable list editor UI ------------------------ */
+
+function ListEditor({
+  label,
+  placeholder,
+  items,
+  onAdd,
+  onRemove,
+  emptyText = "Nothing added yet.",
+}: {
+  label?: string;
+  placeholder: string;
+  items: string[];
+  onAdd: (value: string) => void;
+  onRemove: (index: number) => void;
+  emptyText?: string;
+}) {
+  const [draft, setDraft] = useState("");
+
+  const submit = () => {
+    if (!draft.trim()) return;
+    onAdd(draft);
+    setDraft("");
   };
-
-  const getCheeseRank = (xpValue: number) => {
-    if (xpValue < 100) return { title: "Moon Muncher", next: 100, progress: (xpValue / 100) * 100, level: 1, isHigh: false };
-    if (xpValue < 300) return { title: "Crescent Nibbler", next: 300, progress: ((xpValue - 100) / 200) * 100, level: 2, isHigh: false };
-    if (xpValue < 600) return { title: "Lunar Explorer", next: 600, progress: ((xpValue - 300) / 300) * 100, level: 3, isHigh: true };
-    return { title: "Cosmic Oracle", next: 1200, progress: Math.min(((xpValue - 600) / 600) * 100, 100), level: 4, isHigh: true };
-  };
-
-  const currentRank = getCheeseRank(xp);
-
-  // Generate 28 dummy days for contribution grid (last 4 weeks)
-  const contributionDays = Array.from({ length: 28 }).map((_, idx) => {
-    const weights = [0, 1, 0, 2, 0, 3, 4, 1, 0, 2, 3, 0, 0, 1];
-    const weight = weights[(idx + (nickname.length || 3)) % weights.length];
-    return {
-      day: idx + 1,
-      weight, // 0 = empty, 1-4 = shades of green
-      commits: weight * 2
-    };
-  });
 
   return (
-    <div className="space-y-6 p-4 max-w-6xl mx-auto text-slate-200">
-      
-      {/* Linux Mint Tooltip Metrics Box */}
-      <div 
-        className="relative bg-slate-950 border border-emerald-500/30 p-3.5 rounded-xl flex items-center justify-between gap-4 cursor-help group transition-all"
-        onMouseEnter={() => setHoveredMetrics(`Profile_ID: ${profileId} | Minor_Safeguard_Badge: ${ageVerified.toUpperCase()} | Self_Ad_Sponsor_Slot: ${currentRank.isHigh ? "UNLOCKED" : "LOCKED_LEVEL_3"}`)}
-        onMouseLeave={() => setHoveredMetrics(null)}
-      >
-        <div className="flex items-center gap-2.5">
-          <User className="w-5 h-5 text-turquoise" />
-          <div>
-            <span className="text-xs font-mono font-bold text-slate-100 block">🖥️ GitHub-Style Anonymous Developer Workspace</span>
-            <span className="text-[10px] text-slate-400 font-mono">Build local portfolio matrices, verify student safety, and display self-ad loops</span>
-          </div>
-        </div>
+    <div className="space-y-2">
+      {label && <span className={`${LABEL} block`}>{label}</span>}
 
-        <div className="bg-slate-900 border border-slate-800 px-3 py-1 rounded-lg text-center">
-          <span className="text-[9px] font-mono text-slate-500 block uppercase">cheese rank</span>
-          <span className="text-xs font-bold font-mono text-turquoise">
-            Level {currentRank.level} : {currentRank.title}
-          </span>
-        </div>
-
-        {/* Hover metrics tooltip display */}
-        {hoveredMetrics && (
-          <div className="absolute top-full left-0 right-0 mt-2 z-50 bg-[#070b13] border border-emerald-400/40 rounded-xl p-3 shadow-2xl font-mono text-[10px] text-emerald-400 leading-relaxed transition-all">
-            <div className="flex items-center justify-between border-b border-emerald-500/20 pb-1 mb-1.5">
-              <span className="font-bold text-slate-100 flex items-center gap-1">📊 PROFILE METRICS CONTROLLER (v1.8)</span>
-              <span className="px-1.5 py-0.2 bg-emerald-950/80 border border-emerald-500/30 text-[8px] rounded">SAFE_SSL</span>
-            </div>
-            <span>{hoveredMetrics}</span>
-          </div>
+      <div className="flex flex-wrap gap-1.5">
+        {items.length === 0 ? (
+          <span className="text-[10px] font-mono text-slate-600">{emptyText}</span>
+        ) : (
+          items.map((item, index) => (
+            <span key={`${item}-${index}`} className={CHIP}>
+              <span>{item}</span>
+              <button
+                type="button"
+                onClick={() => onRemove(index)}
+                aria-label={`Remove ${item}`}
+                className="text-slate-500 hover:text-red-400 transition-colors"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+          ))
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Left Column: Standardized Identity and Under-18 Safeguard Gate */}
-        <div className="space-y-6 bg-[#090b14]/80 p-5 rounded-2xl border border-slate-800/80 backdrop-blur-md">
-          <div className="space-y-3">
-            <h3 className="text-xs font-bold font-mono text-turquoise uppercase tracking-widest flex items-center gap-2">
-              👤 Anonymous Ledger Profile
-            </h3>
-            <p className="text-[11px] text-slate-400 font-sans leading-relaxed">
-              We strictly purge all inputs collecting physical addresses or names. Identify yourself purely through your unique Moonbug token coordinate.
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              submit();
+            }
+          }}
+          placeholder={placeholder}
+          className={`${INPUT} flex-1`}
+        />
+        <button type="button" onClick={submit} className={BTN}>
+          <span className="flex items-center gap-1">
+            <Plus className="w-3 h-3" />
+            Add
+          </span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* --------------------- possessions & interests config --------------------- */
+
+const POSSESSION_CATEGORIES: {
+  key: string;
+  label: string;
+  Icon: IconType;
+  placeholder: string;
+}[] = [
+  { key: "mb_pos_realestate", label: "Real Estate", Icon: House, placeholder: "e.g. Family plot — Nairobi" },
+  { key: "mb_pos_vehicles", label: "Vehicles", Icon: Car, placeholder: "e.g. 2012 hatchback" },
+  { key: "mb_pos_clothing", label: "Clothing", Icon: Shirt, placeholder: "e.g. Observation parka" },
+  { key: "mb_pos_electronics", label: "Electronics", Icon: Cpu, placeholder: "e.g. 8in reflector telescope" },
+  { key: "mb_pos_collectables", label: "Collectables", Icon: Gem, placeholder: "e.g. Meteorite fragment" },
+  { key: "mb_pos_medications", label: "Medications", Icon: Pill, placeholder: "e.g. Daily vitamin D" },
+  { key: "mb_pos_leisure", label: "Leisure Activities", Icon: TreePalm, placeholder: "e.g. Night hiking" },
+];
+
+function PossessionCategory({
+  storageKey,
+  label,
+  Icon,
+  placeholder,
+  open,
+  onToggle,
+}: {
+  key?: string;
+  storageKey: string;
+  label: string;
+  Icon: IconType;
+  placeholder: string;
+  open: boolean;
+  onToggle: () => void;
+}) {
+  const list = useStoredList(storageKey);
+
+  return (
+    <div className="rounded-xl border border-slate-800 bg-slate-950/60 overflow-hidden">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        className="w-full flex items-center justify-between gap-3 px-3 py-2.5 text-left hover:bg-slate-900/60 transition-colors"
+      >
+        <span className="flex items-center gap-2">
+          <Icon className="w-4 h-4 text-turquoise" />
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-200">{label}</span>
+          <span className="text-[9px] font-mono text-slate-500">({list.items.length})</span>
+        </span>
+        <ChevronDown
+          className={`w-4 h-4 text-slate-500 transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div className="px-3 pb-3 pt-1 border-t border-slate-800/80">
+          <ListEditor
+            placeholder={placeholder}
+            items={list.items}
+            onAdd={list.add}
+            onRemove={list.remove}
+            emptyText={`No ${label.toLowerCase()} tracked yet.`}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ----------------------- recommendation list config ----------------------- */
+
+const RECOMMENDATION_LISTS: {
+  key: string;
+  label: string;
+  Icon: IconType;
+  placeholder: string;
+}[] = [
+  { key: "mb_rec_books", label: "Books", Icon: BookOpen, placeholder: "e.g. Cosmos — Carl Sagan" },
+  { key: "mb_rec_movies", label: "Movies", Icon: Film, placeholder: "e.g. Apollo 11 (2019)" },
+  { key: "mb_rec_appliances", label: "Appliances", Icon: Refrigerator, placeholder: "e.g. Low-noise dehumidifier" },
+  { key: "mb_rec_songs", label: "Songs", Icon: Music, placeholder: "e.g. Moonlight Sonata" },
+];
+
+function RecommendationList({
+  storageKey,
+  label,
+  Icon,
+  placeholder,
+}: {
+  key?: string;
+  storageKey: string;
+  label: string;
+  Icon: IconType;
+  placeholder: string;
+}) {
+  const list = useStoredList(storageKey);
+
+  return (
+    <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3 space-y-2">
+      <span className="flex items-center gap-2">
+        <Icon className="w-4 h-4 text-turquoise" />
+        <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-200">{label}</span>
+      </span>
+      <ListEditor
+        placeholder={placeholder}
+        items={list.items}
+        onAdd={list.add}
+        onRemove={list.remove}
+        emptyText={`No ${label.toLowerCase()} recommended yet.`}
+      />
+    </div>
+  );
+}
+
+/* ============================ main component ============================== */
+
+export default function ProfileDashboard({
+  nickname,
+  onChangeNickname,
+  xp,
+  onAddXp,
+  onNavigateToView,
+}: ProfileDashboardProps) {
+  /* ---- User Overview state (persisted) ---- */
+  const occupation = useStoredText("mb_portfolio_occupation", "Student");
+  const family = useStoredText("mb_portfolio_family", "");
+  const birthDate = useStoredText("mb_birthdate", "");
+  const milestones = useStoredList("mb_portfolio_milestones");
+  const brands = useStoredList("mb_portfolio_brands");
+
+  const [nicknameDraft, setNicknameDraft] = useState(nickname);
+  useEffect(() => {
+    setNicknameDraft(nickname);
+  }, [nickname]);
+
+  const rank = getRank(xp);
+  const rankProgress = getRankProgress(xp, rank);
+  const ageYears = computeAgeYears(birthDate.value);
+
+  /* ---- Possessions accordion ---- */
+  const [openCategory, setOpenCategory] = useState<string>(POSSESSION_CATEGORIES[0].key);
+
+  /* ---- Shared personal feed ---- */
+  const [feed, setFeed] = useState<FeedItem[]>([]);
+  const [feedStatus, setFeedStatus] = useState<"loading" | "ready" | "error">("loading");
+
+  useEffect(() => {
+    let cancelled = false;
+    setFeedStatus("loading");
+    api
+      .feed({ author: nickname })
+      .then((items) => {
+        if (cancelled) return;
+        setFeed(Array.isArray(items) ? items : []);
+        setFeedStatus("ready");
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setFeed([]);
+        setFeedStatus("error");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [nickname]);
+
+  /* ---- Donation panel ---- */
+  const CASH_RANK_THRESHOLD = 300;
+  const cashUnlocked = xp >= CASH_RANK_THRESHOLD;
+  const [donateTo, setDonateTo] = useState("");
+  const [donateXp, setDonateXp] = useState("");
+  const [donateCash, setDonateCash] = useState("");
+  const [donateStatus, setDonateStatus] = useState("");
+
+  const handleDonateXp = () => {
+    const recipient = donateTo.trim();
+    const amount = Number.parseInt(donateXp, 10);
+
+    if (!recipient) {
+      setDonateStatus("Enter the username you want to donate to.");
+      return;
+    }
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setDonateStatus("Enter an XP amount greater than 0.");
+      return;
+    }
+    if (amount > xp) {
+      setDonateStatus(`Not enough XP. Your balance is ${xp} XP.`);
+      return;
+    }
+    const confirmed = window.confirm(`Donate ${amount} XP to ${recipient}?`);
+    if (!confirmed) {
+      setDonateStatus("Donation cancelled.");
+      return;
+    }
+    onAddXp(-amount);
+    setDonateXp("");
+    setDonateStatus(`Donated ${amount} XP to ${recipient}.`);
+  };
+
+  const handleDonateCash = () => {
+    const recipient = donateTo.trim();
+    const amount = Number.parseFloat(donateCash);
+
+    if (!cashUnlocked) {
+      setDonateStatus(`Cash transfers unlock at ${CASH_RANK_THRESHOLD} XP (Level 3+).`);
+      return;
+    }
+    if (!recipient) {
+      setDonateStatus("Enter the username you want to donate to.");
+      return;
+    }
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setDonateStatus("Enter a cash amount greater than 0.");
+      return;
+    }
+    setDonateStatus(
+      `Cash transfer of ${amount} to ${recipient} is queued (higher-rank feature — no payment is processed here).`
+    );
+    setDonateCash("");
+  };
+
+  /* ------------------------------- render -------------------------------- */
+
+  return (
+    <div
+      className="relative min-h-screen w-full"
+      style={{ background: "linear-gradient(160deg, #0a0f1f, #070b16 60%, #04060d)" }}
+    >
+      {/* subtle star elements behind the bordered cards */}
+      <StarField />
+
+      <div className="relative max-w-6xl mx-auto p-4 space-y-6 text-slate-200">
+        {/* ------------------------- page header ------------------------- */}
+        <header className={`${CARD} p-5 flex flex-col gap-4 md:flex-row md:items-center md:justify-between`}>
+          <div className="space-y-1">
+            <span className={`${LABEL} block`}>Profile &amp; Portfolio</span>
+            <h1 className="text-base font-mono font-bold text-turquoise flex items-center gap-2">
+              <User className="w-5 h-5" />
+              {nickname || "anonymous"}
+            </h1>
+            <p className="text-[10px] font-mono text-slate-500">
+              Level {rank.level} · {rank.label} · {xp} XP
             </p>
           </div>
 
-          <div className="space-y-4">
-            <div className="flex flex-col gap-1">
-              <span className="text-[9px] font-mono text-slate-500 uppercase font-bold">Standardized Moonbug ID</span>
-              <input
-                type="text"
-                value={profileId}
-                readOnly
-                className="p-2.5 rounded-xl border border-slate-850 bg-slate-950 text-xs font-mono text-turquoise-dim select-all cursor-copy"
-              />
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <span className="text-[9px] font-mono text-slate-500 uppercase font-bold">Local Nickname</span>
-              <input
-                type="text"
-                value={nickname}
-                onChange={(e) => {
-                  onChangeNickname(e.target.value);
-                  saveToStorage("mb_nickname", e.target.value);
-                }}
-                className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs font-mono text-slate-200 focus:outline-none focus:border-turquoise-500/60"
-                placeholder="e.g. stargazer-99"
-              />
-            </div>
-
-            <div className="flex items-center justify-between p-2.5 rounded-xl border border-slate-800 bg-slate-950/40">
-              <div>
-                <span className="text-xs font-bold font-mono text-slate-300 block">Incognito Shield</span>
-                <span className="text-[9px] font-mono text-slate-500 block">Purges nickname from index logs</span>
-              </div>
-              <input
-                type="checkbox"
-                checked={anonMode}
-                onChange={(e) => {
-                  setAnonMode(e.target.checked);
-                  saveToStorage("mb_anon_mode", e.target.checked);
-                }}
-                className="w-4 h-4 rounded border-slate-800 text-turquoise-dim focus:ring-0"
-              />
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <span className="text-[9px] font-mono text-slate-500 uppercase font-bold">Broad Occupation</span>
-              <select
-                value={occupation}
-                onChange={(e) => {
-                  setOccupation(e.target.value);
-                  saveToStorage("mb_occupation", e.target.value);
-                }}
-                className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 focus:outline-none font-mono"
-              >
-                <option value="Student">📁 Student Academics</option>
-                <option value="Paid Employed">💼 Industrial Engineer</option>
-                <option value="Voluntary Service">🧘 Volunteer Node</option>
-                <option value="Other">🌐 Decentralized Operator</option>
-              </select>
-            </div>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={() => onNavigateToView?.("recommendations")} className={BTN_GHOST}>
+              <span className="flex items-center gap-1">
+                Feed <ArrowUpRight className="w-3 h-3" />
+              </span>
+            </button>
+            <button type="button" onClick={() => onNavigateToView?.("catalogues")} className={BTN_GHOST}>
+              <span className="flex items-center gap-1">
+                Catalogues <ArrowUpRight className="w-3 h-3" />
+              </span>
+            </button>
+            <button type="button" onClick={() => onNavigateToView?.("tribe")} className={BTN_GHOST}>
+              <span className="flex items-center gap-1">
+                Tribe <ArrowUpRight className="w-3 h-3" />
+              </span>
+            </button>
           </div>
+        </header>
 
-          {/* Under-18 Verification Gate */}
-          <div className="border-t border-slate-800/80 pt-4 space-y-3.5">
-            <div className="flex items-start justify-between">
-              <div>
-                <h4 className="text-[10px] font-mono font-bold text-turquoise uppercase tracking-wider flex items-center gap-1">
-                  <ShieldAlert className="w-3.5 h-3.5" />
-                  <span>Under-18 Safeguard Gate</span>
-                </h4>
-                <p className="text-[9px] text-slate-500 font-sans leading-normal mt-0.5">
-                  Secure offline credential channel to protect minors from fraudulent actors.
-                </p>
-              </div>
-              {ageVerified === "verified" ? (
-                <span className="px-2 py-0.5 rounded bg-emerald-950/40 border border-emerald-500/30 text-[8px] font-mono text-emerald-400 uppercase font-bold">
-                  Verified
-                </span>
-              ) : ageVerified === "pending" ? (
-                <span className="px-2 py-0.5 rounded bg-turquoise-950/40 border border-turquoise-500/30 text-[8px] font-mono text-turquoise uppercase font-bold animate-pulse">
-                  Syncing
-                </span>
-              ) : (
-                <span className="px-2 py-0.5 rounded bg-red-950/40 border border-red-500/30 text-[8px] font-mono text-red-400 uppercase font-bold">
-                  Gate Open
-                </span>
-              )}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* ====================== 1. USER OVERVIEW ====================== */}
+          <section className={`${CARD} p-5 space-y-5`}>
+            <div className="space-y-1">
+              <h2 className={CARD_TITLE}>
+                <User className="w-4 h-4" />
+                User Overview
+              </h2>
+              <p className="text-[10px] font-mono text-slate-500">
+                Anonymous identity, rank, milestones and personal details.
+              </p>
             </div>
 
-            {ageVerified === "unverified" && (
-              <label className="flex flex-col items-center justify-center border border-dashed border-slate-800 bg-slate-950 p-4 rounded-xl text-center cursor-pointer hover:border-turquoise-500/40 transition-colors">
-                <Upload className="w-5 h-5 text-slate-500 mb-1" />
-                <span className="text-[10.5px] font-mono text-slate-300">Upload Student ID / Credential</span>
-                <span className="text-[8px] text-slate-500 font-mono mt-0.5">Processed 100% locally in browser</span>
+            {/* anonymous username */}
+            <div className="space-y-1.5">
+              <span className={`${LABEL} block`}>Anonymous Username</span>
+              <div className="flex gap-2">
                 <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleCredentialUpload}
-                  className="hidden"
+                  type="text"
+                  value={nicknameDraft}
+                  onChange={(e) => setNicknameDraft(e.target.value)}
+                  placeholder="e.g. moonrise_412"
+                  className={`${INPUT} flex-1`}
                 />
-              </label>
-            )}
-
-            {ageVerified === "pending" && (
-              <div className="bg-slate-950/80 p-3 rounded-xl border border-slate-850 flex items-center gap-2.5">
-                <div className="w-4 h-4 rounded-full border-2 border-turquoise-500/30 border-t-turquoise-500 animate-spin" />
-                <span className="text-[9px] font-mono text-slate-400">Performing offline OCR decryption algorithms...</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = nicknameDraft.trim();
+                    if (!next) return;
+                    onChangeNickname(next);
+                    writeText("mb_nickname", next);
+                  }}
+                  className={BTN}
+                >
+                  Save
+                </button>
               </div>
-            )}
+            </div>
 
-            {ageVerified === "verified" && (
-              <div className="bg-emerald-950/10 p-3 rounded-xl border border-emerald-500/20 text-[9px] font-mono text-emerald-300 leading-relaxed">
-                🛡️ Verified Student Safeguard is active. All predatory ad algorithms are completely locked from this viewport.
+            {/* rank */}
+            <div className="space-y-1.5">
+              <span className={`${LABEL} block`}>Rank</span>
+              <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-mono font-bold text-turquoise flex items-center gap-1.5">
+                    <Trophy className="w-4 h-4" />
+                    Level {rank.level}: {rank.label}
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-400">{xp} XP</span>
+                </div>
+                <div className="h-1.5 rounded-full bg-slate-900 overflow-hidden">
+                  <div className="h-full bg-turquoise-500" style={{ width: `${rankProgress}%` }} />
+                </div>
+                <span className="text-[9px] font-mono text-slate-500">
+                  {rank.next === null ? "Highest rank reached" : `${rank.next - xp} XP to Level ${rank.level + 1}`}
+                </span>
               </div>
-            )}
-          </div>
+            </div>
+
+            {/* milestone achievements */}
+            <div className="space-y-2">
+              <span className={`${LABEL} flex items-center gap-1.5`}>
+                <Star className="w-3.5 h-3.5 text-turquoise" />
+                Milestone Achievements
+              </span>
+              <ListEditor
+                placeholder="e.g. Logged 100 moon observations"
+                items={milestones.items}
+                onAdd={milestones.add}
+                onRemove={milestones.remove}
+                emptyText="No milestones recorded yet."
+              />
+            </div>
+
+            {/* age + occupation */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <span className={`${LABEL} block`}>Age</span>
+                <input
+                  type="date"
+                  value={birthDate.value}
+                  onChange={(e) => birthDate.update(e.target.value)}
+                  className={`${INPUT} w-full`}
+                />
+                <span className="text-[10px] font-mono text-turquoise-dim block">
+                  {ageYears === null ? "Set a birth date to compute age" : `${ageYears} years old`}
+                </span>
+              </div>
+
+              <div className="space-y-1.5">
+                <span className={`${LABEL} flex items-center gap-1.5`}>
+                  <Briefcase className="w-3.5 h-3.5 text-turquoise" />
+                  Occupation
+                </span>
+                <input
+                  type="text"
+                  value={occupation.value}
+                  onChange={(e) => occupation.update(e.target.value)}
+                  placeholder="e.g. Student"
+                  className={`${INPUT} w-full`}
+                />
+              </div>
+            </div>
+
+            {/* brand associations */}
+            <div className="space-y-2">
+              <span className={`${LABEL} flex items-center gap-1.5`}>
+                <Tag className="w-3.5 h-3.5 text-turquoise" />
+                Brand Associations
+              </span>
+              <ListEditor
+                placeholder="e.g. AstroGear"
+                items={brands.items}
+                onAdd={brands.add}
+                onRemove={brands.remove}
+                emptyText="No brands linked yet."
+              />
+            </div>
+
+            {/* family details */}
+            <div className="space-y-1.5">
+              <span className={`${LABEL} flex items-center gap-1.5`}>
+                <Users className="w-3.5 h-3.5 text-turquoise" />
+                Family Details
+              </span>
+              <textarea
+                value={family.value}
+                onChange={(e) => family.update(e.target.value)}
+                placeholder="Household, relatives, dependants…"
+                rows={3}
+                className={`${INPUT} w-full resize-none`}
+              />
+            </div>
+          </section>
+
+          {/* ================ 2. POSSESSIONS & INTERESTS ================== */}
+          <section className={`${CARD} p-5 space-y-4`}>
+            <div className="space-y-1">
+              <h2 className={CARD_TITLE}>
+                <Sparkles className="w-4 h-4" />
+                Possessions &amp; Interests
+              </h2>
+              <p className="text-[10px] font-mono text-slate-500">
+                Categorized tracking — open a category to add or remove entries.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              {POSSESSION_CATEGORIES.map((cat) => (
+                <PossessionCategory
+                  key={cat.key}
+                  storageKey={cat.key}
+                  label={cat.label}
+                  Icon={cat.Icon}
+                  placeholder={cat.placeholder}
+                  open={openCategory === cat.key}
+                  onToggle={() => setOpenCategory((prev) => (prev === cat.key ? "" : cat.key))}
+                />
+              ))}
+            </div>
+          </section>
         </div>
 
-        {/* Middle Column: Typewriter Terminal, GitHub activity grid, Project viewports */}
-        <div className="space-y-6 lg:col-span-2">
-          
-          {/* Portfolio Canvas Header & Typewriter */}
-          <div className="bg-[#090b14]/80 p-5 rounded-2xl border border-slate-800/80 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xs font-bold font-mono text-turquoise uppercase tracking-widest">
-                🚀 Dynamic Portfolio Canvas
-              </h3>
-              <span className="text-[9px] font-mono text-slate-500">stable_node_active: true</span>
+        {/* ============ 3. SOCIAL & COMMUNITY — recommendations ============ */}
+        <section className={`${CARD} p-5 space-y-4`}>
+          <div className="space-y-1">
+            <h2 className={CARD_TITLE}>
+              <BookOpen className="w-4 h-4" />
+              Personal Recommendation Lists
+            </h2>
+            <p className="text-[10px] font-mono text-slate-500">
+              Curate what you recommend to the community.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {RECOMMENDATION_LISTS.map((rec) => (
+              <RecommendationList
+                key={rec.key}
+                storageKey={rec.key}
+                label={rec.label}
+                Icon={rec.Icon}
+                placeholder={rec.placeholder}
+              />
+            ))}
+          </div>
+        </section>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* ============ 3b. Shared personal feed ============ */}
+          <section className={`${CARD} p-5 space-y-3`}>
+            <div className="space-y-1">
+              <h2 className={CARD_TITLE}>
+                <Newspaper className="w-4 h-4" />
+                Shared Personal Feed
+              </h2>
+              <p className="text-[10px] font-mono text-slate-500">
+                Everything you have shared as <span className="text-turquoise-dim">{nickname || "anonymous"}</span>.
+              </p>
             </div>
 
-            {/* Typewriter text console */}
-            <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-850 font-mono text-xs text-emerald-400 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span>&gt;</span>
-                <span className="transition-all duration-300">{typewriterQuotes[typewriterIndex]}</span>
+            {feedStatus === "loading" && (
+              <p className="text-[10px] font-mono text-slate-500">Loading your shared feed…</p>
+            )}
+
+            {feedStatus === "error" && (
+              <p className="text-[10px] font-mono text-slate-500">
+                Feed unavailable right now. Your posts will appear here once the connection returns.
+              </p>
+            )}
+
+            {feedStatus === "ready" && feed.length === 0 && (
+              <div className="rounded-xl border border-dashed border-slate-800 bg-slate-950/60 p-4 text-center space-y-1">
+                <span className="text-[11px] font-mono font-bold text-slate-300 block">Your feed is quiet</span>
+                <span className="text-[10px] font-mono text-slate-500 block">
+                  Share a catalogue entry, a badge or a campaign and it will show up here.
+                </span>
               </div>
-              <span className="w-1.5 h-3 bg-emerald-400 animate-pulse shrink-0" />
+            )}
+
+            {feedStatus === "ready" && feed.length > 0 && (
+              <div className="space-y-2 max-h-80 overflow-y-auto">
+                {feed.map((item) => (
+                  <article key={item.id} className="rounded-xl border border-slate-800 bg-slate-950/60 p-3 space-y-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[9px] font-mono uppercase tracking-wider text-turquoise">{item.kind}</span>
+                      <span className="text-[9px] font-mono text-slate-500">
+                        {new Date(item.timestamp).toLocaleString()}
+                      </span>
+                    </div>
+                    {item.title && (
+                      <h3 className="text-[11px] font-mono font-bold text-slate-200">{item.title}</h3>
+                    )}
+                    {item.body && <p className="text-[10px] text-slate-400 leading-relaxed">{item.body}</p>}
+                  </article>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* ============ 3c. User donation feature ============ */}
+          <section className={`${CARD} p-5 space-y-4`}>
+            <div className="space-y-1">
+              <h2 className={CARD_TITLE}>
+                <Gift className="w-4 h-4" />
+                User Donation
+              </h2>
+              <p className="text-[10px] font-mono text-slate-500">
+                Donate XP to another user. Cash transfers unlock at higher ranks.
+              </p>
             </div>
 
-            {/* GitHub-Style Contribution Grid */}
-            <div className="space-y-2 pt-1">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono text-slate-400 uppercase font-bold">Lunar Contribution Log (Last 28 Days)</span>
-                <span className="text-[9px] font-mono text-slate-500">28 days tracking cycle</span>
-              </div>
-
-              {/* Grid element */}
-              <div className="p-3 bg-slate-950 rounded-xl border border-slate-850 flex flex-col gap-2">
-                <div className="grid grid-cols-7 gap-1.5 mx-auto">
-                  {contributionDays.map(day => {
-                    const colorShades = [
-                      "bg-slate-900 border-slate-950", // 0
-                      "bg-emerald-950 border-emerald-900/40", // 1
-                      "bg-emerald-800 border-emerald-700/40", // 2
-                      "bg-emerald-600 border-emerald-500/40", // 3
-                      "bg-emerald-400 border-emerald-300/40", // 4
-                    ];
-                    return (
-                      <div
-                        key={day.day}
-                        title={`Day ${day.day}: ${day.commits} contributions completed`}
-                        className={`w-5.5 h-5.5 rounded-sm border cursor-help hover:ring-1 hover:ring-turquoise-400 transition-all ${colorShades[day.weight]}`}
-                      />
-                    );
-                  })}
-                </div>
-                
-                <div className="flex justify-between items-center text-[8px] font-mono text-slate-500 px-1 border-t border-slate-900 pt-2">
-                  <span>New Moon (Cycle Start)</span>
-                  <div className="flex items-center gap-1">
-                    <span>Less</span>
-                    <span className="w-2 h-2 rounded-sm bg-slate-900" />
-                    <span className="w-2 h-2 rounded-sm bg-emerald-950" />
-                    <span className="w-2 h-2 rounded-sm bg-emerald-800" />
-                    <span className="w-2 h-2 rounded-sm bg-emerald-600" />
-                    <span className="w-2 h-2 rounded-sm bg-emerald-400" />
-                    <span>More</span>
-                  </div>
-                  <span>Full Moon (Zenith)</span>
-                </div>
-              </div>
+            <div className="space-y-1.5">
+              <span className={`${LABEL} block`}>Donate To (Username)</span>
+              <input
+                type="text"
+                value={donateTo}
+                onChange={(e) => setDonateTo(e.target.value)}
+                placeholder="e.g. moonrise_734"
+                className={`${INPUT} w-full`}
+              />
             </div>
 
-            {/* Tagged Hobbies block */}
-            <div className="space-y-2.5">
-              <span className="text-[10px] font-mono text-slate-400 block uppercase font-bold">Interests Tags</span>
-              <div className="flex flex-wrap gap-1.5 p-2 rounded-xl bg-slate-950/40 border border-slate-850">
-                {hobbies.map((h, index) => (
-                  <div key={index} className="flex items-center gap-1 px-2.5 py-0.5 rounded-full border border-turquoise-500/30 bg-turquoise-500/5 text-[10px] text-turquoise-bright font-mono">
-                    <span>{h}</span>
-                    <button onClick={() => handleDeleteHobby(index)} className="hover:text-red-400 text-slate-500 font-bold focus:outline-none">
-                      &times;
+            {/* XP donation */}
+            <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3 space-y-2">
+              <span className={`${LABEL} flex items-center gap-1.5`}>
+                <Coins className="w-3.5 h-3.5 text-turquoise" />
+                XP Donation
+              </span>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  min="1"
+                  value={donateXp}
+                  onChange={(e) => setDonateXp(e.target.value)}
+                  placeholder="XP amount"
+                  className={`${INPUT} flex-1`}
+                />
+                <button type="button" onClick={handleDonateXp} className={BTN}>
+                  Donate XP
+                </button>
+              </div>
+              <span className="text-[9px] font-mono text-slate-500 block">Your balance: {xp} XP</span>
+            </div>
+
+            {/* Cash transfer (higher ranks) */}
+            <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3 space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <span className={`${LABEL} flex items-center gap-1.5`}>
+                  <Banknote className="w-3.5 h-3.5 text-turquoise" />
+                  Cash Transfer
+                </span>
+                <span
+                  className={`text-[8px] font-mono font-bold uppercase px-1.5 py-0.5 rounded border ${
+                    cashUnlocked
+                      ? "text-turquoise border-turquoise-500/40 bg-turquoise-500/10"
+                      : "text-slate-500 border-slate-800 bg-slate-900/60"
+                  }`}
+                >
+                  {cashUnlocked ? "Unlocked" : "Locked"}
+                </span>
+              </div>
+
+              {cashUnlocked ? (
+                <>
+                  <div className="flex gap-2">
+                    <input
+                      type="number"
+                      min="1"
+                      step="0.01"
+                      value={donateCash}
+                      onChange={(e) => setDonateCash(e.target.value)}
+                      placeholder="Cash amount"
+                      className={`${INPUT} flex-1`}
+                    />
+                    <button type="button" onClick={handleDonateCash} className={BTN}>
+                      Send Cash
                     </button>
                   </div>
-                ))}
-              </div>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={newHobby}
-                  onChange={(e) => setNewHobby(e.target.value)}
-                  placeholder="New tag (max 3 words)..."
-                  className="p-2 rounded-xl border border-slate-850 bg-slate-950 text-[10px] text-slate-200 placeholder-slate-500 flex-1 focus:outline-none focus:border-turquoise-500/30"
-                />
-                <button
-                  onClick={handleAddHobby}
-                  className="px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-[10px] font-mono font-bold"
-                >
-                  Add Tag
-                </button>
-              </div>
-            </div>
-
-            {/* Custom Fields (documented: "lets users add custom fields") */}
-            <div className="space-y-2.5">
-              <span className="text-[10px] font-mono text-slate-400 block uppercase font-bold">⚙️ Custom Fields</span>
-              <p className="text-[8.5px] text-slate-500 font-sans leading-normal">
-                Add your own portfolio fields — the page ships with fields out of the box, and you can extend it freely.
-              </p>
-              <div className="flex flex-wrap gap-1.5 p-2 rounded-xl bg-slate-950/40 border border-slate-850">
-                {customFields.length === 0 ? (
-                  <span className="text-[9px] text-slate-500 font-mono">No custom fields yet. Add one below.</span>
-                ) : (
-                  customFields.map((f, idx) => (
-                    <div key={idx} className="flex items-center gap-1 px-2.5 py-0.5 rounded-full border border-turquoise-500/30 bg-turquoise-500/5 text-[10px] text-turquoise-bright font-mono">
-                      <span className="font-bold">{f.key}:</span>
-                      <span>{f.value || "—"}</span>
-                      <button onClick={() => handleDeleteField(idx)} className="hover:text-red-400 text-slate-500 font-bold focus:outline-none">&times;</button>
-                    </div>
-                  ))
-                )}
-              </div>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={newFieldKey}
-                  onChange={(e) => setNewFieldKey(e.target.value)}
-                  placeholder="Field name (e.g. Favorite Telescope)"
-                  className="p-2 rounded-xl border border-slate-850 bg-slate-950 text-[10px] text-slate-200 placeholder-slate-500 flex-1 focus:outline-none focus:border-turquoise-500/30"
-                />
-                <input
-                  type="text"
-                  value={newFieldVal}
-                  onChange={(e) => setNewFieldVal(e.target.value)}
-                  placeholder="Value"
-                  className="p-2 rounded-xl border border-slate-850 bg-slate-950 text-[10px] text-slate-200 placeholder-slate-500 w-28 focus:outline-none focus:border-turquoise-500/30"
-                />
-                <button
-                  onClick={handleAddField}
-                  className="px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-[10px] font-mono font-bold"
-                >
-                  Add
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Curated Catalogues showcase & Self Ad slot */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Curated catalogues (documented portfolio lists) */}
-            <div className="bg-[#090b14]/80 p-4 rounded-2xl border border-slate-800/80 space-y-3">
-              <span className="text-[10px] font-mono text-slate-400 uppercase block font-bold">🗂️ Curated Catalogues</span>
-              <p className="text-[8.5px] text-slate-500 font-sans leading-normal">
-                The portfolio curates lists of things. Open the full catalogue to explore each.
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { label: "Skills", icon: "🛠️", kind: "skill" },
-                  { label: "Books", icon: "📚", kind: "book" },
-                  { label: "Brands", icon: "🏷️", kind: "brand" },
-                  { label: "Astro Events", icon: "🌌", kind: "astro_event" },
-                  { label: "Disease / Health", icon: "🩺", kind: "disease" },
-                  { label: "Charities", icon: "🤝", kind: "charity" },
-                ].map((c) => (
-                  <button
-                    key={c.kind}
-                    onClick={() => onNavigateToView?.("catalogues")}
-                    className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-850 bg-slate-950/50 hover:border-turquoise-500/30 transition-all text-left"
-                  >
-                    <span className="text-base">{c.icon}</span>
-                    <span className="text-[10px] font-mono font-bold text-slate-200">{c.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Self Ad slot */}
-            <div className="bg-[#090b14]/80 p-4 rounded-2xl border border-slate-800/80 space-y-3">
-              <div className="flex justify-between items-start">
-                <div>
-                  <span className="text-[10px] font-mono text-slate-400 uppercase block font-bold">📢 host Profile Self-Ads</span>
-                  <p className="text-[8.5px] text-slate-500 font-sans leading-normal">
-                    Level 3+ users unlock direct hosting of custom ads in their profile slots.
-                  </p>
-                </div>
-                {currentRank.isHigh ? (
-                  <span className="px-1.5 py-0.2 bg-emerald-950/80 border border-emerald-500/30 text-[8px] rounded text-emerald-400 uppercase font-bold">Unlocked</span>
-                ) : (
-                  <span className="px-1.5 py-0.2 bg-red-950/80 border border-red-500/30 text-[8px] rounded text-red-400 uppercase font-bold">Locked</span>
-                )}
-              </div>
-
-              {currentRank.isHigh ? (
-                <div className="space-y-2.5">
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[8px] font-mono text-slate-500">AD PROMOTION TITLE</label>
-                    <input
-                      type="text"
-                      value={selfAdTitle}
-                      onChange={(e) => setSelfAdTitle(e.target.value)}
-                      className="p-1.5 rounded border border-slate-850 bg-slate-950 text-[10px] font-mono text-turquoise"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[8px] font-mono text-slate-500">PROMOTION SUBTITLE/DESC</label>
-                    <textarea
-                      value={selfAdDesc}
-                      onChange={(e) => setSelfAdDesc(e.target.value)}
-                      className="p-1.5 h-10 rounded border border-slate-850 bg-slate-950 text-[9px] font-sans text-slate-300 resize-none"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={selfAdEnabled}
-                      onChange={(e) => setSelfAdEnabled(e.target.checked)}
-                      id="enable-self-ad"
-                      className="rounded border-slate-800 text-turquoise-dim focus:ring-0"
-                    />
-                    <label htmlFor="enable-self-ad" className="text-[9px] font-mono text-slate-400 cursor-pointer">
-                      Broadcast self-ad to my profile slot
-                    </label>
-                  </div>
-
-                  {selfAdEnabled && (
-                    <div className="p-2.5 border border-turquoise-500/30 bg-turquoise-500/5 rounded-xl space-y-1">
-                      <div className="flex items-center justify-between text-[8px] font-mono text-turquoise-dim uppercase font-bold">
-                        <span>📢 Sponsor Ad (P2P Node)</span>
-                        <span>Level {currentRank.level} Sponsor</span>
-                      </div>
-                      <h5 className="text-[10px] font-bold text-slate-100 font-mono">{selfAdTitle}</h5>
-                      <p className="text-[9px] text-slate-400 font-sans leading-normal">{selfAdDesc}</p>
-                    </div>
-                  )}
-                </div>
+                  <span className="text-[9px] font-mono text-slate-500 block leading-relaxed">
+                    Cash transfers are enabled at higher rank (Level 3+, {CASH_RANK_THRESHOLD}+ XP). This panel records
+                    your intent only — no payment is processed here.
+                  </span>
+                </>
               ) : (
-                <div className="h-44 flex flex-col items-center justify-center border border-slate-850 bg-slate-950/60 rounded-xl text-center p-4">
-                  <Megaphone className="w-6 h-6 text-slate-700 mb-1" />
-                  <span className="text-[10px] font-mono text-slate-400 font-bold">Host Profile self-ad is Locked</span>
-                  <span className="text-[8.5px] text-slate-500 font-mono mt-0.5">Reach Cheese Level 3 (300+ XP) to unlock self-sponsored ad slots.</span>
-                </div>
+                <span className="text-[9px] font-mono text-slate-500 block leading-relaxed">
+                  Direct cash transfers are enabled at higher rank. Reach {CASH_RANK_THRESHOLD} XP (Level 3) to unlock
+                  this option — you currently have {xp} XP.
+                </span>
               )}
             </div>
-            </div>
 
-            {/* Catalogues access */}
-            <div className="bg-[#090b14]/80 p-4 rounded-2xl border border-slate-800/80 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <BookOpen className="w-5 h-5 text-turquoise" />
-                <div>
-                  <span className="text-xs font-mono font-bold text-slate-100 block">📚 Unified Catalogues</span>
-                  <span className="text-[9px] text-slate-400 font-mono">Astro events & campaigns by category</span>
-                </div>
-              </div>
-              <button
-                onClick={() => onNavigateToView?.("catalogues")}
-                className="px-3.5 py-1.5 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-mono font-bold text-[10px] uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0"
-              >
-                <span>Open</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            {/* Personal Feed */}
-            <div className="bg-[#090b14]/80 p-4 rounded-2xl border border-slate-800/80 space-y-2">
-              <div className="flex items-center gap-2">
-                <Newspaper className="w-5 h-5 text-turquoise" />
-                <span className="text-xs font-mono font-bold text-slate-100 block">📰 My Feed</span>
-              </div>
-              <div className="space-y-2 max-h-72 overflow-y-auto">
-                {myFeed.length === 0 ? (
-                  <p className="text-[10px] text-slate-500 font-mono">No posts yet. Share a catalogue, challenge, or badge!</p>
-                ) : (
-                  myFeed.map((f) => (
-                    <div key={f.id} className="p-2.5 rounded-xl border border-slate-850 bg-slate-950/60">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[9px] font-mono text-turquoise uppercase">{f.kind}</span>
-                        <span className="text-[8px] text-slate-500 font-mono">{new Date(f.timestamp).toLocaleString()}</span>
-                      </div>
-                      <p className="text-[11px] text-slate-200 mt-0.5">{f.title || f.body}</p>
-                      {f.experience && (
-                        <p className="text-[10px] text-turquoise mt-1 flex items-center gap-1">
-                          <Sparkles className="w-3 h-3" /> View player's challenge experience: {f.experience}
-                        </p>
-                      )}
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-
+            {donateStatus && (
+              <p className="text-[10px] font-mono text-turquoise-dim leading-relaxed">{donateStatus}</p>
+            )}
+          </section>
         </div>
-
-
       </div>
-
     </div>
   );
 }

@@ -156,7 +156,7 @@ export default function AdQuizModule({ xp, onAddXp }: AdQuizModuleProps) {
 
   const handleShareToSocials = () => {
     if (!activeAd) return;
-    const referralLink = `https://moonbug.app/track/challenge-ad-${activeAd.id}?ref=${localStorage.getItem("mb_profile_id") || "anonymous"}`;
+    const referralLink = `https://moonrise.app/track/challenge-ad-${activeAd.id}?ref=${localStorage.getItem("mb_profile_id") || "anonymous"}`;
     alert(`🔗 Trackable Social Link Generated!\n\n${referralLink}\n\nAnyone clicking this will see ad info, and your profile gets direct XP referrals!`);
   };
 
@@ -243,7 +243,7 @@ export default function AdQuizModule({ xp, onAddXp }: AdQuizModuleProps) {
                 Reading Briefing Document: {watchCountdown} seconds remaining...
               </span>
               <p className="text-[10px] text-slate-400 max-w-sm mx-auto leading-relaxed">
-                Moonbug guarantees human validation. Escrow requires voluntary engagement, preventing programmatic bot-abuse or forced pop-ups.
+                moonrise guarantees human validation. Escrow requires voluntary engagement, preventing programmatic bot-abuse or forced pop-ups.
               </p>
             </div>
           )}

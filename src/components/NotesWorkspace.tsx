@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { BookOpen, Calendar, Award, Clock, Lightbulb, Mic, Volume2, Plus, Trash2, Check, ArrowRight, Bell, HelpCircle } from "lucide-react";
-import { JournalEntry, RoutineTask, LifeGoal, Reminder, Idea } from "../types";
+import {
+  Calendar, Clock, Lightbulb, Bell, Plus, Trash2, Check, ArrowRight,
+  Bot, Link2, FileText, Sparkles, ListChecks, Archive, Tag, Send,
+  FolderPlus, PenLine, MessageSquarePlus
+} from "lucide-react";
 
 interface NotesWorkspaceProps {
   xp: number;
@@ -8,784 +11,540 @@ interface NotesWorkspaceProps {
   onNavigateToView?: (view: string) => void;
 }
 
+type PlannerScope = "today" | "tomorrow" | "custom";
+type IdeaCategory = "general" | "work" | "personal" | "health";
+
+interface PlannerTask {
+  id: string;
+  text: string;
+  done: boolean;
+  date: string;
+  deadline?: string;
+  alertNote?: string;
+}
+
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  links: string[];
+  documents: string[];
+  notes: string;
+  brief: string;
+  planner: { id: string; text: string; done: boolean }[];
+}
+
+interface ChallengeLog {
+  id: string;
+  text: string;
+  completed: boolean;
+  createdAt: string;
+}
+
+interface CatalogueCategory {
+  name: string;
+  items: string[];
+}
+
+const PLANNER_KEY = "mb_planner_tasks";
+const IDEA_KEY = "mb_ideas";
+const PROJECT_KEY = "mb_projects";
+const CHALLENGE_LOG_KEY = "mb_challenge_logs";
+const CATALOGUE_KEY = "mb_personal_catalogues";
+
+const IDEA_CATEGORIES: IdeaCategory[] = ["general", "work", "personal", "health"];
+
+const fmtDate = (d: Date) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+};
+
+const dayLabel = (d: Date) =>
+  d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+
 export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesWorkspaceProps) {
-  const [activeScope, setActiveScope] = useState<"diary" | "routine" | "goals" | "reminders" | "ideas">("diary");
-
-  const [journals, setJournals] = useState<JournalEntry[]>([]);
-  const [routines, setRoutines] = useState<RoutineTask[]>([]);
-  const [goals, setGoals] = useState<LifeGoal[]>([]);
-  const [reminders, setReminders] = useState<Reminder[]>([]);
-  const [ideas, setIdeas] = useState<Idea[]>([]);
-
-  const [pendingChallengeAction, setPendingChallengeAction] = useState<{ challengeId: string; stepNumber: number; actionType: string } | null>(null);
-
-  // Form States
-  // Journal Form
-  const [journalText, setJournalText] = useState("");
-  const [journalTheme, setJournalTheme] = useState("Deep Reflection");
-  const [journalMood, setJournalMood] = useState("Peaceful");
-  const [journalReminder, setJournalReminder] = useState("");
-  const [isRecording, setIsRecording] = useState(false);
-  const [flippedJournalId, setFlippedJournalId] = useState<string | null>(null);
-
-  // Routine Form
-  const [routineName, setRoutineName] = useState("");
-  const [routineTime, setRoutineTime] = useState("");
-  const [routineRecur, setRoutineRecur] = useState<'Daily' | 'Weekly' | 'Monthly' | 'Annually'>("Daily");
-  const [routineLife, setRoutineLife] = useState<'Permanent' | 'Temporary'>("Permanent");
-  const [routineExpiry, setRoutineExpiry] = useState("");
-
-  // Goals Form
-  const [goalTitle, setGoalTitle] = useState("");
-  const [goalContent, setGoalContent] = useState("");
-
-  // Reminders Form
-  const [reminderText, setReminderText] = useState("");
-  const [reminderTime, setReminderTime] = useState("");
-  const [reminderInterval, setReminderInterval] = useState<'once' | '4x-daily' | 'custom'>("once");
-  const [customInterval, setCustomInterval] = useState("08:00, 12:00, 16:00, 20:00");
-
-  // Ideas Form
-  const [ideaText, setIdeaText] = useState("");
-  const [ideaTheme, setIdeaTheme] = useState<'general' | 'high-contrast' | 'dark-mode' | 'light-mode' | 'dyslexia-friendly'>("general");
-  const [selectedIdeaFilter, setSelectedIdeaFilter] = useState<string>("all");
-
-  // Countdown timers updater
+  const [activeScope, setActiveScope] = useState<"planner" | "ideas" | "projects" | "archives">("planner");
   const [currentTime, setCurrentTime] = useState(new Date());
 
+  const [plannerTasks, setPlannerTasks] = useState<PlannerTask[]>([]);
+  const [plannerView, setPlannerView] = useState<PlannerScope>("today");
+  const [customDate, setCustomDate] = useState(() => fmtDate(new Date()));
+  const [plannerText, setPlannerText] = useState("");
+  const [plannerDeadline, setPlannerDeadline] = useState("");
+  const [plannerAlert, setPlannerAlert] = useState("");
+
+  const [ideas, setIdeas] = useState<{ id: string; text: string; category: IdeaCategory; timestamp: string }[]>([]);
+  const [ideaText, setIdeaText] = useState("");
+  const [ideaCategory, setIdeaCategory] = useState<IdeaCategory>("general");
+
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [newProjectName, setNewProjectName] = useState("");
+  const [newProjectDesc, setNewProjectDesc] = useState("");
+  const [newProjectBrief, setNewProjectBrief] = useState("");
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [projectLink, setProjectLink] = useState("");
+  const [projectChatInput, setProjectChatInput] = useState("");
+  const [projectChat, setProjectChat] = useState<{ sender: string; text: string }[]>([]);
+
+  const [challengeLogs, setChallengeLogs] = useState<ChallengeLog[]>([]);
+  const [challengeLogText, setChallengeLogText] = useState("");
+  const [catalogues, setCatalogues] = useState<CatalogueCategory[]>([]);
+  const [selectedCat, setSelectedCat] = useState<string>("cars");
+  const [catItemText, setCatItemText] = useState("");
+  const [newCatName, setNewCatName] = useState("");
+
+  const save = (key: string, data: unknown) => localStorage.setItem(key, JSON.stringify(data));
+
   useEffect(() => {
-    // Load initial notes state from localStorage
-    const savedJournals = localStorage.getItem("mb_journals");
-    if (savedJournals) setJournals(JSON.parse(savedJournals));
-
-    const savedRoutines = localStorage.getItem("mb_routines");
-    if (savedRoutines) {
-      const parsed: RoutineTask[] = JSON.parse(savedRoutines);
-      // Run checklist resets check
-      const checkedResets = parsed.map(r => {
-        if (r.completed && r.lastCompletedTimestamp) {
-          const lastDate = new Date(r.lastCompletedTimestamp);
-          const now = new Date();
-          let shouldReset = false;
-
-          if (r.recurrence === "Daily") {
-            // Reset if day has changed
-            shouldReset = now.getDate() !== lastDate.getDate() || now.getMonth() !== lastDate.getMonth() || now.getFullYear() !== lastDate.getFullYear();
-          } else if (r.recurrence === "Weekly") {
-            // Reset if week has changed (diff > 7 days)
-            const diffDays = (now.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24);
-            shouldReset = diffDays >= 7;
-          } else if (r.recurrence === "Monthly") {
-            // Reset if month has changed
-            shouldReset = now.getMonth() !== lastDate.getMonth() || now.getFullYear() !== lastDate.getFullYear();
-          } else if (r.recurrence === "Annually") {
-            shouldReset = now.getFullYear() !== lastDate.getFullYear();
-          }
-
-          if (shouldReset) {
-            return { ...r, completed: false };
-          }
-        }
-        return r;
-      });
-      setRoutines(checkedResets);
-    }
-
-    const savedGoals = localStorage.getItem("mb_goals");
-    if (savedGoals) setGoals(JSON.parse(savedGoals));
-
-    const savedReminders = localStorage.getItem("mb_reminders");
-    if (savedReminders) setReminders(JSON.parse(savedReminders));
-
-    const savedIdeas = localStorage.getItem("mb_ideas");
-    if (savedIdeas) setIdeas(JSON.parse(savedIdeas));
-
-    // Load pending challenge tool action
-    const savedPending = localStorage.getItem("mb_pending_challenge_tool_action");
-    if (savedPending) {
+    const load = <T,>(key: string, fallback: T): T => {
       try {
-        const parsed = JSON.parse(savedPending);
-        if (parsed.view === 'notes') {
-          setPendingChallengeAction(parsed);
-          if (parsed.actionType === 'create_routine') setActiveScope("routine");
-          else if (parsed.actionType === 'create_reminder') setActiveScope("reminders");
-          else if (parsed.actionType === 'create_goal') setActiveScope("goals");
-          else setActiveScope("diary");
-        }
-      } catch (e) {
-        console.error("Failed to parse pending challenge action", e);
+        const raw = localStorage.getItem(key);
+        return raw ? (JSON.parse(raw) as T) : fallback;
+      } catch {
+        return fallback;
       }
-    }
+    };
 
-    // Seed mock details if empty to guide the user beautifully
-    if (!savedGoals) {
-      const defaultGoals: LifeGoal[] = [
-        { id: "g1", title: "🌠 Mastering Astrophotography", whyItMatters: "- Purchase an equatorial mount telescope mount by Winter.\n- Capture 10 clear nebulae transits under Waning Crescent skies.\n- Complete MoonBird challenges regularly to maintain focus.", actionSteps: ["Step 1: Research mounts", "Step 2: Save budget", "Step 3: First capture"], commencementDate: "2026-09-01", priority: "High" }
+    setPlannerTasks(load<PlannerTask[]>(PLANNER_KEY, []));
+    setIdeas(load(IDEA_KEY, []));
+    setProjects(load<Project[]>(PROJECT_KEY, []));
+    setChallengeLogs(load<ChallengeLog[]>(CHALLENGE_LOG_KEY, []));
+
+    const cats = load<CatalogueCategory[]>(CATALOGUE_KEY, []);
+    if (cats.length === 0) {
+      const seeded: CatalogueCategory[] = [
+        { name: "cars", items: [] },
+        { name: "links", items: [] }
       ];
-      setGoals(defaultGoals);
-      localStorage.setItem("mb_goals", JSON.stringify(defaultGoals));
+      setCatalogues(seeded);
+      save(CATALOGUE_KEY, seeded);
+    } else {
+      setCatalogues(cats);
     }
   }, []);
 
   useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
+    const t = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(t);
   }, []);
 
-  // Sync state functions
-  const saveToStorage = (key: string, data: any) => {
-    localStorage.setItem(key, JSON.stringify(data));
-  };
-
-  const recordChallengeStepCompletion = () => {
-    if (!pendingChallengeAction) return;
-    const key = `${pendingChallengeAction.challengeId}-step-${pendingChallengeAction.stepNumber}`;
-    const existing = localStorage.getItem("mb_challenge_step_actions");
-    const actions = existing ? JSON.parse(existing) : {};
-    actions[key] = {
-      id: key,
-      challengeId: pendingChallengeAction.challengeId,
-      stepNumber: pendingChallengeAction.stepNumber,
-      actionType: pendingChallengeAction.actionType,
-      completedAt: new Date().toISOString()
-    };
-    localStorage.setItem("mb_challenge_step_actions", JSON.stringify(actions));
-    localStorage.removeItem("mb_pending_challenge_tool_action");
-    setPendingChallengeAction(null);
-    onNavigateToView?.("challenges");
-  };
-
-  // 1. Journal Handlers
-  const handleAddJournal = () => {
-    if (!journalText.trim()) return;
-    const entry: JournalEntry = {
-      id: `j-${Date.now()}`,
-      date: new Date().toLocaleDateString(),
-      content: journalText,
-      theme: journalTheme,
-      mood: journalMood,
-      reminderDate: journalReminder || undefined,
-      timestamp: new Date().toISOString()
-    };
-    const updated = [entry, ...journals];
-    setJournals(updated);
-    saveToStorage("mb_journals", updated);
-    setJournalText("");
-    setJournalReminder("");
-    onAddXp(20); // Award XP for journaling!
-    if (pendingChallengeAction?.actionType === 'create_journal') {
-      recordChallengeStepCompletion();
+  const plannerActiveDate = (): string => {
+    if (plannerView === "today") return fmtDate(new Date());
+    if (plannerView === "tomorrow") {
+      const d = new Date();
+      d.setDate(d.getDate() + 1);
+      return fmtDate(d);
     }
+    return customDate;
   };
 
-  const handleSpeechToText = () => {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert("Speech recognition is not supported in this browser. Please use Google Chrome or Safari.");
-      return;
-    }
+  const visiblePlannerTasks = plannerTasks.filter((t) => t.date === plannerActiveDate());
 
-    const rec = new SpeechRecognition();
-    rec.continuous = false;
-    rec.interimResults = false;
-    rec.lang = "en-US";
-
-    rec.onstart = () => {
-      setIsRecording(true);
-    };
-
-    rec.onerror = (e: any) => {
-      console.error(e);
-      setIsRecording(false);
-    };
-
-    rec.onend = () => {
-      setIsRecording(false);
-    };
-
-    rec.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      setJournalText((prev) => (prev ? prev + " " + transcript : transcript));
-    };
-
-    rec.start();
-  };
-
-  const handleSpeakJournal = (text: string) => {
-    if (!("speechSynthesis" in window)) {
-      alert("Text to Speech is not supported in this browser.");
-      return;
-    }
-    // Cancel any active speaker
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-    window.speechSynthesis.speak(utterance);
-  };
-
-  const handleDeleteJournal = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const updated = journals.filter(j => j.id !== id);
-    setJournals(updated);
-    saveToStorage("mb_journals", updated);
-  };
-
-  // 2. Routine Handlers
-  const handleAddRoutine = () => {
-    if (!routineName.trim() || !routineTime.trim()) return;
-    const r: RoutineTask = {
-      id: `r-${Date.now()}`,
-      name: routineName,
-      timeFrame: routineTime,
-      completed: false,
-      recurrence: routineRecur,
-      lifespan: routineLife,
-      expiryDate: routineLife === "Temporary" ? routineExpiry : undefined
-    };
-    const updated = [...routines, r];
-    setRoutines(updated);
-    saveToStorage("mb_routines", updated);
-    setRoutineName("");
-    setRoutineTime("");
-    setRoutineExpiry("");
-    onAddXp(15);
-    if (pendingChallengeAction?.actionType === 'create_routine') {
-      recordChallengeStepCompletion();
-    }
-  };
-
-  const handleToggleRoutine = (id: string) => {
-    const updated = routines.map(r => {
-      if (r.id === id) {
-        const nextCompleted = !r.completed;
-        if (nextCompleted) onAddXp(10); // Reward completing tasks
-        return {
-          ...r,
-          completed: nextCompleted,
-          lastCompletedTimestamp: nextCompleted ? new Date().toISOString() : undefined
-        };
-      }
-      return r;
-    });
-    setRoutines(updated);
-    saveToStorage("mb_routines", updated);
-  };
-
-  const handleDeleteRoutine = (id: string) => {
-    const updated = routines.filter(r => r.id !== id);
-    setRoutines(updated);
-    saveToStorage("mb_routines", updated);
-  };
-
-  // 3. Goals Handlers
-  const handleAddGoal = () => {
-    if (!goalTitle.trim() || !goalContent.trim()) return;
-    const g: LifeGoal = {
-      id: `g-${Date.now()}`,
-      title: goalTitle,
-      whyItMatters: goalContent,
-      actionSteps: ["Step 1: Planning and research", "Step 2: Resource setup", "Step 3: Initial commencement"],
-      commencementDate: new Date().toISOString().split("T")[0],
-      priority: "High"
-    };
-    const updated = [...goals, g];
-    setGoals(updated);
-    saveToStorage("mb_goals", updated);
-    setGoalTitle("");
-    setGoalContent("");
-    onAddXp(25);
-    if (pendingChallengeAction?.actionType === 'create_goal') {
-      recordChallengeStepCompletion();
-    }
-  };
-
-  const handleDeleteGoal = (id: string) => {
-    const updated = goals.filter(g => g.id !== id);
-    setGoals(updated);
-    saveToStorage("mb_goals", updated);
-  };
-
-  // 4. Reminders Handlers
-  const handleAddReminder = () => {
-    if (!reminderText.trim() || !reminderTime.trim()) return;
-    const r: Reminder = {
-      id: `rem-${Date.now()}`,
-      text: reminderText,
-      datetime: reminderTime,
-      interval: reminderInterval,
-      customHours: reminderInterval === "custom" ? customInterval : undefined,
-      completed: false
-    };
-    const updated = [...reminders, r];
-    setReminders(updated);
-    saveToStorage("mb_reminders", updated);
-    setReminderText("");
-    setReminderTime("");
-    onAddXp(10);
-    if (pendingChallengeAction?.actionType === 'create_reminder') {
-      recordChallengeStepCompletion();
-    }
-  };
-
-  const handleDeleteReminder = (id: string) => {
-    const updated = reminders.filter(r => r.id !== id);
-    setReminders(updated);
-    saveToStorage("mb_reminders", updated);
-  };
-
-  const calculateRemainingTime = (isoString: string) => {
-    const target = new Date(isoString).getTime();
+  const deadlineStatus = (deadline?: string, done?: boolean): "overdue" | "soon" | "none" => {
+    if (!deadline || done) return "none";
+    const target = new Date(deadline).getTime();
     const now = currentTime.getTime();
-    const diff = target - now;
-
-    if (diff <= 0) return "Alert: Countdown complete!";
-
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    if (isNaN(target)) return "none";
+    if (target <= now) return "overdue";
+    if (target - now <= 24 * 60 * 60 * 1000) return "soon";
+    return "none";
   };
 
-  // 5. Ideas Handlers
+  const handleAddPlannerTask = () => {
+    if (!plannerText.trim()) return;
+    const task: PlannerTask = {
+      id: `pt-${Date.now()}`,
+      text: plannerText.trim(),
+      done: false,
+      date: plannerActiveDate(),
+      deadline: plannerDeadline || undefined,
+      alertNote: plannerAlert.trim() || undefined
+    };
+    const updated = [...plannerTasks, task];
+    setPlannerTasks(updated);
+    save(PLANNER_KEY, updated);
+    setPlannerText("");
+    setPlannerDeadline("");
+    setPlannerAlert("");
+    onAddXp(5);
+  };
+
+  const handleTogglePlannerTask = (id: string) => {
+    const updated = plannerTasks.map((t) => {
+      if (t.id !== id) return t;
+      const next = !t.done;
+      if (next && !t.done) onAddXp(10);
+      return { ...t, done: next };
+    });
+    setPlannerTasks(updated);
+    save(PLANNER_KEY, updated);
+  };
+
+  const handleDeletePlannerTask = (id: string) => {
+    const updated = plannerTasks.filter((t) => t.id !== id);
+    setPlannerTasks(updated);
+    save(PLANNER_KEY, updated);
+  };
+
   const handleAddIdea = () => {
     if (!ideaText.trim()) return;
-    const i: Idea = {
-      id: `i-${Date.now()}`,
-      content: ideaText,
-      theme: ideaTheme,
-      timestamp: new Date().toLocaleDateString()
-    };
+    const i = { id: `i-${Date.now()}`, text: ideaText.trim(), category: ideaCategory, timestamp: new Date().toLocaleDateString() };
     const updated = [i, ...ideas];
     setIdeas(updated);
-    saveToStorage("mb_ideas", updated);
+    save(IDEA_KEY, updated);
     setIdeaText("");
-    onAddXp(15);
+    onAddXp(10);
   };
 
   const handleDeleteIdea = (id: string) => {
-    const updated = ideas.filter(i => i.id !== id);
+    const updated = ideas.filter((i) => i.id !== id);
     setIdeas(updated);
-    saveToStorage("mb_ideas", updated);
+    save(IDEA_KEY, updated);
   };
 
-  const filteredIdeas = selectedIdeaFilter === "all" 
-    ? ideas 
-    : ideas.filter(i => i.theme === selectedIdeaFilter);
+  const handleAddProject = () => {
+    if (!newProjectName.trim()) return;
+    const p: Project = {
+      id: `p-${Date.now()}`,
+      name: newProjectName.trim(),
+      description: newProjectDesc.trim(),
+      links: [],
+      documents: [],
+      notes: "",
+      brief: "",
+      planner: []
+    };
+    const updated = [...projects, p];
+    setProjects(updated);
+    save(PROJECT_KEY, updated);
+    setNewProjectName("");
+    setNewProjectDesc("");
+    onAddXp(20);
+  };
+
+  const updateSelectedProject = (updater: (p: Project) => Project) => {
+    if (!selectedProjectId) return;
+    setProjects((prev) => {
+      const updated = prev.map((p) => (p.id === selectedProjectId ? updater(p) : p));
+      save(PROJECT_KEY, updated);
+      return updated;
+    });
+  };
+
+  const handleDeleteProject = (id: string) => {
+    const updated = projects.filter((p) => p.id !== id);
+    setProjects(updated);
+    save(PROJECT_KEY, updated);
+    if (selectedProjectId === id) {
+      setSelectedProjectId(null);
+      setProjectChat([]);
+    }
+  };
+
+  const handleAddProjectLink = () => {
+    if (!projectLink.trim() || !selectedProjectId) return;
+    updateSelectedProject((p) => ({ ...p, links: [...p.links, projectLink.trim()] }));
+    setProjectLink("");
+  };
+
+  const handleGeneratePlanner = () => {
+    if (!selectedProjectId) return;
+    const brief = newProjectBrief.trim();
+    if (!brief) return;
+    const steps = brief
+      .split(/\n+|(?:\.|\;|\-) /)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0)
+      .map((s) => ({ id: `pp-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, text: s, done: false }));
+    const deduped: { id: string; text: string; done: boolean }[] = [];
+    steps.forEach((s) => {
+      if (!deduped.some((d) => d.text.toLowerCase() === s.text.toLowerCase())) deduped.push(s);
+    });
+    updateSelectedProject((p) => ({ ...p, brief, planner: [...p.planner, ...deduped] }));
+    setNewProjectBrief("");
+    const sys: { sender: string; text: string } = {
+      sender: "Project AI",
+      text: `Generated ${deduped.length} planner step(s) from your brief and added them to the project planner.`
+    };
+    setProjectChat((prev) => [...prev, sys]);
+  };
+
+  const handleToggleProjectPlannerItem = (itemId: string) => {
+    updateSelectedProject((p) => ({
+      ...p,
+      planner: p.planner.map((it) => (it.id === itemId ? { ...it, done: !it.done } : it))
+    }));
+  };
+
+  const localProjectAssistant = (input: string, project: Project): string => {
+    const lower = input.toLowerCase();
+    const open = project.planner.filter((p) => !p.done).length;
+    if (lower.includes("plan") || lower.includes("step") || lower.includes("break")) {
+      return `For "${project.name}", I suggest splitting the work into tracked checklist steps. Use the brief box to auto-generate a planner, then tick items as you progress (${open} still open).`;
+    }
+    if (lower.includes("link") || lower.includes("resource") || lower.includes("document")) {
+      return `Add relevant links and documents under Resources so the project context for "${project.name}" stays complete. I'll reference them when assisting.`;
+    }
+    if (lower.includes("note") || lower.includes("write")) {
+      return `You can draft notes for "${project.name}" in the notes zone, then use "Insert into note" to drop my reply directly into that text.`;
+    }
+    return `Noted for "${project.name}". Keep your brief updated and I'll help maintain the planner and context. (${open} open step(s))`;
+  };
+
+  const handleProjectChatSend = () => {
+    if (!projectChatInput.trim() || !selectedProjectId) return;
+    const project = projects.find((p) => p.id === selectedProjectId);
+    if (!project) return;
+    const userMsg = { sender: "You", text: projectChatInput.trim() };
+    const reply = localProjectAssistant(projectChatInput.trim(), project);
+    setProjectChat((prev) => [...prev, userMsg, { sender: "Project AI", text: reply }]);
+    setProjectChatInput("");
+  };
+
+  const handleInsertIntoNote = () => {
+    if (!selectedProjectId) return;
+    const lastAi = [...projectChat].reverse().find((m) => m.sender === "Project AI");
+    if (!lastAi) return;
+    updateSelectedProject((p) => ({
+      ...p,
+      notes: p.notes ? `${p.notes}\n\n${lastAi.text}` : lastAi.text
+    }));
+  };
+
+  const handleAddChallengeLog = () => {
+    if (!challengeLogText.trim()) return;
+    const log: ChallengeLog = {
+      id: `cl-${Date.now()}`,
+      text: challengeLogText.trim(),
+      completed: false,
+      createdAt: new Date().toISOString()
+    };
+    const updated = [log, ...challengeLogs];
+    setChallengeLogs(updated);
+    save(CHALLENGE_LOG_KEY, updated);
+    setChallengeLogText("");
+    onAddXp(5);
+  };
+
+  const handleToggleChallengeLog = (id: string) => {
+    const updated = challengeLogs.map((c) => (c.id === id ? { ...c, completed: !c.completed } : c));
+    setChallengeLogs(updated);
+    save(CHALLENGE_LOG_KEY, updated);
+  };
+
+  const handleDeleteChallengeLog = (id: string) => {
+    const updated = challengeLogs.filter((c) => c.id !== id);
+    setChallengeLogs(updated);
+    save(CHALLENGE_LOG_KEY, updated);
+  };
+
+  const handleAddCatItem = () => {
+    if (!catItemText.trim()) return;
+    const updated = catalogues.map((c) =>
+      c.name === selectedCat ? { ...c, items: [...c.items, catItemText.trim()] } : c
+    );
+    setCatalogues(updated);
+    save(CATALOGUE_KEY, updated);
+    setCatItemText("");
+  };
+
+  const handleDeleteCatItem = (catName: string, idx: number) => {
+    const updated = catalogues.map((c) =>
+      c.name === catName ? { ...c, items: c.items.filter((_, i) => i !== idx) } : c
+    );
+    setCatalogues(updated);
+    save(CATALOGUE_KEY, updated);
+  };
+
+  const handleAddCat = () => {
+    if (!newCatName.trim()) return;
+    const name = newCatName.trim().toLowerCase().replace(/\s+/g, "-");
+    if (catalogues.some((c) => c.name === name)) return;
+    const updated = [...catalogues, { name, items: [] }];
+    setCatalogues(updated);
+    save(CATALOGUE_KEY, updated);
+    setNewCatName("");
+    setSelectedCat(name);
+  };
+
+  const selectedProject = projects.find((p) => p.id === selectedProjectId) || null;
+
+  const writeZone =
+    "w-full border-0 bg-slate-950/40 rounded-xl p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:bg-slate-950/60 transition-colors resize-none";
+
+  const scopeBtn = (key: typeof activeScope, label: string, Icon: React.FC<{ className?: string }>) => (
+    <button
+      onClick={() => setActiveScope(key)}
+      className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border font-mono text-xs text-left min-w-[130px] transition-all duration-300 focus:outline-none ${
+        activeScope === key
+          ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright shadow-md shadow-turquoise-500/5"
+          : "border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700 hover:text-slate-200"
+      }`}
+    >
+      <Icon className="w-4 h-4 flex-shrink-0" />
+      <span>{label}</span>
+    </button>
+  );
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-4 text-slate-100 max-w-6xl mx-auto">
-      {pendingChallengeAction && (
-        <div className="col-span-full bg-turquoise-500/10 border border-turquoise-500/30 rounded-xl p-3 flex items-center justify-between">
-          <div>
-            <span className="text-[10px] font-mono text-turquoise uppercase block font-bold">Challenge Action Required</span>
-            <span className="text-xs text-slate-200 font-mono">{pendingChallengeAction.description || 'Complete this step to continue your challenge'}</span>
-          </div>
-          <button
-            onClick={recordChallengeStepCompletion}
-            className="px-3 py-1.5 rounded-lg bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-mono text-[10px] font-bold uppercase tracking-wider transition-all"
-          >
-            Done — Return to Challenge
-          </button>
-        </div>
-      )}
-      {/* Sidebar Scope Selector */}
+    <div
+      className="grid grid-cols-1 md:grid-cols-4 gap-6 p-4 text-slate-100 max-w-6xl mx-auto rounded-2xl"
+      style={{
+        background: "linear-gradient(160deg, #1b2230, #161d29 60%, #0d121b)",
+        boxShadow: "inset 0 0 120px rgba(214, 188, 140, 0.06)"
+      }}
+    >
       <div className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
-        <button
-          onClick={() => setActiveScope("diary")}
-          className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border font-mono text-xs text-left min-w-[130px] transition-all duration-300 focus:outline-none ${
-            activeScope === "diary"
-              ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright shadow-md shadow-turquoise-500/5"
-              : "border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700 hover:text-slate-200"
-          }`}
-        >
-          <BookOpen className="w-4 h-4 flex-shrink-0" />
-          <span>Daily Journal</span>
-        </button>
+        {scopeBtn("planner", "Daily Planner", Calendar)}
+        {scopeBtn("ideas", "Ideas", Lightbulb)}
+        {scopeBtn("projects", "Projects", FolderPlus)}
+        {scopeBtn("archives", "Archives & Lists", Archive)}
 
-        <button
-          onClick={() => setActiveScope("routine")}
-          className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border font-mono text-xs text-left min-w-[130px] transition-all duration-300 focus:outline-none ${
-            activeScope === "routine"
-              ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright shadow-md shadow-turquoise-500/5"
-              : "border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700 hover:text-slate-200"
-          }`}
-        >
-          <Calendar className="w-4 h-4 flex-shrink-0" />
-          <span>Timetable & Reset</span>
-        </button>
-
-        <button
-          onClick={() => setActiveScope("goals")}
-          className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border font-mono text-xs text-left min-w-[130px] transition-all duration-300 focus:outline-none ${
-            activeScope === "goals"
-              ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright shadow-md shadow-turquoise-500/5"
-              : "border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700 hover:text-slate-200"
-          }`}
-        >
-          <Award className="w-4 h-4 flex-shrink-0" />
-          <span>Life Goals</span>
-        </button>
-
-        <button
-          onClick={() => setActiveScope("reminders")}
-          className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border font-mono text-xs text-left min-w-[130px] transition-all duration-300 focus:outline-none ${
-            activeScope === "reminders"
-              ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright shadow-md shadow-turquoise-500/5"
-              : "border-slate-800 bg-slate-900/40 text-slate-400 hover:border-slate-700 hover:text-slate-200"
-          }`}
-        >
-          <Clock className="w-4 h-4 flex-shrink-0" />
-          <span>Deadlines & Alert</span>
-        </button>
-
-        <button
-          onClick={() => setActiveScope("ideas")}
-          className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border font-mono text-xs text-left min-w-[130px] transition-all duration-300 focus:outline-none ${
-            activeScope === "ideas"
-              ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright shadow-md shadow-turquoise-500/5"
-              : "border-slate-800 bg-[#10121e]/60 text-slate-400 hover:border-slate-700 hover:text-slate-200"
-          }`}
-        >
-          <Lightbulb className="w-4 h-4 flex-shrink-0" />
-          <span>Ideas Boards</span>
-        </button>
+        <div className="md:mt-auto pt-3 border-t border-slate-800/70 px-1">
+          <span className="text-[10px] font-mono text-slate-500 uppercase block">Notebook XP</span>
+          <span className="text-sm font-bold font-mono text-turquoise block">{xp} Cheese</span>
+          <span className="text-[9px] font-mono text-slate-500">Daytime writing mode</span>
+        </div>
       </div>
 
-      {/* Main Workspace Content Area */}
-      <div className="md:col-span-3 min-h-[460px] p-5 rounded-2xl border border-slate-800/80 bg-slate-900/50 backdrop-blur-xl">
-        
-        {/* SCOPE 1: DAILY JOURNAL */}
-        {activeScope === "diary" && (
+      <div className="md:col-span-3 min-h-[460px] p-5 rounded-2xl border border-slate-800/70 bg-slate-900/40 backdrop-blur-xl">
+        {activeScope === "planner" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold font-mono text-turquoise tracking-wider uppercase">
-                🌙 PERSONAL EXPERIENCE DIARY (P.E.D.)
-              </h3>
-              <span className="text-[10px] font-mono text-slate-400">Award: +20 XP</span>
+              <h3 className="text-sm font-bold font-mono text-turquoise tracking-wider uppercase">📅 DAILY PLANNER</h3>
+              <span className="text-[10px] font-mono text-slate-400">+5 XP / task · +10 done</span>
             </div>
 
-            <div className="space-y-3">
-              <textarea
-                value={journalText}
-                onChange={(e) => setJournalText(e.target.value)}
-                placeholder="Transcribe your deepest physical and meditative feeling as you coordinate with current Moon cycles..."
-                className="w-full h-28 p-3 rounded-xl border border-slate-800 bg-slate-950/80 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-turquoise-500/60 transition-colors"
-              />
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono text-slate-400">Theme Category</label>
-                  <select
-                    value={journalTheme}
-                    onChange={(e) => setJournalTheme(e.target.value)}
-                    className="p-2.5 rounded-xl border border-slate-800 bg-slate-950/85 text-xs text-slate-200 focus:outline-none"
-                  >
-                    <option value="Deep Reflection">🔮 Deep Reflection</option>
-                    <option value="Starry Spark">✨ Starry Spark</option>
-                    <option value="Solar Flare">☀️ Solar Flare</option>
-                    <option value="Cozy Earth">🌲 Cozy Earth</option>
-                  </select>
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono text-slate-400">Current Mood State</label>
-                  <select
-                    value={journalMood}
-                    onChange={(e) => setJournalMood(e.target.value)}
-                    className="p-2.5 rounded-xl border border-slate-800 bg-slate-950/85 text-xs text-slate-200 focus:outline-none"
-                  >
-                    <option value="Peaceful">🧘 Peaceful</option>
-                    <option value="Energetic">⚡ Energetic</option>
-                    <option value="Melancholy">🌧️ Melancholy</option>
-                    <option value="Creative">🎨 Creative</option>
-                  </select>
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono text-slate-400">Sync Reminder (Optional)</label>
-                  <input
-                    type="datetime-local"
-                    value={journalReminder}
-                    onChange={(e) => setJournalReminder(e.target.value)}
-                    className="p-2 rounded-xl border border-slate-800 bg-slate-950/85 text-xs text-slate-200 focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between gap-3 pt-1">
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleSpeechToText}
-                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-300 focus:outline-none ${
-                      isRecording
-                        ? "border-red-500 bg-red-500/10 text-red-400 animate-pulse"
-                        : "border-slate-800 bg-slate-900/60 text-slate-300 hover:border-slate-700"
-                    }`}
-                  >
-                    <Mic className="w-3.5 h-3.5" />
-                    <span>{isRecording ? "Transcribing..." : "Speak Now"}</span>
-                  </button>
-                </div>
-
+            <div className="flex flex-wrap gap-2">
+              {(["today", "tomorrow", "custom"] as PlannerScope[]).map((v) => (
                 <button
-                  onClick={handleAddJournal}
-                  className="flex items-center gap-1 px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-xs font-bold text-slate-950 transition-all duration-300 shadow-lg shadow-turquoise-500/10"
+                  key={v}
+                  onClick={() => setPlannerView(v)}
+                  className={`px-3 py-1.5 rounded-lg font-mono text-[10px] uppercase tracking-wider border transition-all ${
+                    plannerView === v
+                      ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright"
+                      : "border-slate-800 bg-slate-950/40 text-slate-400 hover:text-slate-200"
+                  }`}
                 >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Save Journal Entry</span>
+                  {v === "today" ? "Today" : v === "tomorrow" ? "Tomorrow" : "Custom Range"}
                 </button>
-              </div>
-            </div>
-
-            <div className="border-t border-slate-800/85 pt-4">
-              <h4 className="text-xs font-bold font-mono text-slate-400 mb-3 tracking-widest uppercase">
-                📖 Historical Logs (Flip Book Style)
-              </h4>
-
-              {journals.length === 0 ? (
-                <p className="text-xs text-slate-500 text-center py-6 font-mono">
-                  Your astral experience logs are currently empty. Save your first entry to generate a card.
-                </p>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {journals.map((j) => {
-                    const isFlipped = flippedJournalId === j.id;
-                    return (
-                      <div
-                        key={j.id}
-                        onClick={() => setFlippedJournalId(isFlipped ? null : j.id)}
-                        className="relative h-44 w-full cursor-pointer perspective-1000"
-                      >
-                        {/* 3D Flippable Book Layer */}
-                        <div
-                          className={`absolute inset-0 w-full h-full rounded-xl border transition-all duration-700 transform-style-3d ${
-                            isFlipped ? "rotate-y-180" : ""
-                          } ${
-                            j.theme === "Starry Spark"
-                              ? "border-turquoise-500/30 bg-turquoise-950/20"
-                              : j.theme === "Solar Flare"
-                              ? "border-red-500/30 bg-red-950/20"
-                              : j.theme === "Cozy Earth"
-                              ? "border-emerald-500/30 bg-emerald-950/20"
-                              : "border-indigo-500/30 bg-indigo-950/20"
-                          }`}
-                        >
-                          {/* FRONT OF THE CARD */}
-                          <div className="absolute inset-0 w-full h-full p-4 flex flex-col justify-between backface-hidden">
-                            <div>
-                              <div className="flex items-center justify-between mb-1.5">
-                                <span className="text-[9px] font-mono uppercase tracking-widest text-slate-400">
-                                  {j.date}
-                                </span>
-                                <span className="px-2 py-0.5 rounded-full text-[8px] font-bold font-mono bg-slate-950 text-turquoise border border-slate-800">
-                                  {j.mood}
-                                </span>
-                              </div>
-                              <h5 className="text-xs font-bold font-mono text-slate-200 line-clamp-1">
-                                {j.theme} Journal Entry
-                              </h5>
-                              <p className="text-[11px] text-slate-400 leading-relaxed mt-2 line-clamp-3">
-                                {j.content}
-                              </p>
-                            </div>
-                            <div className="flex items-center justify-between border-t border-slate-800/80 pt-1.5">
-                              <span className="text-[9px] text-turquoise font-bold font-mono uppercase animate-pulse">
-                                Click to Flip ↩
-                              </span>
-                              <button
-                                onClick={(e) => handleDeleteJournal(j.id, e)}
-                                className="p-1 rounded bg-slate-900/60 text-slate-400 hover:text-red-400 hover:bg-red-900/20 transition-all"
-                                title="Delete Entry"
-                              >
-                                <Trash2 className="w-3 h-3" />
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* BACK OF THE CARD */}
-                          <div className="absolute inset-0 w-full h-full p-4 flex flex-col justify-between rotate-y-180 backface-hidden bg-slate-950/95 rounded-xl border border-slate-700/80">
-                            <div className="overflow-y-auto max-h-28 pr-1 scrollbar-thin">
-                              <span className="text-[9px] font-mono text-turquoise uppercase tracking-wider block mb-1">
-                                Complete Entry Logs
-                              </span>
-                              <p className="text-[11px] text-slate-300 leading-relaxed font-sans whitespace-pre-line">
-                                {j.content}
-                              </p>
-                            </div>
-                            <div className="flex items-center justify-between border-t border-slate-800 pt-1.5">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleSpeakJournal(j.content);
-                                }}
-                                className="flex items-center gap-1 text-[10px] text-slate-300 hover:text-turquoise"
-                              >
-                                <Volume2 className="w-3.5 h-3.5" />
-                                <span>Narrate Log</span>
-                              </button>
-                              <span className="text-[9px] text-slate-400 font-mono">Click to Reset</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+              ))}
+              {plannerView === "custom" && (
+                <input
+                  type="date"
+                  value={customDate}
+                  onChange={(e) => setCustomDate(e.target.value)}
+                  className="px-2 py-1.5 rounded-lg border border-slate-800 bg-slate-950/60 text-xs text-slate-200 font-mono focus:outline-none"
+                />
               )}
-            </div>
-          </div>
-        )}
-
-        {/* SCOPE 2: ROUTINE TIMETABLE */}
-        {activeScope === "routine" && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold font-mono text-turquoise tracking-wider uppercase">
-                📅 LUNAR TIMETABLE & AUTORESETTING CHECKLIST
-              </h3>
-              <span className="text-[10px] font-mono text-slate-400">Award: +15 XP</span>
+              <span className="self-center text-[10px] font-mono text-slate-500">
+                Viewing: {dayLabel(new Date(plannerActiveDate() + "T00:00:00"))}
+              </span>
             </div>
 
-            {/* Timetable inputs */}
-            <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/60 space-y-3">
+            <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/40 space-y-3">
+              <textarea
+                value={plannerText}
+                onChange={(e) => setPlannerText(e.target.value)}
+                placeholder="Plan a task for this day (e.g., Morning meditation, Submit report)…"
+                className={`${writeZone} h-20`}
+              />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono text-slate-400">Task Name</label>
+                  <label className="text-[10px] font-mono text-slate-400">Deadline (optional)</label>
                   <input
-                    type="text"
-                    value={routineName}
-                    onChange={(e) => setRoutineName(e.target.value)}
-                    placeholder="e.g., Deep Breathing Meditation"
-                    className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 placeholder-slate-500 focus:outline-none"
+                    type="datetime-local"
+                    value={plannerDeadline}
+                    onChange={(e) => setPlannerDeadline(e.target.value)}
+                    className="px-2 py-1.5 rounded-lg border border-slate-800 bg-slate-950/60 text-xs text-slate-200 focus:outline-none"
                   />
                 </div>
-
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono text-slate-400">Time Interval Frame</label>
+                  <label className="text-[10px] font-mono text-slate-400">Custom Alert Note (optional)</label>
                   <input
                     type="text"
-                    value={routineTime}
-                    onChange={(e) => setRoutineTime(e.target.value)}
-                    placeholder="e.g., 08:00 - 08:30"
-                    className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 placeholder-slate-500 focus:outline-none"
+                    value={plannerAlert}
+                    onChange={(e) => setPlannerAlert(e.target.value)}
+                    placeholder="e.g., Ping me 30 min before"
+                    className="px-2 py-1.5 rounded-lg border border-slate-800 bg-slate-950/60 text-xs text-slate-200 placeholder-slate-500 focus:outline-none"
                   />
                 </div>
               </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono text-slate-400">Resets Interval</label>
-                  <select
-                    value={routineRecur}
-                    onChange={(e) => setRoutineRecur(e.target.value as any)}
-                    className="p-2.5 rounded-xl border border-slate-800 bg-[#0c0d16] text-xs text-slate-200 focus:outline-none"
-                  >
-                    <option value="Daily">Daily Reset (24 Hours)</option>
-                    <option value="Weekly">Weekly Reset (7 Days)</option>
-                    <option value="Monthly">Monthly Reset (30 Days)</option>
-                    <option value="Annually">Annually Reset</option>
-                  </select>
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono text-slate-400">Task Lifespan</label>
-                  <select
-                    value={routineLife}
-                    onChange={(e) => setRoutineLife(e.target.value as any)}
-                    className="p-2.5 rounded-xl border border-slate-800 bg-[#0c0d16] text-xs text-slate-200 focus:outline-none"
-                  >
-                    <option value="Permanent">Permanent Task</option>
-                    <option value="Temporary">Temporary (Calendar Expiry)</option>
-                  </select>
-                </div>
-
-                {routineLife === "Temporary" && (
-                  <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-mono text-slate-400">Expiry Date Deadline</label>
-                    <input
-                      type="date"
-                      value={routineExpiry}
-                      onChange={(e) => setRoutineExpiry(e.target.value)}
-                      className="p-2 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 focus:outline-none"
-                    />
-                  </div>
-                )}
-              </div>
-
-              <div className="flex justify-end pt-1">
+              <div className="flex justify-end">
                 <button
-                  onClick={handleAddRoutine}
-                  className="flex items-center gap-1 px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-xs font-bold text-slate-950 transition-all duration-300"
+                  onClick={handleAddPlannerTask}
+                  className="flex items-center gap-1 px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-xs font-bold text-slate-950 transition-all"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>Save Routine Task</span>
+                  <span>Add Task</span>
                 </button>
               </div>
             </div>
 
-            {/* Timetable checklist list */}
-            <div className="space-y-2 pt-2">
-              <h4 className="text-xs font-bold font-mono text-slate-400 tracking-wider uppercase">
-                📋 Routine Checklist
-              </h4>
-
-              {routines.length === 0 ? (
-                <p className="text-xs text-slate-500 text-center py-6 font-mono">
-                  No routines defined yet. Set your daily meditation or study guidelines above.
-                </p>
+            <div className="space-y-2 pt-1">
+              <h4 className="text-xs font-bold font-mono text-slate-400 tracking-wider uppercase">Checklist</h4>
+              {visiblePlannerTasks.length === 0 ? (
+                <p className="text-xs text-slate-500 text-center py-6 font-mono">No tasks planned for this view yet.</p>
               ) : (
                 <div className="space-y-2.5">
-                  {routines.map((r) => {
-                    // Check if temporary and expired
-                    const isExpired = r.lifespan === "Temporary" && r.expiryDate && new Date(r.expiryDate) < currentTime;
+                  {visiblePlannerTasks.map((t) => {
+                    const status = deadlineStatus(t.deadline, t.done);
                     return (
                       <div
-                        key={r.id}
-                        className={`flex items-center justify-between p-3 rounded-xl border transition-all duration-200 ${
-                          r.completed
-                            ? "border-emerald-500/20 bg-emerald-950/10 text-slate-400"
-                            : isExpired
-                            ? "border-slate-800 bg-slate-900/20 text-slate-500 line-through opacity-60"
+                        key={t.id}
+                        className={`flex items-start justify-between p-3 rounded-xl border transition-all ${
+                          t.done
+                            ? "border-emerald-500/20 bg-emerald-950/10"
+                            : status === "overdue"
+                            ? "border-red-500/40 bg-red-950/10"
+                            : status === "soon"
+                            ? "border-amber-500/40 bg-amber-950/10"
                             : "border-slate-800/80 bg-slate-950/40 hover:border-slate-700"
                         }`}
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-start gap-3">
                           <button
-                            onClick={() => !isExpired && handleToggleRoutine(r.id)}
-                            disabled={isExpired}
-                            className={`flex items-center justify-center w-5 h-5 rounded-lg border transition-all duration-200 focus:outline-none ${
-                              r.completed
+                            onClick={() => handleTogglePlannerTask(t.id)}
+                            className={`mt-0.5 flex items-center justify-center w-5 h-5 rounded-lg border transition-all ${
+                              t.done
                                 ? "border-emerald-500 bg-emerald-500 text-slate-950"
                                 : "border-slate-700 hover:border-turquoise-500 bg-slate-950"
                             }`}
                           >
-                            {r.completed && <Check className="w-3.5 h-3.5" />}
+                            {t.done && <Check className="w-3.5 h-3.5" />}
                           </button>
                           <div>
-                            <span className={`text-xs font-bold font-mono block ${r.completed ? "line-through text-slate-500" : "text-slate-200"}`}>
-                              {r.name}
+                            <span className={`text-xs font-bold font-mono block ${t.done ? "line-through text-slate-500" : "text-slate-200"}`}>
+                              {t.text}
                             </span>
-                            <div className="flex items-center gap-2 mt-0.5">
-                              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-slate-400">
-                                🕒 {r.timeFrame}
+                            {t.deadline && (
+                              <span
+                                className={`text-[9px] font-mono px-1.5 py-0.5 rounded mt-1 inline-flex items-center gap-1 ${
+                                  status === "overdue"
+                                    ? "bg-red-950/40 text-red-400"
+                                    : status === "soon"
+                                    ? "bg-amber-950/40 text-amber-300"
+                                    : "bg-slate-900 text-slate-400"
+                                }`}
+                              >
+                                <Clock className="w-3 h-3" />
+                                {new Date(t.deadline).toLocaleString()}
+                                {status === "overdue" && " · OVERDUE"}
+                                {status === "soon" && " · SOON"}
                               </span>
-                              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-turquoise">
-                                🔄 {r.recurrence} Reset
+                            )}
+                            {t.alertNote && (
+                              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-turquoise-950/40 text-turquoise ml-1 inline-flex items-center gap-1">
+                                <Bell className="w-3 h-3" />
+                                {t.alertNote}
                               </span>
-                              {r.lifespan === "Temporary" && r.expiryDate && (
-                                <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded ${isExpired ? "bg-red-950/40 text-red-400" : "bg-slate-900 text-turquoise"}`}>
-                                  ⌛ Expiry: {r.expiryDate} {isExpired && "(Expired)"}
-                                </span>
-                              )}
-                            </div>
+                            )}
                           </div>
                         </div>
-
                         <button
-                          onClick={() => handleDeleteRoutine(r.id)}
+                          onClick={() => handleDeletePlannerTask(t.id)}
                           className="p-1.5 rounded-lg bg-slate-900/60 text-slate-500 hover:text-red-400 hover:bg-red-950/20 transition-all"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -799,81 +558,60 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
           </div>
         )}
 
-        {/* SCOPE 3: LIFE GOALS */}
-        {activeScope === "goals" && (
+        {activeScope === "ideas" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold font-mono text-turquoise tracking-wider uppercase">
-                🌠 LONG TERM LIFE GOALS & MILESTONES
-              </h3>
-              <span className="text-[10px] font-mono text-slate-400">Award: +25 XP</span>
+              <h3 className="text-sm font-bold font-mono text-turquoise tracking-wider uppercase">💡 IDEAS — QUICK CAPTURE</h3>
+              <span className="text-[10px] font-mono text-slate-400">+10 XP</span>
             </div>
 
-            <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/60 space-y-3">
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-mono text-slate-400">Goal Title</label>
-                <input
-                  type="text"
-                  value={goalTitle}
-                  onChange={(e) => setGoalTitle(e.target.value)}
-                  placeholder="e.g., Reach Level 10 Moon Explorer"
-                  className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 placeholder-slate-500 focus:outline-none"
-                />
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-mono text-slate-400">Goal Content & Action Steps (Use bullet points '-')</label>
-                <textarea
-                  value={goalContent}
-                  onChange={(e) => setGoalContent(e.target.value)}
-                  placeholder="Describe your long term milestone here..."
-                  className="w-full h-24 p-3 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 focus:outline-none"
-                />
-              </div>
-
-              <div className="flex justify-end pt-1">
+            <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/40 space-y-3">
+              <textarea
+                value={ideaText}
+                onChange={(e) => setIdeaText(e.target.value)}
+                placeholder="Capture a quick idea…"
+                className={`${writeZone} h-20`}
+              />
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[10px] font-mono text-slate-400">Category:</span>
+                {IDEA_CATEGORIES.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setIdeaCategory(c)}
+                    className={`px-2.5 py-1 rounded-lg ${
+                      ideaCategory === c
+                        ? "border border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright font-mono text-[10px] uppercase"
+                        : "border border-slate-800 bg-slate-950/40 text-slate-400 font-mono text-[10px] uppercase hover:text-slate-200"
+                    }`}
+                  >
+                    {c}
+                  </button>
+                ))}
                 <button
-                  onClick={handleAddGoal}
-                  className="flex items-center gap-1 px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-xs font-bold text-slate-950 transition-all duration-300"
+                  onClick={handleAddIdea}
+                  className="ml-auto flex items-center gap-1 px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-xs font-bold text-slate-950 transition-all"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>Save Life Goal</span>
+                  <span>Capture</span>
                 </button>
               </div>
             </div>
 
-            <div className="space-y-3 pt-2">
-              <h4 className="text-xs font-bold font-mono text-slate-400 tracking-wider uppercase">
-                🌠 Active Milestones
-              </h4>
-
-              {goals.length === 0 ? (
-                <p className="text-xs text-slate-500 text-center py-6 font-mono">No goals defined yet.</p>
+            <div className="space-y-2 pt-1">
+              {ideas.length === 0 ? (
+                <p className="text-xs text-slate-500 text-center py-6 font-mono">No ideas captured yet.</p>
               ) : (
-                <div className="grid grid-cols-1 gap-3">
-                  {goals.map((g) => (
-                    <div key={g.id} className="p-4 rounded-xl border border-slate-800 bg-slate-950/30 space-y-2">
-                      <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
-                        <span className="text-xs font-bold font-mono text-turquoise">
-                          {g.title}
-                        </span>
-                        <button
-                          onClick={() => handleDeleteGoal(g.id)}
-                          className="p-1 rounded bg-slate-900 text-slate-400 hover:text-red-400"
-                        >
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {ideas.map((i) => (
+                    <div key={i.id} className="p-3 rounded-xl border border-slate-800 bg-slate-950/30 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-slate-900 text-turquoise">{i.category}</span>
+                        <button onClick={() => handleDeleteIdea(i.id)} className="p-1 rounded bg-slate-900 text-slate-400 hover:text-red-400">
                           <Trash2 className="w-3 h-3" />
                         </button>
                       </div>
-                      <div className="text-[11px] text-slate-300 leading-relaxed whitespace-pre-line font-sans">
-                        {g.whyItMatters || (g as any).content}
-                      </div>
-                      {g.actionSteps && g.actionSteps.length > 0 && (
-                        <div className="bg-slate-900/60 p-2 rounded-lg border border-slate-800 text-[10px] font-mono text-slate-400 space-y-1">
-                          <span className="text-turquoise font-bold block">Action Steps & Date:</span>
-                          <span className="block text-slate-300">{g.actionSteps.join(" → ")}</span>
-                          <span className="block text-emerald-400">Locked Date: {g.commencementDate}</span>
-                        </div>
-                      )}
+                      <p className="text-[12px] text-slate-200 leading-relaxed whitespace-pre-line font-sans">{i.text}</p>
+                      <span className="text-[9px] font-mono text-slate-500 block">{i.timestamp}</span>
                     </div>
                   ))}
                 </div>
@@ -882,257 +620,346 @@ export default function NotesWorkspace({ xp, onAddXp, onNavigateToView }: NotesW
           </div>
         )}
 
-        {/* SCOPE 4: REMINDERS & SIMULATED ALARMS */}
-        {activeScope === "reminders" && (
+        {activeScope === "projects" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold font-mono text-turquoise tracking-wider uppercase">
-                ⏰ SYSTEM DEADLINES & RECURRING ALARMS
-              </h3>
-              <span className="text-[10px] font-mono text-slate-400">Award: +10 XP</span>
+              <h3 className="text-sm font-bold font-mono text-turquoise tracking-wider uppercase">📁 PROJECTS</h3>
+              <span className="text-[10px] font-mono text-slate-400">+20 XP</span>
             </div>
 
-            <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/60 space-y-3">
-              <div className="flex flex-col gap-1">
-                <label className="text-[10px] font-mono text-slate-400">Deadline Description</label>
-                <input
-                  type="text"
-                  value={reminderText}
-                  onChange={(e) => setReminderText(e.target.value)}
-                  placeholder="e.g., Stargazing window peak"
-                  className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 placeholder-slate-500 focus:outline-none"
-                />
-              </div>
-
+            <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/40 space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono text-slate-400">Target Date-Time</label>
-                  <input
-                    type="datetime-local"
-                    value={reminderTime}
-                    onChange={(e) => setReminderTime(e.target.value)}
-                    className="p-2 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 focus:outline-none"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono text-slate-400">Alarm Frequency Interval</label>
-                  <select
-                    value={reminderInterval}
-                    onChange={(e) => setReminderInterval(e.target.value as any)}
-                    className="p-2.5 rounded-xl border border-slate-800 bg-[#0c0d16] text-xs text-slate-200 focus:outline-none"
-                  >
-                    <option value="once">Once (Single countdown)</option>
-                    <option value="4x-daily">4 Times a Day (Simulated checks)</option>
-                    <option value="custom">Custom Hours</option>
-                  </select>
-                </div>
-              </div>
-
-              {reminderInterval === "custom" && (
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono text-slate-400">Custom Alert Hours (Comma separated)</label>
+                  <label className="text-[10px] font-mono text-slate-400">Project Name</label>
                   <input
                     type="text"
-                    value={customInterval}
-                    onChange={(e) => setCustomInterval(e.target.value)}
-                    className="p-2.5 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 focus:outline-none"
+                    value={newProjectName}
+                    onChange={(e) => setNewProjectName(e.target.value)}
+                    placeholder="e.g., Lunar Photography Portfolio"
+                    className="px-2.5 py-2 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 placeholder-slate-500 focus:outline-none"
                   />
                 </div>
-              )}
-
-              <div className="flex justify-end pt-1">
+                <div className="flex flex-col gap-1">
+                  <label className="text-[10px] font-mono text-slate-400">Description</label>
+                  <input
+                    type="text"
+                    value={newProjectDesc}
+                    onChange={(e) => setNewProjectDesc(e.target.value)}
+                    placeholder="Brief description"
+                    className="px-2.5 py-2 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 placeholder-slate-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end">
                 <button
-                  onClick={handleAddReminder}
-                  className="flex items-center gap-1 px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-xs font-bold text-slate-950 transition-all duration-300"
+                  onClick={handleAddProject}
+                  className="flex items-center gap-1 px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-xs font-bold text-slate-950 transition-all"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>Save Alarm Reminder</span>
+                  <span>Create Project</span>
                 </button>
               </div>
             </div>
 
-            <div className="space-y-2 pt-2">
-              <h4 className="text-xs font-bold font-mono text-slate-400 tracking-wider uppercase">
-                ⏰ Countdown & Active Timers
-              </h4>
-
-              {reminders.length === 0 ? (
-                <p className="text-xs text-slate-500 text-center py-6 font-mono">No alert timers active.</p>
-              ) : (
-                <div className="space-y-2">
-                  {reminders.map((rem) => {
-                    const remainingStr = calculateRemainingTime(rem.datetime);
-                    const isAlarming = remainingStr.startsWith("Alert:");
-                    return (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <h4 className="text-xs font-bold font-mono text-slate-400 tracking-wider uppercase">Active Projects</h4>
+                {projects.length === 0 ? (
+                  <p className="text-xs text-slate-500 text-center py-4 font-mono">No projects yet.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {projects.map((p) => (
                       <div
-                        key={rem.id}
-                        className={`flex items-center justify-between p-3.5 rounded-xl border ${
-                          isAlarming
-                            ? "border-red-500/30 bg-red-950/15 text-slate-300"
-                            : "border-slate-800 bg-slate-950/40"
+                        key={p.id}
+                        onClick={() => { setSelectedProjectId(p.id); setProjectChat([]); }}
+                        className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                          selectedProjectId === p.id
+                            ? "border-turquoise-500 bg-turquoise-500/10"
+                            : "border-slate-800 bg-slate-950/40 hover:border-slate-700"
                         }`}
                       >
-                        <div className="space-y-1">
-                          <span className="text-xs font-bold font-mono text-slate-200 block">
-                            {rem.text}
-                          </span>
-                          <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-slate-400">
-                              🎯 Target: {new Date(rem.datetime).toLocaleString()}
-                            </span>
-                            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-turquoise">
-                              🔊 Mode: {rem.interval === "4x-daily" ? "4x Daily Alarm" : rem.interval === "custom" ? "Custom Alerts" : "One-Shot"}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          <span className={`text-[11px] font-bold font-mono px-2.5 py-1 rounded-lg border bg-slate-950 ${
-                            isAlarming
-                              ? "border-red-500 text-red-400 animate-pulse"
-                              : "border-slate-800 text-turquoise"
-                          }`}>
-                            {remainingStr}
-                          </span>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold font-mono text-slate-200">{p.name}</span>
                           <button
-                            onClick={() => handleDeleteReminder(rem.id)}
-                            className="p-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-red-400"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* SCOPE 5: IDEAS & MEMORIES ACCESSIBILITY BOARDS */}
-        {activeScope === "ideas" && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold font-mono text-turquoise tracking-wider uppercase">
-                💡 IDEAS BOARDS & COSMIC ACCESSIBILITY CAPTURES
-              </h3>
-              <span className="text-[10px] font-mono text-slate-400">Award: +15 XP</span>
-            </div>
-
-            <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/60 space-y-3">
-              <textarea
-                value={ideaText}
-                onChange={(e) => setIdeaText(e.target.value)}
-                placeholder="Draft a freeform astronomical idea, astrophotography guide, or memory log..."
-                className="w-full h-24 p-3 rounded-xl border border-slate-800 bg-slate-950 text-xs text-slate-200 placeholder-slate-500 focus:outline-none"
-              />
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1">
-                  <label className="text-[10px] font-mono text-slate-400">Accessibility Theme Tag</label>
-                  <select
-                    value={ideaTheme}
-                    onChange={(e) => setIdeaTheme(e.target.value as any)}
-                    className="p-2.5 rounded-xl border border-slate-800 bg-[#0c0d16] text-xs text-slate-200 focus:outline-none"
-                  >
-                    <option value="general">📁 General</option>
-                    <option value="high-contrast">🌗 High Contrast Text</option>
-                    <option value="dark-mode">🌌 Dark Space Mode</option>
-                    <option value="light-mode">☀️ Light Mode Accent</option>
-                    <option value="dyslexia-friendly">📖 Dyslexia-Friendly Spacing</option>
-                  </select>
-                </div>
-
-                <div className="flex items-end justify-end">
-                  <button
-                    onClick={handleAddIdea}
-                    className="flex items-center gap-1 px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-xs font-bold text-slate-950 transition-all duration-300"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Save Idea Snippet</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Filtration & Sorting panel */}
-            <div className="border-t border-slate-800/80 pt-4 space-y-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[10px] font-mono text-slate-400 mr-1 uppercase">Filter Snippets:</span>
-                {["all", "general", "high-contrast", "dark-mode", "light-mode", "dyslexia-friendly"].map((filter) => (
-                  <button
-                    key={filter}
-                    onClick={() => setSelectedIdeaFilter(filter)}
-                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold font-mono transition-all duration-200 focus:outline-none ${
-                      selectedIdeaFilter === filter
-                        ? "bg-turquoise-500 text-slate-950 shadow"
-                        : "bg-slate-900 hover:bg-slate-800 text-slate-300"
-                    }`}
-                  >
-                    {filter === "all" ? "🌐 Show All" : filter}
-                  </button>
-                ))}
-              </div>
-
-              {filteredIdeas.length === 0 ? (
-                <p className="text-xs text-slate-500 text-center py-6 font-mono">No idea snippets matches this filter category.</p>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {filteredIdeas.map((idea) => {
-                    // Implement accessibility theme rules dynamically
-                    let fontClass = "font-sans";
-                    let bgClass = "bg-slate-950/40 border-slate-800";
-                    let textClass = "text-slate-200";
-
-                    if (idea.theme === "dyslexia-friendly") {
-                      fontClass = "font-serif tracking-widest leading-loose";
-                      bgClass = "bg-turquoise-100/5 border-turquoise-500/20";
-                    } else if (idea.theme === "high-contrast") {
-                      bgClass = "bg-black border-white/60";
-                      textClass = "text-white font-extrabold";
-                    } else if (idea.theme === "light-mode") {
-                      bgClass = "bg-white/95 border-slate-200";
-                      textClass = "text-slate-900";
-                    } else if (idea.theme === "dark-mode") {
-                      bgClass = "bg-[#05060b] border-indigo-900/50";
-                      textClass = "text-cyan-100";
-                    }
-
-                    return (
-                      <div key={idea.id} className={`p-4 rounded-xl border flex flex-col justify-between gap-3 ${bgClass}`}>
-                        <div>
-                          <div className="flex items-center justify-between border-b border-slate-800/25 pb-1 mb-2">
-                            <span className="text-[9px] font-mono text-slate-400">
-                              Log: {idea.timestamp}
-                            </span>
-                            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-turquoise">
-                              {idea.theme}
-                            </span>
-                          </div>
-                          <p className={`text-[11px] leading-relaxed ${textClass} ${fontClass} whitespace-pre-line`}>
-                            {idea.content}
-                          </p>
-                        </div>
-
-                        <div className="flex justify-end border-t border-slate-800/10 pt-2">
-                          <button
-                            onClick={() => handleDeleteIdea(idea.id)}
+                            onClick={(e) => { e.stopPropagation(); handleDeleteProject(p.id); }}
                             className="p-1 rounded bg-slate-900 text-slate-400 hover:text-red-400"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-3 h-3" />
                           </button>
                         </div>
+                        <p className="text-[10px] text-slate-400 mt-1 line-clamp-2">{p.description || "No description"}</p>
+                        <div className="flex items-center gap-2 mt-2 text-[9px] text-slate-500 font-mono">
+                          <span>{p.links.length} links</span>
+                          <span>·</span>
+                          <span>{p.documents.length} docs</span>
+                          <span>·</span>
+                          <span>{p.planner.length} plan steps</span>
+                        </div>
                       </div>
-                    );
-                  })}
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {selectedProject && (
+                <div className="space-y-3 p-4 rounded-xl border border-slate-800 bg-slate-950/50">
+                  <h4 className="text-xs font-bold font-mono text-turquoise uppercase tracking-wider">
+                    {selectedProject.name} — Project AI Assistant
+                  </h4>
+
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={projectLink}
+                      onChange={(e) => setProjectLink(e.target.value)}
+                      placeholder="Add resource link…"
+                      className="flex-1 px-2 py-1.5 rounded-lg border border-slate-800 bg-slate-950 text-xs text-slate-200 placeholder-slate-500 focus:outline-none"
+                    />
+                    <button
+                      onClick={handleAddProjectLink}
+                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-xs font-bold"
+                    >
+                      <Link2 className="w-3.5 h-3.5 inline" /> Add
+                    </button>
+                  </div>
+                  {selectedProject.links.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {selectedProject.links.map((l, idx) => (
+                        <span key={idx} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-900 text-turquoise">{l}</span>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-mono text-slate-400">Project Brief (auto-generates planner)</label>
+                    <textarea
+                      value={newProjectBrief}
+                      onChange={(e) => setNewProjectBrief(e.target.value)}
+                      placeholder="Describe the project; each sentence/line becomes a tracked planner step…"
+                      className={`${writeZone} h-16`}
+                    />
+                    <button
+                      onClick={handleGeneratePlanner}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-mono text-xs font-bold"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" /> Generate Planner
+                    </button>
+                  </div>
+
+                  {selectedProject.planner.length > 0 && (
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-mono text-slate-400 uppercase flex items-center gap-1">
+                        <ListChecks className="w-3.5 h-3.5" /> Project Planner
+                      </span>
+                      {selectedProject.planner.map((it) => (
+                        <div key={it.id} className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleToggleProjectPlannerItem(it.id)}
+                            className={`flex items-center justify-center w-4 h-4 rounded border ${
+                              it.done ? "border-emerald-500 bg-emerald-500 text-slate-950" : "border-slate-700 bg-slate-950"
+                            }`}
+                          >
+                            {it.done && <Check className="w-3 h-3" />}
+                          </button>
+                          <span className={`text-[11px] ${it.done ? "line-through text-slate-500" : "text-slate-200"}`}>{it.text}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="border-t border-slate-800 pt-3 space-y-2">
+                    <span className="text-[10px] font-mono text-turquoise uppercase block flex items-center gap-1">
+                      <Bot className="w-3.5 h-3.5" /> Embedded Project AI Chatbot
+                    </span>
+                    <div className="space-y-2 max-h-40 overflow-y-auto">
+                      {projectChat.length === 0 && (
+                        <p className="text-[10px] text-slate-500 font-mono">Ask the assistant to plan, edit, or organize this project.</p>
+                      )}
+                      {projectChat.map((m, idx) => (
+                        <div
+                          key={idx}
+                          className={`p-2 rounded-lg text-[11px] ${
+                            m.sender === "You" ? "bg-turquoise-500/10 text-turquoise-bright ml-8" : "bg-slate-800 text-slate-200 mr-8"
+                          }`}
+                        >
+                          <span className="text-[9px] font-mono block opacity-70">{m.sender}</span>
+                          {m.text}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={projectChatInput}
+                        onChange={(e) => setProjectChatInput(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleProjectChatSend()}
+                        placeholder="Ask the project AI…"
+                        className="flex-1 px-2 py-1.5 rounded-lg border border-slate-800 bg-slate-950 text-xs text-slate-200 placeholder-slate-500 focus:outline-none"
+                      />
+                      <button
+                        onClick={handleProjectChatSend}
+                        className="px-3 py-1.5 rounded-lg bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-mono text-xs font-bold"
+                      >
+                        <Send className="w-3.5 h-3.5 inline" /> Send
+                      </button>
+                    </div>
+                    <button
+                      onClick={handleInsertIntoNote}
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-mono text-[10px] font-bold"
+                    >
+                      <MessageSquarePlus className="w-3.5 h-3.5" /> Insert into note
+                    </button>
+                  </div>
+
+                  <div className="space-y-1 border-t border-slate-800 pt-3">
+                    <label className="text-[10px] font-mono text-slate-400 flex items-center gap-1">
+                      <PenLine className="w-3.5 h-3.5" /> Project Notes
+                    </label>
+                    <textarea
+                      value={selectedProject.notes}
+                      onChange={(e) => updateSelectedProject((p) => ({ ...p, notes: e.target.value }))}
+                      placeholder="Draft notes here; use 'Insert into note' to append AI replies…"
+                      className={`${writeZone} h-24`}
+                    />
+                  </div>
                 </div>
               )}
             </div>
           </div>
         )}
 
+        {activeScope === "archives" && (
+          <div className="space-y-5">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold font-mono text-turquoise tracking-wider uppercase">🗂️ CHALLENGE LOGS & PERSONAL CATALOGUES</h3>
+            </div>
+
+            <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/40 space-y-3">
+              <h4 className="text-xs font-bold font-mono text-slate-300 tracking-wider uppercase flex items-center gap-1">
+                <Archive className="w-3.5 h-3.5" /> Challenge Note Logs
+              </h4>
+              <textarea
+                value={challengeLogText}
+                onChange={(e) => setChallengeLogText(e.target.value)}
+                placeholder="Archive a completed-challenge note task…"
+                className={`${writeZone} h-16`}
+              />
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleAddChallengeLog}
+                  className="flex items-center gap-1 px-4 py-2 rounded-xl bg-turquoise-500 hover:bg-turquoise-400 text-xs font-bold text-slate-950 transition-all"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Add Log
+                </button>
+                <button
+                  onClick={() => onNavigateToView?.("challenges")}
+                  className="flex items-center gap-1 px-3 py-2 rounded-xl border border-slate-800 text-xs font-mono text-slate-300 hover:text-turquoise transition-all"
+                >
+                  View Challenges <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div className="space-y-2 pt-1">
+                {challengeLogs.length === 0 ? (
+                  <p className="text-xs text-slate-500 text-center py-4 font-mono">No archived challenge logs yet.</p>
+                ) : (
+                  challengeLogs.map((c) => (
+                    <div key={c.id} className="flex items-start justify-between p-3 rounded-xl border border-slate-800/80 bg-slate-950/40">
+                      <div className="flex items-start gap-3">
+                        <button
+                          onClick={() => handleToggleChallengeLog(c.id)}
+                          className={`mt-0.5 flex items-center justify-center w-5 h-5 rounded-lg border ${
+                            c.completed ? "border-emerald-500 bg-emerald-500 text-slate-950" : "border-slate-700 bg-slate-950"
+                          }`}
+                        >
+                          {c.completed && <Check className="w-3.5 h-3.5" />}
+                        </button>
+                        <div>
+                          <span className={`text-xs font-bold font-mono block ${c.completed ? "line-through text-slate-500" : "text-slate-200"}`}>{c.text}</span>
+                          <span className="text-[9px] font-mono text-slate-500">{new Date(c.createdAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleDeleteChallengeLog(c.id)}
+                        className="p-1.5 rounded-lg bg-slate-900/60 text-slate-500 hover:text-red-400 hover:bg-red-950/20 transition-all"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl border border-slate-800 bg-slate-950/40 space-y-3">
+              <h4 className="text-xs font-bold font-mono text-slate-300 tracking-wider uppercase flex items-center gap-1">
+                <Tag className="w-3.5 h-3.5" /> Personal Catalogues
+              </h4>
+
+              <div className="flex flex-wrap gap-2">
+                {catalogues.map((c) => (
+                  <button
+                    key={c.name}
+                    onClick={() => setSelectedCat(c.name)}
+                    className={`px-3 py-1.5 rounded-lg font-mono text-[10px] uppercase border transition-all ${
+                      selectedCat === c.name
+                        ? "border-turquoise-500 bg-turquoise-500/10 text-turquoise-bright"
+                        : "border-slate-800 bg-slate-950/40 text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    {c.name} ({c.items.length})
+                  </button>
+                ))}
+                <input
+                  type="text"
+                  value={newCatName}
+                  onChange={(e) => setNewCatName(e.target.value)}
+                  placeholder="New category…"
+                  className="px-2 py-1.5 rounded-lg border border-slate-800 bg-slate-950/60 text-xs text-slate-200 placeholder-slate-500 focus:outline-none"
+                />
+                <button
+                  onClick={handleAddCat}
+                  className="px-3 py-1.5 rounded-lg bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-mono text-[10px] font-bold"
+                >
+                  <Plus className="w-3 h-3 inline" /> Add
+                </button>
+              </div>
+
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={catItemText}
+                  onChange={(e) => setCatItemText(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleAddCatItem()}
+                  placeholder={`Add item to "${selectedCat}"…`}
+                  className="flex-1 px-2 py-1.5 rounded-lg border border-slate-800 bg-slate-950/60 text-xs text-slate-200 placeholder-slate-500 focus:outline-none"
+                />
+                <button
+                  onClick={handleAddCatItem}
+                  className="px-3 py-1.5 rounded-lg bg-turquoise-500 hover:bg-turquoise-400 text-slate-950 font-mono text-xs font-bold"
+                >
+                  <FileText className="w-3.5 h-3.5 inline" /> Add Item
+                </button>
+              </div>
+
+              <div className="space-y-1 pt-1">
+                {catalogues.find((c) => c.name === selectedCat)?.items.length === 0 ? (
+                  <p className="text-xs text-slate-500 text-center py-3 font-mono">No items in "{selectedCat}" yet.</p>
+                ) : (
+                  catalogues
+                    .find((c) => c.name === selectedCat)
+                    ?.items.map((item, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-2.5 rounded-lg border border-slate-800/80 bg-slate-950/30">
+                        <span className="text-[12px] text-slate-200 font-mono">{item}</span>
+                        <button onClick={() => handleDeleteCatItem(selectedCat, idx)} className="p-1 rounded bg-slate-900 text-slate-400 hover:text-red-400">
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

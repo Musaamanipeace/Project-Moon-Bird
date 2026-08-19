@@ -4,6 +4,7 @@ import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import { AstroEvent, Challenge, ChatMessage, Comment, OnlineUser } from "./src/types";
 import { astroCatalogue } from "./src/lib/events";
+import { runIngestion, getCuratedAds } from "./adIngestion";
 
 // Lazy-initialized Gemini AI client
 let aiClient: GoogleGenAI | null = null;
@@ -93,7 +94,7 @@ const challenges: Challenge[] = [
     category: "Self-Improvement",
     scope: "Self-Improvement/Wellbeing",
     participationMode: "Solo",
-    description: "Establish your daily rhythm by setting a wake-up alarm, scheduling your day, and completing your MoonBird portfolio page.",
+    description: "Establish your daily rhythm by setting a wake-up alarm, scheduling your day, and completing your moonrise portfolio page.",
     rewardXp: 70,
     state: "Finished",
     steps: [
@@ -476,7 +477,7 @@ app.post("/api/chat/messages/companion", async (req, res) => {
     if (hasKey) {
       // Build context containing app metrics and notes for high-quality proactive astronomy support
       const contextPrompt = `
-You are the supportive and highly conversational "Moonbug AI Companion," a supportive lunar astrologer, productivity assistant, and astronomer.
+You are the supportive and highly conversational "Moonrise AI Companion," a supportive lunar astrologer, productivity assistant, and astronomer.
 You are interacting with ${nickname}.
 Current App Metrics Context: ${JSON.stringify(appMetrics || {})}
 Recent Notes Snapshot: ${JSON.stringify(notesSnapshot || "")}
@@ -488,7 +489,7 @@ Keep responses concise (under 150 words).
 
 Dialogue history:
 ${userHistory.slice(-6).map(m => `${m.senderName}: ${m.text}`).join("\n")}
-Moonbug AI Companion:`;
+Moonrise AI Companion:`;
 
       const response = await ai.models.generateContent({
         model: "gemini-3.5-flash",
@@ -516,7 +517,7 @@ Moonbug AI Companion:`;
   const aiMessage: ChatMessage = {
     id: `ai-${Date.now()}`,
     sender: "AI",
-    senderName: "Moonbug Bot",
+    senderName: "moonrise Bot",
     text: replyText,
     timestamp: new Date().toISOString()
   };
@@ -549,14 +550,14 @@ app.post("/api/chat/proactive", async (req, res) => {
     const ai = getAI();
     if (process.env.GEMINI_API_KEY) {
       const contextPrompt = `
-You are the supportive and warm "Moonbug AI Companion."
+You are the supportive and warm "Moonrise AI Companion."
 You are initiating a proactive supportive message to ${nickname}.
 Context trigger: ${triggerPrompt}
 Current User XP: ${appMetrics?.xp || 0}
 Recent notes context: ${JSON.stringify(notesSnapshot || "")}
 
 Draft a direct, supportive, and reflective micro-message (under 80 words) to spark their productivity relationship.
-Moonbug AI Companion:`;
+Moonrise AI Companion:`;
 
       const response = await ai.models.generateContent({
         model: "gemini-3.5-flash",
@@ -576,7 +577,7 @@ Moonbug AI Companion:`;
   const aiMessage: ChatMessage = {
     id: `ai-proactive-${Date.now()}`,
     sender: "AI",
-    senderName: "Moonbug Bot",
+    senderName: "moonrise Bot",
     text: replyText,
     timestamp: new Date().toISOString(),
     isProactive: true
@@ -708,6 +709,22 @@ app.get("/api/catalogue/skills", (req, res) => res.json(skills));
 app.get("/api/catalogue/diseases", (req, res) => res.json(diseases));
 app.get("/api/catalogue/charities", (req, res) => res.json(charities));
 
+// ---- Ad Ingestion & Pipeline endpoints ----
+app.get("/api/ads/curated", (req, res) => {
+  const cat = req.query.category ? String(req.query.category) : null;
+  const ads = getCuratedAds();
+  res.json(cat ? ads.filter(a => a.category === cat) : ads);
+});
+
+app.post("/api/ads/ingest", async (req, res) => {
+  try {
+    const ads = await runIngestion();
+    res.json({ success: true, count: ads.length });
+  } catch (e:any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // ---- Feed endpoints ----
 app.get("/api/feed", (req, res) => {
   const { author, kind } = req.query;
@@ -777,8 +794,12 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`[Moonbug] Server running on http://localhost:${PORT}`);
+    console.log(`[moonrise] Server running on http://localhost:${PORT}`);
   });
 }
+
+// Kick off ad ingestion on boot so the curated cache is populated
+// (fire-and-forget; failures degrade gracefully to the seed library).
+runIngestion().catch(err => console.warn("[ads] ingestion skipped:", err.message));
 
 startServer();

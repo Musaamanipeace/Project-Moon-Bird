@@ -40,7 +40,7 @@ export default function Header({ activeView, isOnline, theme, onThemeToggle, isL
     chat: {
       title: "AI Companion",
       desc: "Engage in helpful reflection and productive support conversations.",
-      steps: "Talk to MoonBird AI Bot or establish live thread with peers.",
+      steps: "Talk to moonrise AI or establish live thread with peers.",
     },
     events: {
       title: "Events & Challenges",
@@ -62,6 +62,8 @@ export default function Header({ activeView, isOnline, theme, onThemeToggle, isL
       desc: "Self-hosted ethical advertisement ecosystem for brands and creators.",
       steps: "Create sponsored ads, review the ad quiz, or browse the advertiser feed for XP.",
     },
+    notifications: { title: "Notifications", desc: "Stay updated on events, challenges, and community activity.", steps: "Review astro-event alerts and challenge reminders." },
+    hello: { title: "Hello (Moonrise AI)", desc: "Talk to Moonrise, your benevolent AI companion.", steps: "Ask questions, get guidance, or just say hello." },
   };
 
   const currentContext = dashboardMap[activeView] || dashboardMap.home;
@@ -72,7 +74,7 @@ export default function Header({ activeView, isOnline, theme, onThemeToggle, isL
       <div className="flex items-center gap-2 cursor-pointer group" onClick={onHome} title="Go to Home">
         <h1 className="text-xl font-bold font-mono tracking-wider text-slate-100 group-hover:text-white transition-colors duration-500 relative flex items-center gap-1">
           <span className="bg-gradient-to-r from-turquoise-200 via-turquoise-300 to-turquoise-500 bg-clip-text text-transparent">
-            MoonBird
+            Project-moonrise
           </span>
         </h1>
       </div>

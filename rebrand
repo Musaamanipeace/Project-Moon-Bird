@@ -1,0 +1,134 @@
+Project-moonrise Platform Specification
+Core Design & Navigation Guidelines
+Interface Principles: Prioritize clear calls to action over dense text descriptions to prevent UI overload.
+
+
+Header Architecture:
+
+
+
+Left: Project-moonrise logo.
+
+
+Middle: Dynamic Page Name (e.g., Home, Chat).
+
+
+Right: User Profile indicator and login status.
+
+
+Collapsible Static Sidebar (Global Tools): Notifications, Calendar, Notebook, Moondial (Lunar Clock), Catalogues, Recommendation Feed, Chat, Find Someone Like Me, and Hello.
+
+
+Bottom Static Navigation Bar: Home, Watch Ads, Advertise, Moondial (Clock & Calendar), Challenges, Portfolio, Notebook, Catalogues, and an overflow scroll menu.
+
+
+Unauthenticated Landing Page
+Background Visuals: Starlight night sky with non-intrusive ambient motion.
+
+
+Primary Calls to Action:
+
+
+
+Sign Up / Log In: Direct entry point for account creation and authentication.
+
+
+Explore Public Content: Unauthenticated access to browse community-recommended resources.
+
+
+Structure: Clean hero title statement, preview grid of public recommendation cards, and borderless text links for platform policy, guidelines, and about pages.
+
+
+Dashboard Visual Themes
+Design Language: Organic nature themes with subtle color variations tailored per dashboard; no robotic space-tech aesthetics.
+
+
+Home Landing Page (Moondial): Twilight theme with a subdued evening sky and soft lunar background; uses bordered containers.
+
+
+Notebook: Daytime theme featuring soft daylight tones and borderless text zones for writing.
+
+
+Profile & Portfolio: Nighttime theme with deep sky shades and subtle star elements behind bordered cards.
+
+
+Watch Ads & Advertise: Cloudy sky theme featuring muted, overcast tones and bordered analytical data cards.
+
+
+Challenges & Social Hubs: Dynamic environmental themes paired with organic, non-robotic image banners.
+
+
+Core Modules & Feature Specifications
+1. Home Landing Page (Homepage & Moondial)
+Hero Section: Highlights user-recommended content and free advertising, focusing on paywall-free resource discovery for creators and users.
+
+
+Interactive Dashboard: Prominent 3D interactive lunar clock directly below the hero section, flanked by essential user stats, upcoming astrological/lunar events, highlighted community challenges, and featured user ads.
+
+
+Endless Recommendation Feed: Infinite-scroll discovery feed displaying community-recommended courses, YouTube videos, books, movies, and products. Includes interactive Subscribe and Unsubscribe toggles on each content card.
+
+
+2. Notebook (Floatable & Standalone)
+Daily Planner: Checklist supporting views for Today, Tomorrow, or specific custom date ranges, complete with customizable deadline alerts and contextual notes.
+
+
+Ideas: Categorizable notes for quick capture.
+
+
+Projects: Manages links, documents, and resources within project directories. Integrates an AI agent that maintains project context, edits designated file sections, and automatically generates and tracks project planners. Features an embedded AI chatbot for creative assistance and direct text insertion into notes.
+
+
+Challenge Logs & Personal Catalogues: Archives note-taking tasks from completed challenges and hosts structured user-created lists (e.g., cars, links) with custom or preset categories.
+
+
+3. Profile & Portfolio Page
+User Overview: Displays anonymous username, rank, milestone achievements, age, occupation, brand associations, and family details.
+
+
+Possessions & Interests: Categorized tracking for real estate, vehicles, clothing, electronics, collectables, medications, and leisure activities.
+
+
+Social & Community Features: Hosts personal recommendation lists (books, movies, appliances, songs), a shared personal feed, and a user donation feature supporting XP and direct cash transfers at higher ranks.
+
+
+4. Ad Ecosystem (Watch Ads & Advertise)
+Watch Ads: Displays curated, nature-conscious, and public-awareness campaigns source-extracted from public archives. Categorizes media into banners, GIFs, and short high-end videos, filtering out low-quality content or full-length videos.
+
+
+User Experience & Rewards: Collects initial user brand preferences to tailor campaign delivery. Includes an anti-doomscroll safeguard that displays a mental health warning upon excessive scrolling. Watching ads earns Cheese (the in-house utility token).
+
+
+Advertise Dashboard: Interface to upload campaigns and track ad engagement, comments, and emoji reactions using Cheese tokens.
+
+
+5. Social Dynamics & Gamified Systems
+Find Someone Like Me: Sidebar tool using a privacy-preserving algorithm to match users based on shared profile traits. Tracks lists of found, rejected, and pending matches based on earned XP thresholds.
+
+
+Tribe & Empire System: Engaging with matched users adds them to a Tribe. Within a shared tribe, the user with the highest XP rank becomes the Ruler, forming an Empire. Empires dynamically expand or shrink as connected members shift in rank relative to one another.
+
+
+Challenges & Gamification: Features daily tasks, monthly lunar-phase streaks, multiplayer games (a 3-hint phrase-guessing game generated by AI, and chess), project tracking streaks, and notebook logging tasks (e.g., Daily Meals lists). Active participation rewards users with XP.
+
+
+Technical Architecture: Automated Ad Ingestion & Pipeline
+1. Ingestion & Retrieval Strategy
+Official APIs & Proxy Ingestion: Ingests campaign metadata through official interfaces (such as the Meta Ad Library Graph API) supplemented by specialized scraping proxies (e.g., Playwright with residential IP rotation) for public transparency archives.
+
+
+Targeted Querying: Ingestion queries filter for tags centered on environmental sustainability, public health, awareness campaigns, and nature conservation.
+
+
+2. Automated Filtering & Quality Control
+Media Duration & Format Validation: Incoming assets are analyzed using binary inspection utilities (ffprobe). Videos exceeding 60 seconds, files exceeding payload limits (>15MB), or media failing resolution standards are automatically discarded.
+
+
+Format Classification: Validated assets are categorized into Static Banners, GIFs, or Short Video Ads based on MIME type, aspect ratio, and frame density.
+
+
+3. Asset Persistence & Delivery
+Static Asset Mirroring: Validated media files are downloaded directly from the source and stored in persistent cloud storage buckets (Supabase Storage or AWS S3) to prevent expiring CDN tokens or third-party hotlink blocks.
+
+
+Database Indexing & Fallbacks: Stores permanent local media URLs alongside brand tags and classifications. System defaults to a pre-loaded static seed library of public awareness assets if external ingestion experiences downtime or returns empty brand queries.

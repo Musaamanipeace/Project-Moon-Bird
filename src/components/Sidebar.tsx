@@ -1,5 +1,5 @@
 import React from "react";
-import { User, BookOpen, Bell, Tv, Users, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { Bell, Calendar, FileText, BookOpen, Rss, Clock, Users, UserPlus, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface SidebarProps {
   activeView: string;
@@ -9,24 +9,28 @@ interface SidebarProps {
 }
 
 const ITEMS = [
-  { id: "profile", label: "Portfolio", icon: User, hint: "Your cosmic identity & work" },
+  { id: "notifications", label: "Notifications", icon: Bell, hint: "Alerts, events & challenges" },
+  { id: "calendar", label: "Calendar", icon: Calendar, hint: "Moon phases & events" },
+  { id: "notes", label: "Notebook", icon: FileText, hint: "Daily planner, ideas & projects" },
+  { id: "dial", label: "Moondial", icon: Clock, hint: "Lunar clock & calendar" },
   { id: "catalogues", label: "Catalogues", icon: BookOpen, hint: "Events, brands, books, ads" },
-  { id: "notes", label: "Reminders & Alarms", icon: Bell, hint: "Deadlines & recurring alarms" },
-  { id: "advertiser", label: "Watch Ads", icon: Tv, hint: "Earn XP from sponsored feeds" },
-  { id: "meet", label: "Meet People Like Me", icon: Users, hint: "Find stargazers with shared interests" },
+  { id: "recommendations", label: "Recommendation Feed", icon: Rss, hint: "Community-curated resources" },
+  { id: "chat", label: "Chat", icon: Users, hint: "Live chat & AI companion" },
+  { id: "meet", label: "Find Someone Like Me", icon: UserPlus, hint: "Privacy-preserving matches" },
+  { id: "hello", label: "Hello", icon: Sparkles, hint: "Talk to Moonrise AI" },
 ] as const;
 
 export default function Sidebar({ activeView, onNavigate, collapsed, onToggleCollapse }: SidebarProps) {
   return (
     <aside
-      className={`flex flex-col shrink-0 border-r border-slate-800/80 bg-[#0a0b12]/90 backdrop-blur-md transition-all duration-300 ${
+      className={`sticky self-start top-14 max-h-[calc(100dvh-3.5rem)] flex flex-col shrink-0 border-r border-slate-800/80 bg-[#0a0b12]/90 backdrop-blur-md transition-all duration-300 ${
         collapsed ? "w-14" : "w-56"
       }`}
     >
       <div className="flex items-center justify-between p-2 border-b border-slate-800/80">
         {!collapsed && (
           <span className="text-[10px] font-mono text-turquoise uppercase tracking-widest font-bold flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5" /> Moonbug HUD
+            <Sparkles className="w-3.5 h-3.5" /> moonrise HUD
           </span>
         )}
         <button
@@ -67,7 +71,7 @@ export default function Sidebar({ activeView, onNavigate, collapsed, onToggleCol
 
       {!collapsed && (
         <div className="p-2 border-t border-slate-800/80 text-[9px] font-mono text-slate-600">
-          Global quick access · v2.0
+          Global quick access · moonrise v1.0
         </div>
       )}
     </aside>

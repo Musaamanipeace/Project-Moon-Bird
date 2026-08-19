@@ -1,5 +1,5 @@
 {
-  "name": "MoonBird",
+  "name": "Project-moonrise",
   "description": "Astral Diary, Lunar Timetable & Lifestyle Challenges Platform. Track moon cycles, complete custom habit/astro/vital challenges, log journals, and collaborate.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

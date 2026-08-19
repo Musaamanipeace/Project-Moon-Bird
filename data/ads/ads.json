@@ -1,0 +1,124 @@
+[
+  {
+    "id": "seed-env-1",
+    "title": "Protect Our Rivers",
+    "brand": "Clean Water Alliance",
+    "tagline": "Every drop counts — keep our rivers flowing clean.",
+    "mediaType": "banner",
+    "category": "environment",
+    "brandTags": [
+      "environment",
+      "water",
+      "sustainability",
+      "awareness"
+    ],
+    "sourceUrl": "data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='315'><rect%20width='100%25'%20height='100%25'%20fill='%231a3a2a'/><text%20x='50%25'%20y='50%25'%20fill='%23afeeee'%20font-family='monospace'%20font-size='28'%20text-anchor='middle'%20dominant-baseline='middle'>Protect%20Our%20Rivers</text></svg>",
+    "localMediaUrl": "data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='315'><rect%20width='100%25'%20height='100%25'%20fill='%231a3a2a'/><text%20x='50%25'%20y='50%25'%20fill='%23afeeee'%20font-family='monospace'%20font-size='28'%20text-anchor='middle'%20dominant-baseline='middle'>Protect%20Our%20Rivers</text></svg>",
+    "mimeType": "image/svg+xml",
+    "width": 1200,
+    "height": 628,
+    "createdAt": "2026-08-19T22:30:59.003Z"
+  },
+  {
+    "id": "seed-env-2",
+    "title": "Plant a Tree Today",
+    "brand": "Global Reforestation Fund",
+    "tagline": "One tree at a time, we cool the planet.",
+    "mediaType": "gif",
+    "category": "environment",
+    "brandTags": [
+      "environment",
+      "climate",
+      "nature",
+      "awareness"
+    ],
+    "sourceUrl": "data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='315'><rect%20width='100%25'%20height='100%25'%20fill='%231a3a2a'/><text%20x='50%25'%20y='50%25'%20fill='%23afeeee'%20font-family='monospace'%20font-size='28'%20text-anchor='middle'%20dominant-baseline='middle'>Plant%20a%20Tree%20Today</text></svg>",
+    "localMediaUrl": "data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='315'><rect%20width='100%25'%20height='100%25'%20fill='%231a3a2a'/><text%20x='50%25'%20y='50%25'%20fill='%23afeeee'%20font-family='monospace'%20font-size='28'%20text-anchor='middle'%20dominant-baseline='middle'>Plant%20a%20Tree%20Today</text></svg>",
+    "mimeType": "image/svg+xml",
+    "width": 480,
+    "height": 480,
+    "createdAt": "2026-08-19T22:30:59.003Z"
+  },
+  {
+    "id": "seed-health-1",
+    "title": "Breathe Easy",
+    "brand": "Public Health Now",
+    "tagline": "Clean air is a human right. Mask up when air quality drops.",
+    "mediaType": "short_video",
+    "category": "public_health",
+    "brandTags": [
+      "public_health",
+      "air_quality",
+      "awareness"
+    ],
+    "sourceUrl": "data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='315'><rect%20width='100%25'%20height='100%25'%20fill='%230f3b3b'/><text%20x='50%25'%20y='50%25'%20fill='%23afeeee'%20font-family='monospace'%20font-size='28'%20text-anchor='middle'%20dominant-baseline='middle'>Breathe%20Easy</text></svg>",
+    "localMediaUrl": "data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='315'><rect%20width='100%25'%20height='100%25'%20fill='%230f3b3b'/><text%20x='50%25'%20y='50%25'%20fill='%23afeeee'%20font-family='monospace'%20font-size='28'%20text-anchor='middle'%20dominant-baseline='middle'>Breathe%20Easy</text></svg>",
+    "mimeType": "image/svg+xml",
+    "durationSec": 15,
+    "fileSizeBytes": 3500000,
+    "width": 720,
+    "height": 1280,
+    "createdAt": "2026-08-19T22:30:59.003Z"
+  },
+  {
+    "id": "seed-health-2",
+    "title": "Walk for Your Heart",
+    "brand": "Healthy Communities",
+    "tagline": "Thirty minutes of movement a day keeps the doctor away.",
+    "mediaType": "banner",
+    "category": "public_health",
+    "brandTags": [
+      "public_health",
+      "wellbeing",
+      "awareness"
+    ],
+    "sourceUrl": "data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='315'><rect%20width='100%25'%20height='100%25'%20fill='%230f3b3b'/><text%20x='50%25'%20y='50%25'%20fill='%23afeeee'%20font-family='monospace'%20font-size='28'%20text-anchor='middle'%20dominant-baseline='middle'>Walk%20for%20Your%20Heart</text></svg>",
+    "localMediaUrl": "data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='315'><rect%20width='100%25'%20height='100%25'%20fill='%230f3b3b'/><text%20x='50%25'%20y='50%25'%20fill='%23afeeee'%20font-family='monospace'%20font-size='28'%20text-anchor='middle'%20dominant-baseline='middle'>Walk%20for%20Your%20Heart</text></svg>",
+    "mimeType": "image/svg+xml",
+    "width": 1200,
+    "height": 628,
+    "createdAt": "2026-08-19T22:30:59.003Z"
+  },
+  {
+    "id": "seed-nature-1",
+    "title": "Guard the Wild",
+    "brand": "Nature Conservation Trust",
+    "tagline": "Protect habitats before they go silent.",
+    "mediaType": "gif",
+    "category": "nature",
+    "brandTags": [
+      "nature",
+      "conservation",
+      "wildlife",
+      "awareness"
+    ],
+    "sourceUrl": "data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='315'><rect%20width='100%25'%20height='100%25'%20fill='%233a3a1a'/><text%20x='50%25'%20y='50%25'%20fill='%23afeeee'%20font-family='monospace'%20font-size='28'%20text-anchor='middle'%20dominant-baseline='middle'>Guard%20the%20Wild</text></svg>",
+    "localMediaUrl": "data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='315'><rect%20width='100%25'%20height='100%25'%20fill='%233a3a1a'/><text%20x='50%25'%20y='50%25'%20fill='%23afeeee'%20font-family='monospace'%20font-size='28'%20text-anchor='middle'%20dominant-baseline='middle'>Guard%20the%20Wild</text></svg>",
+    "mimeType": "image/svg+xml",
+    "width": 600,
+    "height": 600,
+    "createdAt": "2026-08-19T22:30:59.003Z"
+  },
+  {
+    "id": "seed-awareness-1",
+    "title": "Be Ocean Wise",
+    "brand": "Blue Planet Initiative",
+    "tagline": "Reduce plastics — our oceans are not a landfill.",
+    "mediaType": "short_video",
+    "category": "awareness",
+    "brandTags": [
+      "awareness",
+      "ocean",
+      "environment",
+      "nature"
+    ],
+    "sourceUrl": "data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='315'><rect%20width='100%25'%20height='100%25'%20fill='%231f1f4a'/><text%20x='50%25'%20y='50%25'%20fill='%23afeeee'%20font-family='monospace'%20font-size='28'%20text-anchor='middle'%20dominant-baseline='middle'>Be%20Ocean%20Wise</text></svg>",
+    "localMediaUrl": "data:image/svg+xml,<svg%20xmlns='http://www.w3.org/2000/svg'%20width='600'%20height='315'><rect%20width='100%25'%20height='100%25'%20fill='%231f1f4a'/><text%20x='50%25'%20y='50%25'%20fill='%23afeeee'%20font-family='monospace'%20font-size='28'%20text-anchor='middle'%20dominant-baseline='middle'>Be%20Ocean%20Wise</text></svg>",
+    "mimeType": "image/svg+xml",
+    "durationSec": 20,
+    "fileSizeBytes": 6200000,
+    "width": 1080,
+    "height": 1080,
+    "createdAt": "2026-08-19T22:30:59.003Z"
+  }
+]

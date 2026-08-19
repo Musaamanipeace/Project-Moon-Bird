@@ -1,5 +1,5 @@
 /**
- * MoonBird Shared Types and Interfaces
+ * moonrise Shared Types and Interfaces
  */
 
 export interface Comment {
