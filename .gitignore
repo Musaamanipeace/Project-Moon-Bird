@@ -3,3 +3,4 @@ dist/
 .env
 .env.local
 MOONRISE_DEPLOYMENT.md
+.kilo
